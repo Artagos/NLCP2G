@@ -88,8 +88,19 @@ backend/
 sandbox/
   Dockerfile      python:3.11-slim + g++, bakes in runner.py
   runner.py       runs inside the container: compile + run tests with limits
-frontend/
-  index.html      minimal chat UI (no build step)
+frontend/         React + Vite single-page app
+  index.html      Vite entry (loads MathJax + the bundle)
+  vite.config.js  dev-server API proxy → :8000; build → dist/
+  package.json
+  src/
+    main.jsx      React entry
+    App.jsx       state + data loading, wires the two panels
+    api.js        fetch wrappers for the backend endpoints
+    styles.css
+    components/
+      ProblemPanel.jsx   statement (HTML + MathJax), meta, progress, New-problem
+      Chat.jsx           message list + composer
+      Message.jsx        Markdown + syntax-highlighted C++ per bubble
 ```
 
 ## Memory (per session)
@@ -130,18 +141,27 @@ pip install -r backend/requirements.txt
 #      (bash)        export GEMINI_API_KEY=...
 #    NOTE: .env is gitignored. Never put a real key in .env.example (tracked).
 
-# 4. Run the API
+# 4. Build the React frontend (once, or after UI changes)
+cd frontend && npm install && npm run build && cd ..
+
+# 5. Run the API (also serves the built frontend from frontend/dist)
 uvicorn backend.main:app --reload --app-dir .
 
-# 5. Open the UI
-#    visit http://localhost:8000  (index.html is served by FastAPI)
+# 6. Open the UI
+#    visit http://localhost:8000
 ```
+
+**Frontend dev (hot reload):** instead of steps 4–6, run the API
+(`uvicorn backend.main:app --app-dir .`) and, in another terminal,
+`cd frontend && npm run dev` — then open http://localhost:5173. Vite proxies the
+API calls to the backend on :8000, so cookies/session work.
 
 Then chat. Try:
 - "what is a hash map?"          → tutor answers (allowed)
 - "should I use a hash map?"     → refused (problem-specific)
-- "I'll loop over every pair and count the ones summing to K" → translator
-  builds it, runs it, and reports the TLE on the big test.
+- describe a real approach to the current Codeforces problem → the pipeline
+  screens it, builds C++, and runs it against the sample tests.
+- "give me another problem"      → switches to a new (adaptively chosen) problem.
 
 ## Design notes / where to take it next
 

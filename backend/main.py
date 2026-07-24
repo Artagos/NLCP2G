@@ -17,7 +17,8 @@ import os
 from uuid import uuid4
 
 from fastapi import FastAPI, Request
-from fastapi.responses import FileResponse
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from . import memory, router, state, translator, tutor
@@ -26,7 +27,7 @@ from .prompts import REFUSAL_MESSAGE
 
 app = FastAPI(title="CP Tutor")
 
-_FRONTEND = os.path.join(os.path.dirname(__file__), "..", "frontend", "index.html")
+_DIST = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
 
 
 @app.on_event("startup")
@@ -64,11 +65,6 @@ def _summary(p: Problem) -> dict:
         "tags": p.tags, "url": p.url, "rating": p.rating, "source": p.source,
         "time_limit_ms": p.time_limit_ms, "num_sample_tests": len(p.tests),
     }
-
-
-@app.get("/")
-def index() -> FileResponse:
-    return FileResponse(os.path.abspath(_FRONTEND))
 
 
 @app.get("/problem")
@@ -154,3 +150,18 @@ def _handle(sid: str, message: str) -> ChatResponse:
                "concept, or say 'give me another problem' to switch."),
         meta={"reason": routed.reason},
     )
+
+
+# Serve the built React app (frontend/dist) at "/". API routes above are
+# registered first, so they take precedence over this catch-all mount.
+if os.path.isdir(_DIST):
+    app.mount("/", StaticFiles(directory=_DIST, html=True), name="spa")
+else:
+    @app.get("/")
+    def _needs_build() -> HTMLResponse:
+        return HTMLResponse(
+            "<h1>Frontend not built</h1><p>Run <code>cd frontend &amp;&amp; npm install "
+            "&amp;&amp; npm run build</code>, or use the Vite dev server "
+            "(<code>npm run dev</code> on :5173).</p>",
+            status_code=503,
+        )

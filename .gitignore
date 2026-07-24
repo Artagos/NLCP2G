@@ -5,3 +5,5 @@ __pycache__/
 venv/
 *.db
 cp_tutor.db
+node_modules/
+frontend/dist/

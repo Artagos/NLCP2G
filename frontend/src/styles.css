@@ -28,7 +28,9 @@ body { font: 15px/1.5 system-ui, -apple-system, sans-serif; }
 aside {
   padding: 20px;
   border-right: 1px solid #8883;
+  overflow-x: hidden;   /* wide children scroll inside themselves, not the panel */
   overflow-y: auto;
+  min-width: 0;         /* let the grid item shrink instead of overflowing */
 }
 .head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
 .head h1 { font-size: 17px; margin: 0; }
@@ -49,18 +51,28 @@ aside {
 .statement-text { white-space: pre-wrap; font: 13px/1.45 ui-monospace, monospace; }
 
 /* rich CF statement */
-.statement { font-size: 15px; line-height: 1.7; word-wrap: break-word; max-width: 78ch; }
+.statement {
+  font-size: 15px; line-height: 1.7;
+  max-width: 78ch;
+  overflow-wrap: break-word;   /* break long unbroken tokens/URLs */
+}
 .statement .section-title { font-weight: 600; font-size: 15px; margin: 16px 0 6px; }
 .statement .header .title { font-weight: 600; }
 .statement .property-title { font-weight: 600; }
 .statement p { margin: 8px 0; }
 .statement ul, .statement ol { margin: 8px 0; padding-left: 22px; }
 .statement pre {
-  background: #0001; padding: 8px; border-radius: 6px; overflow-x: auto;
+  background: #0001; padding: 8px; border-radius: 6px;
+  max-width: 100%; overflow-x: auto;   /* wide samples scroll, don't stretch */
   white-space: pre; font: 12px/1.4 ui-monospace, monospace;
 }
 .statement img { max-width: 100%; height: auto; }
 .statement .test-example-line { font-family: ui-monospace, monospace; }
+/* wide tables and display math scroll within their own box */
+.statement table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; }
+.statement table td, .statement table th { border: 1px solid #8884; padding: 4px 8px; }
+.statement mjx-container { max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+.statement mjx-container[display="true"] { margin: 8px 0; }
 
 /* ---- chat ---- */
 main { display: flex; flex-direction: column; min-width: 0; }
@@ -88,7 +100,9 @@ main { display: flex; flex-direction: column; min-width: 0; }
 }
 .markdown pre {
   background: #0d1117; border-radius: 8px; padding: 12px; overflow-x: auto; margin: 8px 0;
+  max-width: 100%;
 }
+.markdown { overflow-wrap: break-word; }
 .markdown pre code { background: none; padding: 0; }
 
 .code-details { margin-top: 8px; }

@@ -26,9 +26,10 @@ _ORIGIN = "https://codeforces.com"
 _API_LIST = "https://codeforces.com/api/problemset.problems"
 _PAGE = "https://codeforces.com/problemset/problem/{cid}/{idx}"
 
-# Beginner-friendly, likely-simple-I/O rating band.
+# Candidate pool spans the full rated range so "harder" requests have problems
+# to pick from; the *default* selection band (state._band) keeps new sessions easy.
 _MIN_RATING = 800
-_MAX_RATING = 1200
+_MAX_RATING = 3500
 # Tags that tend to break the "read stdin, print stdout" assumption.
 _SKIP_TAGS = {"interactive", "*special"}
 

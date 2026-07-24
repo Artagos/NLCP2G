@@ -17,6 +17,8 @@ Intent = Literal["concept", "strategy", "solution", "new_problem", "chitchat"]
 
 class Routed(BaseModel):
     intent: Intent
+    # only meaningful when intent == "new_problem"
+    difficulty: Literal["easier", "harder", "same"] = "same"
     reason: str  # short justification, useful for debugging / logging
 
 

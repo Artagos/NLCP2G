@@ -33,13 +33,19 @@ Classify the message into exactly one intent:
 - "new_problem": the user wants to switch to a different problem — change it,
   skip it, try another/a new/the next one, or get a different challenge.
   Examples: "give me another problem", "change the problem", "next one",
-  "I want a different problem", "try something else".
+  "I want a different problem", "try something else", "give me an easier one",
+  "something harder please".
 
 - "chitchat": greetings, thanks, or anything unrelated.
 
 Judge intent, not keywords. "What is a hash map?" is concept; "should I use a
 hash map for this?" is strategy — the difference is whether answering reveals
 how to solve THIS problem.
+
+Also set `difficulty` (only used for new_problem): "easier" if they ask for an
+easier / simpler / lower-rated / less difficult problem; "harder" if they ask
+for a harder / tougher / more challenging / higher-rated one; otherwise "same".
+For every other intent, set difficulty to "same".
 """
 
 

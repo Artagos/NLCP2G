@@ -76,7 +76,14 @@ export default function App() {
 
   return (
     <div className="app">
-      <ProblemPanel problem={problem} progress={progress} onNew={handleNew} loadingNew={loadingNew} />
+      <ProblemPanel
+        problem={problem}
+        progress={progress}
+        onNew={handleNew}
+        loadingNew={loadingNew}
+        onSummarize={() => handleSend("summarize")}
+        busy={sending}
+      />
       <Chat messages={messages} onSend={handleSend} sending={sending} />
     </div>
   );

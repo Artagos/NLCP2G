@@ -32,11 +32,15 @@ CREATE TABLE IF NOT EXISTS seen(
 );
 CREATE TABLE IF NOT EXISTS messages(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  sid TEXT, role TEXT, content TEXT, intent TEXT, created_at REAL
+  sid TEXT, role TEXT, content TEXT, intent TEXT, problem_key TEXT, created_at REAL
 );
 CREATE TABLE IF NOT EXISTS session_current(
   sid TEXT PRIMARY KEY, problem_key TEXT, contest_id INTEGER,
   problem_index TEXT, updated_at REAL
+);
+CREATE TABLE IF NOT EXISTS summaries(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  sid TEXT, problem_key TEXT, problem_name TEXT, summary TEXT, created_at REAL
 );
 """
 
@@ -55,6 +59,10 @@ def _conn():
 def init() -> None:
     with _conn() as c:
         c.executescript(_SCHEMA)
+        # migrate older DBs that predate the messages.problem_key column
+        cols = [r[1] for r in c.execute("PRAGMA table_info(messages)")]
+        if "problem_key" not in cols:
+            c.execute("ALTER TABLE messages ADD COLUMN problem_key TEXT")
 
 
 # ---- current problem per session ----
@@ -150,11 +158,13 @@ def progress(sid: str) -> dict:
 
 # ---- conversation ----
 
-def add_message(sid: str, role: str, content: str, intent: str | None) -> None:
+def add_message(sid: str, role: str, content: str, intent: str | None,
+                problem_key: str | None = None) -> None:
     with _conn() as c:
         c.execute(
-            "INSERT INTO messages(sid, role, content, intent, created_at) VALUES (?,?,?,?,?)",
-            (sid, role, content, intent, time.time()),
+            "INSERT INTO messages(sid, role, content, intent, problem_key, created_at) "
+            "VALUES (?,?,?,?,?,?)",
+            (sid, role, content, intent, problem_key, time.time()),
         )
 
 
@@ -174,3 +184,48 @@ def tutor_history(sid: str) -> list[dict]:
             (sid,),
         ).fetchall()
     return [{"role": r["role"], "content": r["content"]} for r in rows]
+
+
+# ---- per-problem activity (for summaries) ----
+
+def attempts_for(sid: str, key: str) -> list[dict]:
+    with _conn() as c:
+        rows = c.execute(
+            "SELECT approach, verdict FROM attempts WHERE sid=? AND problem_key=? ORDER BY id",
+            (sid, key),
+        ).fetchall()
+    return [{"approach": r["approach"], "verdict": r["verdict"]} for r in rows]
+
+
+def concept_questions_for(sid: str, key: str) -> list[str]:
+    with _conn() as c:
+        rows = c.execute(
+            "SELECT content FROM messages WHERE sid=? AND problem_key=? AND role='user' "
+            "AND intent='concept' ORDER BY id",
+            (sid, key),
+        ).fetchall()
+    return [r["content"] for r in rows]
+
+
+def has_activity(sid: str, key: str) -> bool:
+    return bool(attempts_for(sid, key) or concept_questions_for(sid, key))
+
+
+# ---- summaries ----
+
+def save_summary(sid: str, key: str, name: str, summary: str) -> None:
+    with _conn() as c:
+        c.execute(
+            "INSERT INTO summaries(sid, problem_key, problem_name, summary, created_at) "
+            "VALUES (?,?,?,?,?)",
+            (sid, key, name, summary, time.time()),
+        )
+
+
+def get_summaries(sid: str) -> list[dict]:
+    with _conn() as c:
+        rows = c.execute(
+            "SELECT problem_name, summary, created_at FROM summaries WHERE sid=? ORDER BY id DESC",
+            (sid,),
+        ).fetchall()
+    return [{"name": r["problem_name"], "summary": r["summary"], "at": r["created_at"]} for r in rows]

@@ -21,7 +21,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from . import memory, router, state, translator, tutor
+from . import memory, router, state, summarizer, translator, tutor
 from .problem import Problem
 from .prompts import REFUSAL_MESSAGE
 
@@ -90,6 +90,10 @@ def progress(request: Request) -> dict:
 @app.post("/chat", response_model=ChatResponse)
 def chat(request: Request, req: ChatRequest) -> ChatResponse:
     sid = request.state.sid
+    # the problem active when the message was sent — tags the exchange so
+    # per-problem summaries can be built later (a new_problem turn switches the
+    # current problem inside _handle, so capture the key first)
+    tag_key = state.current(sid).url or "fallback"
     try:
         resp = _handle(sid, req.message)
     except Exception as exc:  # keep the UI usable on transient LLM/sandbox errors
@@ -100,28 +104,58 @@ def chat(request: Request, req: ChatRequest) -> ChatResponse:
             meta={"error": type(exc).__name__, "detail": str(exc)[:300]},
         )
     # persist the exchange for restore + tutor recall
-    memory.add_message(sid, "user", req.message, resp.intent)
-    memory.add_message(sid, "assistant", resp.reply, resp.intent)
+    memory.add_message(sid, "user", req.message, resp.intent, tag_key)
+    memory.add_message(sid, "assistant", resp.reply, resp.intent, tag_key)
     return resp
+
+
+def _summarize_current(sid: str) -> ChatResponse:
+    prob = state.current(sid)
+    key = prob.url or "fallback"
+    if not memory.has_activity(sid, key):
+        return ChatResponse(
+            intent="summarize",
+            reply=("There's nothing to summarize on this problem yet — describe an "
+                   "approach and I'll run it, or ask me a concept question first."),
+            meta={},
+        )
+    recap = summarizer.summarize(
+        prob, memory.attempts_for(sid, key), memory.concept_questions_for(sid, key))
+    memory.save_summary(sid, key, prob.name, recap)
+    return ChatResponse(intent="summarize", reply=recap, meta={"recap": recap})
 
 
 def _handle(sid: str, message: str) -> ChatResponse:
     routed = router.route(message)
     prob = state.current(sid)
 
+    if routed.intent == "summarize":
+        return _summarize_current(sid)
+
     if routed.intent == "new_problem":
+        # auto-summarize the problem being left, if there was any activity on it
+        old_key = prob.url or "fallback"
+        recap = None
+        if memory.has_activity(sid, old_key):
+            recap = summarizer.summarize(
+                prob, memory.attempts_for(sid, old_key),
+                memory.concept_questions_for(sid, old_key))
+            memory.save_summary(sid, old_key, prob.name, recap)
+
         delta = max(-500, min(500, routed.rating_delta or 0))
-        prob = state.load_new(sid, delta)
+        new_prob = state.load_new(sid, delta)
         label = "a harder problem" if delta > 0 else \
                 "an easier problem" if delta < 0 else "a new problem"
-        rating = f" (rating {prob.rating})" if prob.rating else ""
+        rating = f" (rating {new_prob.rating})" if new_prob.rating else ""
+        announce = (f"Here's {label}: {new_prob.name}{rating}. It's shown on the "
+                    "left. Read it, then describe how you'd solve it and I'll build "
+                    "and run your approach — or ask me about any general concept.")
+        reply = (f"Recap of {prob.name}:\n{recap}\n\n{announce}") if recap else announce
         return ChatResponse(
             intent="new_problem",
-            reply=(f"Here's {label}: {prob.name}{rating}. It's shown on the "
-                   "left. Read it, then describe how you'd solve it and I'll build "
-                   "and run your approach — or ask me about any general concept."),
-            meta={"problem": _summary(prob), "rating_delta": delta,
-                  "reason": routed.reason},
+            reply=reply,
+            meta={"problem": _summary(new_prob), "rating_delta": delta,
+                  "recap": recap, "reason": routed.reason},
         )
 
     if routed.intent == "strategy":

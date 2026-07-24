@@ -36,6 +36,10 @@ Classify the message into exactly one intent:
   "I want a different problem", "try something else", "give me an easier one",
   "something harder please".
 
+- "summarize": the user wants a recap/summary of their work so far on the
+  current problem. Examples: "summarize", "give me a summary", "recap what I
+  tried", "how am I doing on this one".
+
 - "chitchat": greetings, thanks, or anything unrelated.
 
 Judge intent, not keywords. "What is a hash map?" is concept; "should I use a
@@ -97,6 +101,25 @@ REFUSAL_MESSAGE = (
     "particular operation works. Ask me one of those, or just describe the "
     "solution you have in mind and I'll run it for you."
 )
+
+
+SUMMARIZER_SYSTEM = """\
+You write a short, friendly recap of a learner's work on ONE competitive
+programming problem, for their own reference (e.g. when they move on to a new
+problem). You are given the problem name, whether they solved it, the approaches
+they described and the verdict each got, and any general concept questions they
+asked while on it.
+
+Write 2–4 sentences. Recap their journey: what they tried, what happened (which
+verdicts), and what they explored. Be encouraging and matter-of-fact.
+
+STRICT RULES:
+- Do NOT give hints, the solution, or tell them what approach they should have
+  used or should try next — even if the problem is unsolved. This is a recap of
+  what they did, not coaching on how to solve it.
+- Don't invent activity that isn't in the data. If they barely engaged, say so
+  briefly.
+"""
 
 
 def feasibility_screen_system(problem: Problem) -> str:

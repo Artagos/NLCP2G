@@ -60,8 +60,8 @@ class ChatResponse(BaseModel):
 
 def _summary(p: Problem) -> dict:
     return {
-        "name": p.name, "statement": p.statement, "tags": p.tags,
-        "url": p.url, "rating": p.rating, "source": p.source,
+        "name": p.name, "statement": p.statement, "statement_html": p.statement_html,
+        "tags": p.tags, "url": p.url, "rating": p.rating, "source": p.source,
         "time_limit_ms": p.time_limit_ms, "num_sample_tests": len(p.tests),
     }
 

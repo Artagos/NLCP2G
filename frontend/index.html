@@ -19,6 +19,16 @@
     #progress { font-size: 12px; color: #888; margin: 0 0 12px; padding: 6px 0;
                 border-top: 1px solid #8882; border-bottom: 1px solid #8882; }
     aside pre { white-space: pre-wrap; font: 13px/1.45 ui-monospace, monospace; }
+    .statement { font-size: 14px; line-height: 1.55; word-wrap: break-word; }
+    .statement .section-title { font-weight: 600; font-size: 15px; margin: 16px 0 6px; }
+    .statement .header .title { font-weight: 600; }
+    .statement .property-title { font-weight: 600; }
+    .statement p { margin: 8px 0; }
+    .statement ul, .statement ol { margin: 8px 0; padding-left: 22px; }
+    .statement pre { background: #0001; padding: 8px; border-radius: 6px;
+                     overflow-x: auto; white-space: pre; font: 12px/1.4 ui-monospace, monospace; }
+    .statement img { max-width: 100%; height: auto; }
+    .statement .test-example-line { font-family: ui-monospace, monospace; }
     #newBtn { font: 12px system-ui; padding: 5px 10px; border: 1px solid #8886;
               border-radius: 8px; background: transparent; color: inherit; cursor: pointer; white-space: nowrap; }
     #newBtn:disabled { opacity: .5; cursor: default; }
@@ -38,6 +48,14 @@
              color: #fff; font: inherit; cursor: pointer; }
     button.send:disabled { opacity: .5; cursor: default; }
   </style>
+  <script>
+    // Codeforces writes inline math as $$$…$$$ and display math as $$$$…$$$$.
+    window.MathJax = {
+      tex: { inlineMath: [['$$$', '$$$']], displayMath: [['$$$$', '$$$$']] },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
 </head>
 <body>
   <aside>
@@ -47,7 +65,7 @@
     </div>
     <div class="meta" id="pmeta"></div>
     <div id="progress">progress: —</div>
-    <pre id="statement"></pre>
+    <div id="statement" class="statement"></div>
   </aside>
   <main>
     <div id="log"></div>
@@ -80,7 +98,16 @@
         a.href = p.url; a.target = "_blank"; a.textContent = "open on Codeforces ↗";
         meta.appendChild(a);
       }
-      document.getElementById("statement").textContent = p.statement || "";
+      const st = document.getElementById("statement");
+      if (p.statement_html) {
+        st.innerHTML = p.statement_html;
+        typeset(st);   // render $$$…$$$ math
+      } else {
+        st.textContent = p.statement || "";
+      }
+    }
+    function typeset(el) {
+      if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([el]).catch(() => {});
     }
     const loadProblem = () => fetch("/problem").then(r => r.json()).then(renderProblem);
 

@@ -14,11 +14,14 @@ from __future__ import annotations
 
 import random
 import re
+from urllib.parse import urljoin
 
 import cloudscraper
 from bs4 import BeautifulSoup
 
 from .problem import Problem, Test
+
+_ORIGIN = "https://codeforces.com"
 
 _API_LIST = "https://codeforces.com/api/problemset.problems"
 _PAGE = "https://codeforces.com/problemset/problem/{cid}/{idx}"
@@ -129,7 +132,20 @@ def fetch_problem(contest_id: int, index: str, meta: dict | None = None) -> Prob
     # isn't duplicated with the "4A" we prepend below.
     title = re.sub(r"^[A-Za-z]\d?\.\s*", "", title) or f"{contest_id}{index}"
 
-    # Full statement for the tutor + UI: drop the sample block (shown separately).
+    # Rich HTML for the UI: make asset/link URLs absolute, drop scripts/styles,
+    # keep the sample block (readers expect the examples inline). Built BEFORE we
+    # strip samples for the plain-text version below.
+    for tag in stmt.find_all(["script", "style"]):
+        tag.decompose()
+    for img in stmt.find_all("img"):
+        if img.get("src"):
+            img["src"] = urljoin(_ORIGIN, img["src"])
+    for a in stmt.find_all("a"):
+        if a.get("href"):
+            a["href"] = urljoin(_ORIGIN, a["href"])
+    statement_html = str(stmt)
+
+    # Plain-text statement for the tutor's LLM context: drop the sample block.
     for s in stmt.select(".sample-tests"):
         s.decompose()
     statement = _tidy(stmt.get_text("\n"))
@@ -151,6 +167,7 @@ def fetch_problem(contest_id: int, index: str, meta: dict | None = None) -> Prob
         url=url,
         rating=meta.get("rating"),
         source="codeforces",
+        statement_html=statement_html,
     )
 
 

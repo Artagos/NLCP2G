@@ -26,7 +26,7 @@ class Test:
 @dataclass
 class Problem:
     name: str                       # e.g. "4A - Watermelon"
-    statement: str                  # tutor + UI
+    statement: str                  # plain text — tutor's LLM context
     io_format: str                  # translator + screener see ONLY this
     tags: list[str]
     tests: list[Test]
@@ -35,6 +35,7 @@ class Problem:
     url: str | None = None
     rating: int | None = None
     source: str = "codeforces"
+    statement_html: str | None = None  # rich HTML for the UI (math via MathJax)
 
 
 # --------------------------------------------------------------------------- #

@@ -17,10 +17,12 @@ body { font: 15px/1.5 system-ui, -apple-system, sans-serif; }
 }
 .divider:hover, .divider:active { background: #2563eb; }
 
-/* focus mode: hide the chat, give the problem the full width */
+/* focus mode: hide the chat, use most of the screen for the statement */
 .app.focus { grid-template-columns: 1fr; }
 .app.focus .divider, .app.focus main { display: none; }
-.app.focus aside { padding: 28px max(28px, calc((100vw - 900px) / 2)); }
+.app.focus aside { padding: 28px max(32px, calc((100vw - 1400px) / 2)); }
+/* drop the narrow reading cap so the text fills the wide focus column */
+.app.focus .statement { max-width: none; }
 
 /* ---- problem panel ---- */
 aside {

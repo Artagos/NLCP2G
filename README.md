@@ -1,4 +1,6 @@
-# CP Tutor — an agentic "explain your solution" competitive-programming coach
+# NLCP2G — Natural Language Competitive Programming PlayGround
+
+An agentic "explain your solution" competitive-programming coach.
 
 A chat-bot that lets **non-coders** solve competitive programming problems by
 *describing their algorithm in plain words*. The system translates the described

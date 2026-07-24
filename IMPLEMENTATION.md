@@ -6,7 +6,7 @@ described approach into C++, runs it against real test cases, and reports back
 faithfully — while a guardrailed tutor answers *general* concept questions but
 never leaks how to solve the current problem.
 
-Repo: https://github.com/Artagos/cp-tutor
+Repo: https://github.com/Artagos/NLCP2G  (**NLCP2G** — Natural Language Competitive Programming PlayGround)
 
 ---
 

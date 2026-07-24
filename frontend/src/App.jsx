@@ -22,10 +22,14 @@ export default function App() {
   const [sending, setSending] = useState(false);
   const [loadingNew, setLoadingNew] = useState(false);
   const [leftW, setLeftW] = useState(() => Number(localStorage.getItem("cp_leftw")) || 560);
+  const [focus, setFocus] = useState(() => localStorage.getItem("cp_focus") === "1");
 
   useEffect(() => {
     localStorage.setItem("cp_leftw", String(leftW));
   }, [leftW]);
+  useEffect(() => {
+    localStorage.setItem("cp_focus", focus ? "1" : "0");
+  }, [focus]);
 
   const startDrag = useCallback((e) => {
     e.preventDefault();
@@ -115,7 +119,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="app" style={{ "--left-w": `${leftW}px` }}>
+    <div className={`app${focus ? " focus" : ""}`} style={{ "--left-w": `${leftW}px` }}>
       <ProblemPanel
         problem={problem}
         progress={progress}
@@ -123,6 +127,8 @@ export default function App() {
         loadingNew={loadingNew}
         onSummarize={() => handleSend("summarize")}
         onReset={handleReset}
+        focus={focus}
+        onToggleFocus={() => setFocus((f) => !f)}
         busy={sending}
       />
       <div className="divider" onMouseDown={startDrag} title="Drag to resize" />

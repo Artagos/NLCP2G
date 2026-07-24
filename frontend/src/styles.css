@@ -17,6 +17,11 @@ body { font: 15px/1.5 system-ui, -apple-system, sans-serif; }
 }
 .divider:hover, .divider:active { background: #2563eb; }
 
+/* focus mode: hide the chat, give the problem the full width */
+.app.focus { grid-template-columns: 1fr; }
+.app.focus .divider, .app.focus main { display: none; }
+.app.focus aside { padding: 28px max(28px, calc((100vw - 900px) / 2)); }
+
 /* ---- problem panel ---- */
 aside {
   padding: 20px;

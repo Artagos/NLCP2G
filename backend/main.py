@@ -77,6 +77,16 @@ def new_problem(request: Request) -> dict:
     return _summary(state.load_new(request.state.sid))
 
 
+@app.post("/reset")
+def reset(request: Request) -> dict:
+    """Full reset: wipe this session's chat, progress, attempts, and summaries,
+    then load a fresh problem."""
+    sid = request.state.sid
+    state.reset(sid)
+    memory.reset(sid)
+    return _summary(state.load_new(sid))
+
+
 @app.get("/history")
 def history(request: Request) -> dict:
     return {"messages": memory.get_messages(request.state.sid)}

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import ProblemPanel from "./components/ProblemPanel.jsx";
 import Chat from "./components/Chat.jsx";
-import { getHistory, getProblem, getProgress, newProblem, sendChat } from "./api.js";
+import { getHistory, getProblem, getProgress, newProblem, resetSession, sendChat } from "./api.js";
 
 const WELCOME =
   "Read the problem on the left, then describe how you'd solve it and I'll build and run your approach. I won't tell you how to solve it — that's yours. Ask me general concepts anytime, or say \"give me another problem\" to switch.";
@@ -74,6 +74,23 @@ export default function App() {
     }
   }, []);
 
+  const handleReset = useCallback(async () => {
+    if (!window.confirm(
+      "Start over? This wipes this session's chat, progress, attempts, and " +
+      "summaries, and loads a fresh problem. This can't be undone.")) return;
+    setLoadingNew(true);
+    try {
+      const p = await resetSession();
+      setProblem(p);
+      setProgress(await getProgress());
+      setMessages([{ role: "assistant", content: WELCOME, tag: "tutor" }]);
+    } catch (e) {
+      setMessages((m) => [...m, { role: "assistant", content: `Reset failed: ${e}`, tag: "error" }]);
+    } finally {
+      setLoadingNew(false);
+    }
+  }, []);
+
   return (
     <div className="app">
       <ProblemPanel
@@ -82,6 +99,7 @@ export default function App() {
         onNew={handleNew}
         loadingNew={loadingNew}
         onSummarize={() => handleSend("summarize")}
+        onReset={handleReset}
         busy={sending}
       />
       <Chat messages={messages} onSend={handleSend} sending={sending} />

@@ -7,6 +7,7 @@ const json = (r) => {
 
 export const getProblem = () => fetch("/problem").then(json);
 export const newProblem = () => fetch("/new-problem", { method: "POST" }).then(json);
+export const resetSession = () => fetch("/reset", { method: "POST" }).then(json);
 export const getHistory = () => fetch("/history").then(json);
 export const getProgress = () => fetch("/progress").then(json);
 export const sendChat = (message) =>

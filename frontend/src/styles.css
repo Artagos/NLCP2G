@@ -18,6 +18,7 @@ aside {
 .head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
 .head h1 { font-size: 17px; margin: 0; }
 .head-btns { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+.reset-btn:hover:not(:disabled) { border-color: #dc2626; color: #dc2626; }
 .new-btn {
   font: 12px system-ui; padding: 6px 11px; border: 1px solid #8886;
   border-radius: 8px; background: transparent; color: inherit; cursor: pointer; white-space: nowrap;

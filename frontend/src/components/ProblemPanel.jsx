@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 
 // Left panel: problem name, metadata, progress line, and the rich HTML statement
 // (with MathJax typesetting the $$$…$$$ math after each update).
-export default function ProblemPanel({ problem, progress, onNew, loadingNew, onSummarize, busy }) {
+export default function ProblemPanel({ problem, progress, onNew, loadingNew, onSummarize, onReset, busy }) {
   const stmtRef = useRef(null);
 
   useEffect(() => {
@@ -28,6 +28,10 @@ export default function ProblemPanel({ problem, progress, onNew, loadingNew, onS
           </button>
           <button className="new-btn" onClick={onNew} disabled={loadingNew}>
             {loadingNew ? "…" : "🎲 New problem"}
+          </button>
+          <button className="new-btn reset-btn" onClick={onReset} disabled={busy || loadingNew}
+                  title="Wipe this session and start over">
+            ↺ Start over
           </button>
         </div>
       </div>

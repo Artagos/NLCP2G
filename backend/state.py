@@ -72,6 +72,11 @@ def current(sid: str) -> Problem:
     return load_new(sid)
 
 
+def reset(sid: str) -> None:
+    """Drop the cached problem for a session (call alongside memory.reset)."""
+    _cache.pop(sid, None)
+
+
 def load_new(sid: str, rating_delta: int = 0) -> Problem:
     """Load a new problem. A non-zero rating_delta targets (current rating +
     delta); otherwise the adaptive default band (from solved ratings) is used."""

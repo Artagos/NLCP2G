@@ -222,6 +222,13 @@ def save_summary(sid: str, key: str, name: str, summary: str) -> None:
         )
 
 
+def reset(sid: str) -> None:
+    """Delete everything for a session — a full fresh start."""
+    with _conn() as c:
+        for table in ("attempts", "seen", "messages", "session_current", "summaries"):
+            c.execute(f"DELETE FROM {table} WHERE sid=?", (sid,))
+
+
 def get_summaries(sid: str) -> list[dict]:
     with _conn() as c:
         rows = c.execute(

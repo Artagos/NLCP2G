@@ -239,6 +239,7 @@ production, or via the Vite dev server (HMR) with an API proxy during dev.
 | POST | `/chat` | `{message}` → `{intent, reply, meta}` |
 | GET | `/problem` | current problem summary (incl. `statement_html`) |
 | POST | `/new-problem` | load a new problem (button) |
+| POST | `/reset` | full reset: wipe this session's chat/progress/attempts/summaries, load a fresh problem |
 | GET | `/history` | prior chat messages (restore UI) |
 | GET | `/progress` | attempts/solved/seen + per-verdict counts |
 | GET | `/` | the built SPA |

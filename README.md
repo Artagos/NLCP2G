@@ -75,7 +75,8 @@ backend/
   main.py         FastAPI app + /chat, /problem, /new-problem
   llm.py          Gemini shim (the only LLM-provider-specific file)
   codeforces.py   fetch + parse real problems (cloudscraper + BeautifulSoup)
-  state.py        holds the current problem; load a new one on request
+  memory.py       per-session SQLite store (attempts, progress, chat, seen)
+  state.py        per-session current problem + adaptive selection
   router.py       intent classifier (concept/strategy/solution/new_problem/chitchat)
   tutor.py        guardrailed conceptual Q&A
   screener.py     feasibility pre-screen (blind to the problem)
@@ -90,6 +91,25 @@ sandbox/
 frontend/
   index.html      minimal chat UI (no build step)
 ```
+
+## Memory (per session)
+
+Each browser gets a `sid` cookie; everything below is persisted in a SQLite DB
+(`cp_tutor.db`, gitignored) keyed by it — `backend/memory.py`:
+
+- **Attempts & progress** — every solution attempt (problem, approach, verdict,
+  time) is recorded. The chat shows "attempt N"; `GET /progress` returns
+  solved/seen/attempt counts and a per-verdict breakdown (shown in the sidebar).
+- **Persistent conversation** — the full chat is stored and restored via
+  `GET /history`, so a refresh keeps context; the tutor also recalls prior
+  concept turns.
+- **Adaptive problem selection** — "new problem" excludes already-seen problems
+  and targets a difficulty band derived from the ratings you've solved (starts
+  800–1000, climbs as you solve harder ones). See `state._band`.
+
+**Guardrail:** memory is only read by the tutor (which already sees the
+statement) and the problem-selection logic (metadata only). It is **never**
+handed to the translator or screener — they stay blind, so no solution can leak.
 
 ## Running it
 

@@ -14,8 +14,10 @@
     aside { padding: 20px; border-right: 1px solid #8883; overflow-y: auto; }
     .head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
     aside h1 { font-size: 17px; margin: 0; }
-    aside .meta { color: #888; font-size: 13px; margin: 4px 0 12px; }
+    aside .meta { color: #888; font-size: 13px; margin: 4px 0 8px; }
     aside .meta a { color: #2563eb; }
+    #progress { font-size: 12px; color: #888; margin: 0 0 12px; padding: 6px 0;
+                border-top: 1px solid #8882; border-bottom: 1px solid #8882; }
     aside pre { white-space: pre-wrap; font: 13px/1.45 ui-monospace, monospace; }
     #newBtn { font: 12px system-ui; padding: 5px 10px; border: 1px solid #8886;
               border-radius: 8px; background: transparent; color: inherit; cursor: pointer; white-space: nowrap; }
@@ -44,15 +46,11 @@
       <button id="newBtn" title="Fetch a different Codeforces problem">🎲 New problem</button>
     </div>
     <div class="meta" id="pmeta"></div>
+    <div id="progress">progress: —</div>
     <pre id="statement"></pre>
   </aside>
   <main>
-    <div id="log">
-      <div class="msg bot"><span class="tag">tutor</span>Read the problem on the left,
-then describe how you'd solve it and I'll build and run your approach. I won't
-tell you how to solve it — that part's yours. Ask me general concepts anytime, or
-say "give me another problem" to switch.</div>
-    </div>
+    <div id="log"></div>
     <form id="form">
       <textarea id="input" rows="2" placeholder="Describe your approach, ask a concept question, or say 'new problem'…"></textarea>
       <button class="send" id="send" type="submit">Send</button>
@@ -65,7 +63,8 @@ say "give me another problem" to switch.</div>
     const input = document.getElementById("input");
     const send = document.getElementById("send");
     const newBtn = document.getElementById("newBtn");
-    const history = [];  // tutor (concept) turns only
+
+    const WELCOME = "Read the problem on the left, then describe how you'd solve it and I'll build and run your approach. I won't tell you how to solve it — that's yours. Ask me general concepts anytime, or say \"give me another problem\" to switch.";
 
     function renderProblem(p) {
       document.getElementById("pname").textContent = p.name || "Problem";
@@ -83,11 +82,16 @@ say "give me another problem" to switch.</div>
       }
       document.getElementById("statement").textContent = p.statement || "";
     }
+    const loadProblem = () => fetch("/problem").then(r => r.json()).then(renderProblem);
 
-    function loadProblem() {
-      return fetch("/problem").then(r => r.json()).then(renderProblem);
+    function renderProgress(s) {
+      const v = s.by_verdict || {};
+      const parts = Object.keys(v).sort().map(k => k + ":" + v[k]);
+      document.getElementById("progress").textContent =
+        `progress: solved ${s.solved}/${s.seen} seen · ${s.attempts} attempts` +
+        (parts.length ? " · " + parts.join(" ") : "");
     }
-    loadProblem();
+    const loadProgress = () => fetch("/progress").then(r => r.json()).then(renderProgress);
 
     function add(role, text, tag, code) {
       const el = document.createElement("div");
@@ -100,12 +104,22 @@ say "give me another problem" to switch.</div>
       return el;
     }
 
+    // Restore prior conversation (persistent memory), else show the welcome.
+    async function loadHistory() {
+      const { messages } = await (await fetch("/history")).json();
+      log.innerHTML = "";
+      if (!messages.length) { add("bot", WELCOME, "tutor"); return; }
+      for (const m of messages) add(m.role === "user" ? "user" : "bot", m.content, m.intent || "");
+    }
+
+    Promise.all([loadProblem(), loadProgress(), loadHistory()]);
+
     newBtn.addEventListener("click", async () => {
       newBtn.disabled = true;
       const ph = add("bot", "Fetching a new problem…", "system");
       try {
         const p = await (await fetch("/new-problem", { method: "POST" })).json();
-        renderProblem(p);
+        renderProblem(p); loadProgress();
         ph.remove();
         add("bot", "New problem loaded: " + p.name + ". Read it on the left and describe your approach.", "new_problem");
       } catch (err) {
@@ -128,18 +142,17 @@ say "give me another problem" to switch.</div>
         const resp = await fetch("/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message, history }),
+          body: JSON.stringify({ message }),
         });
         const data = await resp.json();
         ph.remove();
         const code = data.meta && data.meta.cpp_source ? data.meta.cpp_source : null;
-        const tag = data.meta && data.meta.verdict ? data.intent + " · " + data.meta.verdict : data.intent;
+        let tag = data.intent;
+        if (data.meta && data.meta.verdict) tag += " · " + data.meta.verdict;
+        if (data.meta && data.meta.attempt_number) tag += " · attempt " + data.meta.attempt_number;
         add("bot", data.reply, tag, code);
         if (data.intent === "new_problem") loadProblem();
-        if (data.intent === "concept") {
-          history.push({ role: "user", content: message });
-          history.push({ role: "assistant", content: data.reply });
-        }
+        if (data.intent === "solution" || data.intent === "new_problem") loadProgress();
       } catch (err) {
         ph.remove();
         add("bot", "Something went wrong: " + err, "error");

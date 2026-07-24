@@ -154,14 +154,49 @@ def fetch_problem(contest_id: int, index: str, meta: dict | None = None) -> Prob
     )
 
 
-def random_problem(max_attempts: int = 8, rng: random.Random | None = None) -> Problem:
-    """Pick a random candidate and fetch it; retry on parse/network failure."""
+def key_of(contest_id: int, index: str) -> str:
+    return _PAGE.format(cid=contest_id, idx=index)
+
+
+def parse_ref(url: str | None) -> tuple[int | None, str | None]:
+    m = re.search(r"/problem/(\d+)/([^/]+)/?$", url or "")
+    return (int(m.group(1)), m.group(2)) if m else (None, None)
+
+
+def random_problem(
+    max_attempts: int = 8,
+    rng: random.Random | None = None,
+    exclude_keys: set[str] | None = None,
+    min_rating: int | None = None,
+    max_rating: int | None = None,
+) -> Problem:
+    """Pick a random candidate and fetch it; retry on parse/network failure.
+
+    Adaptive selection: `exclude_keys` avoids repeats; `min_rating`/`max_rating`
+    target a difficulty band. Falls back to a wider pool if the band is empty.
+    """
     candidates = _candidate_problems()
+    exclude_keys = exclude_keys or set()
     rng = rng or random.Random()
+
+    def in_band(p: dict) -> bool:
+        r = p.get("rating")
+        if min_rating is not None and (r is None or r < min_rating):
+            return False
+        if max_rating is not None and (r is None or r > max_rating):
+            return False
+        return True
+
+    pool = [p for p in candidates
+            if key_of(p["contestId"], p["index"]) not in exclude_keys and in_band(p)]
+    if not pool:  # band exhausted or all seen — widen to anything unseen
+        pool = [p for p in candidates
+                if key_of(p["contestId"], p["index"]) not in exclude_keys] or candidates
+
     tried: set[tuple[int, str]] = set()
     last_err: Exception | None = None
     for _ in range(max_attempts):
-        p = rng.choice(candidates)
+        p = rng.choice(pool)
         key = (p["contestId"], p["index"])
         if key in tried:
             continue

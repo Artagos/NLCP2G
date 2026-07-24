@@ -13,12 +13,35 @@ function tagFor(d) {
   return tag;
 }
 
+const MIN_LEFT = 340;
+
 export default function App() {
   const [problem, setProblem] = useState(null);
   const [progress, setProgress] = useState(null);
   const [messages, setMessages] = useState([]);
   const [sending, setSending] = useState(false);
   const [loadingNew, setLoadingNew] = useState(false);
+  const [leftW, setLeftW] = useState(() => Number(localStorage.getItem("cp_leftw")) || 560);
+
+  useEffect(() => {
+    localStorage.setItem("cp_leftw", String(leftW));
+  }, [leftW]);
+
+  const startDrag = useCallback((e) => {
+    e.preventDefault();
+    const onMove = (ev) => {
+      const max = Math.max(MIN_LEFT, window.innerWidth - 360);
+      setLeftW(Math.min(Math.max(ev.clientX, MIN_LEFT), max));
+    };
+    const onUp = () => {
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+      document.body.style.userSelect = "";
+    };
+    document.body.style.userSelect = "none";
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -92,7 +115,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="app">
+    <div className="app" style={{ "--left-w": `${leftW}px` }}>
       <ProblemPanel
         problem={problem}
         progress={progress}
@@ -102,6 +125,7 @@ export default function App() {
         onReset={handleReset}
         busy={sending}
       />
+      <div className="divider" onMouseDown={startDrag} title="Drag to resize" />
       <Chat messages={messages} onSend={handleSend} sending={sending} />
     </div>
   );

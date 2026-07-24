@@ -5,9 +5,17 @@ body { font: 15px/1.5 system-ui, -apple-system, sans-serif; }
 
 .app {
   display: grid;
-  grid-template-columns: 380px 1fr;
+  grid-template-columns: var(--left-w, 560px) 6px 1fr;
   height: 100vh;
 }
+
+/* draggable splitter between problem and chat */
+.divider {
+  cursor: col-resize;
+  background: #8883;
+  transition: background 0.12s;
+}
+.divider:hover, .divider:active { background: #2563eb; }
 
 /* ---- problem panel ---- */
 aside {
@@ -34,7 +42,7 @@ aside {
 .statement-text { white-space: pre-wrap; font: 13px/1.45 ui-monospace, monospace; }
 
 /* rich CF statement */
-.statement { font-size: 14px; line-height: 1.55; word-wrap: break-word; }
+.statement { font-size: 15px; line-height: 1.7; word-wrap: break-word; max-width: 78ch; }
 .statement .section-title { font-weight: 600; font-size: 15px; margin: 16px 0 6px; }
 .statement .header .title { font-weight: 600; }
 .statement .property-title { font-weight: 600; }
@@ -94,6 +102,7 @@ main { display: flex; flex-direction: column; min-width: 0; }
 
 /* ---- responsive: stack on narrow screens ---- */
 @media (max-width: 800px) {
-  .app { grid-template-columns: 1fr; grid-template-rows: 45vh 1fr; }
+  .app { grid-template-columns: 1fr; grid-template-rows: 50vh 1fr; }
   aside { border-right: none; border-bottom: 1px solid #8883; }
+  .divider { display: none; }
 }

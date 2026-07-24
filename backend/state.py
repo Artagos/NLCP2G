@@ -16,7 +16,6 @@ log = logging.getLogger("cp_tutor.state")
 
 _MIN_RATING = 800
 _MAX_RATING = 3500
-_STEP = 200  # how much "easier"/"harder" shifts the target rating
 
 # In-process cache of the full Problem (with tests) per session.
 _cache: dict[str, Problem] = {}
@@ -35,14 +34,12 @@ def _band(sid: str) -> tuple[int, int]:
     return (top, top + 200)
 
 
-def _directional_band(current_rating: int | None, direction: str) -> tuple[int, int]:
-    """Band shifted one step easier/harder relative to the current problem."""
+def _target_band(current_rating: int | None, rating_delta: int) -> tuple[int, int]:
+    """Band centered on (current rating + delta), clamped to the rated range.
+    A tight ±50 window targets that exact CF rating level."""
     base = current_rating or 1000
-    if direction == "easier":
-        target = max(_MIN_RATING, base - _STEP)
-    else:  # harder
-        target = min(_MAX_RATING, base + _STEP)
-    return (max(_MIN_RATING, target - 100), min(_MAX_RATING, target + 100))
+    target = max(_MIN_RATING, min(_MAX_RATING, base + rating_delta))
+    return (max(_MIN_RATING, target - 50), min(_MAX_RATING, target + 50))
 
 
 def _persist(sid: str, p: Problem) -> None:
@@ -75,11 +72,11 @@ def current(sid: str) -> Problem:
     return load_new(sid)
 
 
-def load_new(sid: str, direction: str | None = None) -> Problem:
-    """Load a new problem. direction 'easier'/'harder' shifts the rating band
-    relative to the current problem; otherwise the adaptive default band is used."""
-    if direction in ("easier", "harder"):
-        lo, hi = _directional_band(current(sid).rating, direction)
+def load_new(sid: str, rating_delta: int = 0) -> Problem:
+    """Load a new problem. A non-zero rating_delta targets (current rating +
+    delta); otherwise the adaptive default band (from solved ratings) is used."""
+    if rating_delta:
+        lo, hi = _target_band(current(sid).rating, rating_delta)
     else:
         lo, hi = _band(sid)
     p = _fetch(sid, lo, hi)

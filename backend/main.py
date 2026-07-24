@@ -110,17 +110,17 @@ def _handle(sid: str, message: str) -> ChatResponse:
     prob = state.current(sid)
 
     if routed.intent == "new_problem":
-        direction = routed.difficulty if routed.difficulty in ("easier", "harder") else None
-        prob = state.load_new(sid, direction)
-        label = {"easier": "an easier problem", "harder": "a harder problem"}.get(
-            direction, "a new problem")
+        delta = max(-500, min(500, routed.rating_delta or 0))
+        prob = state.load_new(sid, delta)
+        label = "a harder problem" if delta > 0 else \
+                "an easier problem" if delta < 0 else "a new problem"
         rating = f" (rating {prob.rating})" if prob.rating else ""
         return ChatResponse(
             intent="new_problem",
             reply=(f"Here's {label}: {prob.name}{rating}. It's shown on the "
                    "left. Read it, then describe how you'd solve it and I'll build "
                    "and run your approach — or ask me about any general concept."),
-            meta={"problem": _summary(prob), "difficulty": direction or "same",
+            meta={"problem": _summary(prob), "rating_delta": delta,
                   "reason": routed.reason},
         )
 

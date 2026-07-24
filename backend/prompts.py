@@ -42,10 +42,17 @@ Judge intent, not keywords. "What is a hash map?" is concept; "should I use a
 hash map for this?" is strategy — the difference is whether answering reveals
 how to solve THIS problem.
 
-Also set `difficulty` (only used for new_problem): "easier" if they ask for an
-easier / simpler / lower-rated / less difficult problem; "harder" if they ask
-for a harder / tougher / more challenging / higher-rated one; otherwise "same".
-For every other intent, set difficulty to "same".
+Also set `rating_delta` (only used for new_problem): an integer, a multiple of
+100, saying how much easier or harder than the CURRENT problem the learner wants.
+Negative = easier, positive = harder, 0 = no specific difficulty change (they
+just want a different problem). Calibrate the MAGNITUDE to the wording:
+  - "slightly / a little / a bit / marginally harder"  -> +100
+  - "harder / a harder one / tougher"                  -> +200
+  - "much / a lot / considerably harder"               -> +300
+  - "way / significantly / a ton harder"               -> +400 to +500
+Mirror these with negative values for "easier". If they name a number
+("+200", "300 harder"), use it (rounded to the nearest 100). Keep it within
+-500..+500. For every other intent, set rating_delta to 0.
 """
 
 

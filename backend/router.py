@@ -17,8 +17,10 @@ Intent = Literal["concept", "strategy", "solution", "new_problem", "chitchat"]
 
 class Routed(BaseModel):
     intent: Intent
-    # only meaningful when intent == "new_problem"
-    difficulty: Literal["easier", "harder", "same"] = "same"
+    # only meaningful when intent == "new_problem": how much easier/harder than
+    # the current problem, as a rating delta (multiple of 100; negative = easier,
+    # positive = harder, 0 = no specific difficulty change)
+    rating_delta: int = 0
     reason: str  # short justification, useful for debugging / logging
 
 

@@ -8,9 +8,9 @@ saving, and where to put them.
 
 **alice:** From now on, whenever you explain something to me, always finish with one tiny worked example. I learn from examples, not definitions.
 
-> Got it! From now on, I'll always finish my explanations with a small worked example.
+> I understand! From now on, I'll make sure to include a small worked example every time I explain something.
 
-<sub>intent=`meta` · facts_used=`['f_d14035e1']` · tools_called=`['retrieve_memory']` · saved a **rule**: _The learner prefers explanations to finish with a tiny worked example._</sub>
+<sub>intent=`meta` · saved a **rule**: _The learner prefers to learn from examples and wants every explanation to finish with a tiny worked example._</sub>
 
 
 The reflection step classified this as a **rule** — always in force, no cue,
@@ -20,11 +20,9 @@ never retrieved. It is attached to every subsequent run for alice.
 
 **alice:** Some context about me: I'm a graphic designer, I've never written code, and I'm preparing for a university algorithms course that starts in September.
 
-> Thanks for sharing that! It helps me understand how to best explain things.
-> 
-> I'll be sure to use plain language, avoid coding jargon, and focus on clear concepts, always finishing with a tiny worked example as you requested.
+> Thanks for letting me know! It's great to hear you're preparing for an algorithms course. I'll keep in mind that you're new to coding and will use clear, simple language in my explanations, always finishing with a small example, as you requested.
 
-<sub>intent=`meta` · saved a **fact**: _The learner is a graphic designer._</sub>
+<sub>intent=`meta` · saved a **fact**: _The learner is a graphic designer with no prior coding experience, preparing for a university algorithms course starting in September._</sub>
 
 
 Classified as a **fact** and saved *with a cue*. The cue is what brings it back:
@@ -36,43 +34,31 @@ Rules (pushed on every run):
 
 | id | type | text | cue keywords |
 |---|---|---|---|
-| `r_f5f5357b` | rule | The learner is colour-blind and needs explanations to avoid relying on colours. | — |
-| `r_18a0add8` | rule | The learner prefers explanations to finish with a tiny worked example. | — |
+| `r_37a246fa` | rule | The learner prefers to learn from examples and wants every explanation to finish with a tiny worked example. | — |
 
 
 Facts (pulled only when the cue matches):
 
 | id | type | text | cue keywords |
 |---|---|---|---|
-| `f_d14035e1` | fact | The learner is training for an interview next month. | interview, training, goal, preparation |
-| `f_2ba38f6a` | fact | The learner is a graphic designer. | designer, graphic designer, background |
+| `f_ffa030d9` | fact | The learner is a graphic designer with no prior coding experience, preparing for a university algorithms course starting in September. | coding, beginner, algorithms course, university, designer |
 
 
 ## The rule changes behaviour without being mentioned
 
 **alice:** What is a hash map?
 
-> A hash map is like a special kind of list or dictionary that stores information in pairs. Each pair has a "key" and a "value." You can think of the key as a label, and the value as the information associated with that label.
+> A hash map, also known as a dictionary or an associative array, is a way to store information so you can quickly find it later. Think of it like a real-world dictionary: you look up a word (the "key"), and it gives you its definition (the "value").
 > 
-> When you want to store something, the hash map takes the key, does a quick calculation (called "hashing"), and figures out a specific spot to put both the key and its value. This calculation helps the hash map find or store information very quickly.
+> Instead of using numbers to find things (like saying "the third item in the list"), you use a specific label or name. Each label, or "key," is unique and points to its own "value." This makes finding the information you need very fast.
 > 
-> When you want to retrieve a value, you just give the hash map the key, and it uses the same calculation to instantly go to the right spot and get the value.
+> For example, imagine you want to store the capital city for a few countries:
 > 
-> Here's a tiny example:
+> *   **Key:** "France" -> **Value:** "Paris"
+> *   **Key:** "Japan" -> **Value:** "Tokyo"
+> *   **Key:** "Canada" -> **Value:** "Ottawa"
 > 
-> Imagine you have a hash map to store favorite fruits for people.
-> 
-> 1.  You want to store that "Alice" likes "Apple".
->     *   **Key:** "Alice"
->     *   **Value:** "Apple"
->     *   The hash map calculates a spot for "Alice" and stores "Alice" and "Apple" there.
-> 
-> 2.  You want to store that "Bob" likes "Banana".
->     *   **Key:** "Bob"
->     *   **Value:** "Banana"
->     *   The hash map calculates a spot for "Bob" and stores "Bob" and "Banana" there.
-> 
-> Later, if you ask the hash map, "What fruit does Alice like?", it quickly calculates the spot for "Alice" and tells you "Apple".
+> If you wanted to know the capital of Japan, you would ask the hash map for the value associated with the key "Japan," and it would tell you "Tokyo."
 
 <sub>intent=`concept`</sub>
 
@@ -86,7 +72,7 @@ because rules are pushed, and the answer ends with one.
 
 > Hi! Describe the solution you have in mind for the problem on the left and I'll run it, ask me to explain any general programming concept, or say 'give me another problem' to switch.
 
-<sub>intent=`chitchat` · saved a **fact**: _The learner is preparing for a course and wants to know how much to learn beforehand._</sub>
+<sub>intent=`chitchat` · saved a **fact**: _The learner is preparing for a university course._</sub>
 
 
 Note `facts_used` above: the agent called `retrieve_memory`, the cue matched,

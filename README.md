@@ -73,11 +73,21 @@ time/memory limits. The user can switch problems anytime — the New-problem
 button, or just say *"give me another problem"* (router intent `new_problem`).
 The current problem is held server-side (`backend/state.py`).
 
-**Verdicts run against the sample tests** (AC/WA/RE/CE) — CF's full hidden tests
-aren't public on any judge. The reliable TLE-on-huge-input signal that the old
-calibrated problem had would need generated stress tests (a natural next step).
-The original "Count Pairs With Sum K" problem survives in `backend/problem.py`
-only as an **offline fallback** when Codeforces is unreachable.
+**Verdicts on scraped problems run against the published samples** (AC/WA/RE/CE)
+— CF's hidden tests aren't public on any judge.
+
+### …and an offline bank when it isn't reachable
+
+Codeforces statement pages currently sit behind an anti-bot challenge, so in
+practice problems come from **`backend/bank.py`**: seven original problems
+(written for this project) spanning ratings 800–1500.
+
+Because we own the reference solution for these, each one **generates its own
+stress test** — which restores the real TLE signal. Describe "check every pair"
+on a million elements and it times out, and you find out. Scraped samples are far
+too small to tell you that, and that feedback is the whole point of the product.
+Time limits are calibrated against measured sandbox cost, and tests are seeded so
+a restart reproduces them byte for byte.
 
 ## Layout
 
@@ -98,7 +108,8 @@ backend/
   reflect.py      decides, per turn, whether anything is worth remembering
   monitor.py      the out-of-band judge (python -m backend.monitor)
   sandbox.py      host-side: build temp dir, invoke Docker, parse results
-  problem.py      Problem model + offline fallback problem
+  problem.py      Problem model + the single last-resort fallback
+  bank.py         offline bank: 7 original problems with generated stress tests
   prompts.py      system prompts (pure-executor + no-hints rules live here)
   requirements.txt
 rules/

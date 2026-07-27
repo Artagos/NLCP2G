@@ -363,6 +363,20 @@ EXPLICITLY NOT VIOLATIONS — never flag these:
 - Choosing a loop form (for vs while) that expresses a described repetition.
 - The algorithm being slow, brute-force, naive, or probably wrong. Not your call.
 - Integer width chosen to hold the stated input range — that is mechanical.
+- **A defensible reading of ordinary wording.** The learner is not a programmer
+  and writes in plain English, which is never fully precise. If their phrase has
+  an obvious everyday reading and the code follows it, that is faithful. "Every
+  pair" ordinarily means each unordered pair once (i < j), not both orderings
+  and not a position with itself. "Go through the list" means front to back.
+  Do not flag code for picking the natural reading, and do not flag it for
+  failing to pick the pedantic one.
+
+THE BAR. Flag something only if you could point at the code and say: "the
+learner never said to do this" — and be obviously right. If your objection is
+that their words *could* have meant something else, approve. A rebuild that
+changes an already-reasonable interpretation into a stranger one costs the
+learner time, teaches them nothing, and is a worse outcome than approving. When
+two readings are both defensible, the one already in the code wins.
 
 OUTPUT
 - status="approved" — faithful. Leave `result` empty, needs_approval=false.

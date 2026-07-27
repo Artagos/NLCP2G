@@ -9,13 +9,20 @@ from __future__ import annotations
 import pytest
 from fastapi.testclient import TestClient
 
-from backend import codeforces, docstore, main, state
+from backend import bank, codeforces, docstore, main, state
 
 
 @pytest.fixture
 def client(monkeypatch):
+    """Every learner lands on the same problem.
+
+    Codeforces is forced to fail so selection falls to the offline bank, and the
+    bank is pinned — otherwise two learners get different problems and a
+    per-problem feature like notes has nothing to share.
+    """
     monkeypatch.setattr(codeforces, "random_problem", lambda **kw: (_ for _ in ()).throw(
         RuntimeError("offline in tests")))
+    monkeypatch.setattr(bank, "random_problem", lambda **kw: bank.get("count-evens"))
     state._cache.clear()
     return lambda: TestClient(main.app)
 

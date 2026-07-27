@@ -154,8 +154,9 @@ caught-and-corrected C1 is still visible to the monitor.
 | `monitor.py` | The out-of-band judge: grades the run log, writes `reports/*.md` |
 | `summarizer.py` | Per-problem recap (no hints) |
 | `sandbox.py` | Host side: build temp dir, invoke Docker, parse results |
-| `problem.py` | `Problem` model + offline fallback problem |
+| `problem.py` | `Problem` model + the single last-resort fallback |
 | `codeforces.py` | Fetch + parse real problems (cloudscraper + BeautifulSoup) |
+| `bank.py` | Offline bank: seven original problems with generated stress tests |
 | `state.py` | Per-learner current problem + adaptive/calibrated selection |
 | `memory.py` | **Relational store**: problems, attempts, notes, runs, scratchpad, judgments |
 | `docstore.py` | **Document store**: agent-written facts and rules, private + shared |
@@ -178,11 +179,34 @@ Cloudflare, so we use **cloudscraper** + **BeautifulSoup** to fetch and parse:
 - **sample tests** (input/output pairs),
 - **time/memory limits**.
 
-**Verdicts run against the sample tests** (AC/WA/RE/CE). CF's full hidden tests
-aren't public on any judge, so the huge-input TLE signal isn't available for
-arbitrary problems (a "generated stress tests" feature would restore it). The
-original calibrated "Count Pairs With Sum K" problem remains only as an **offline
-fallback** when Codeforces is unreachable.
+**Verdicts on scraped problems run against the published sample tests**
+(AC/WA/RE/CE). CF's hidden tests aren't public on any judge, so for a scraped
+problem the huge-input TLE signal isn't available.
+
+### 5.1 The offline bank (`bank.py`)
+
+Codeforces statement pages currently sit behind an anti-bot challenge, which we
+are not going to try to defeat — so in practice selection falls through to the
+**offline bank**: seven original problems (written for this project, nothing
+copied from any judge) spanning ratings 800–1500.
+
+This is not just a stand-in. With a single hardcoded fallback, "give me another
+problem", the adaptive band, repeat-avoidance and the calibrated easier/harder
+deltas were all no-ops — there was nothing to choose between. More importantly,
+because we own the reference solution here, each problem **generates its own
+stress test**, which restores the real TLE signal: an O(n²) idea on 10⁶ elements
+times out, and the learner finds out. That feedback is the whole teaching
+mechanism, and scraped samples are far too small to produce it.
+
+Time limits are calibrated against measured sandbox cost, not guessed — the
+intended solution to `count-pairs` runs at ~1.6 s, so its limit is 5 s, while the
+naive version needs minutes. Tests are generated lazily on selection (they are
+megabytes) and cached, seeded by crc32 so a restart reproduces them byte for byte
+and previously recorded verdicts still mean something.
+
+Selection prefers an unseen problem *outside* the band over a repeat inside it:
+being shown a problem you already solved reads as a bug, being shown one slightly
+off your level does not.
 
 ---
 
@@ -408,8 +432,12 @@ python -m scripts.demo_traces    # regenerate traces/ against the live model
 
 ## 15. Known limitations / next steps
 
-- **Sample-test verdicts only** — no hidden CF tests; add generated stress tests
-  to restore reliable TLE and stronger correctness signals.
+- **Codeforces scraping is blocked** by an anti-bot challenge, so problems come
+  from the offline bank in practice. The bank has seven problems; a learner who
+  works through all of them will start seeing repeats.
+- **Scraped problems still have sample-test verdicts only** — no hidden CF tests,
+  so TLE is unreliable there. Bank problems generate their own stress tests and
+  do not have this weakness.
 - **Identity is unauthenticated** — a `uid` cookie with no password. It scopes
   memory; it does not protect it. Anyone can claim any name.
 - **Difficulty magnitude is LLM-inferred** — natural but slightly non-deterministic.

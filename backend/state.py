@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import logging
 
-from . import codeforces, memory
+from . import bank, codeforces, memory
 from .problem import Problem, fallback_problem
 
 log = logging.getLogger("cp_tutor.state")
@@ -48,11 +48,22 @@ def _persist(sid: str, p: Problem) -> None:
 
 
 def _fetch(sid: str, lo: int, hi: int) -> Problem:
+    """A problem in the [lo, hi] band that this learner hasn't seen.
+
+    Codeforces first; the offline bank when it can't be reached. The bank keeps
+    the difficulty band, repeat-avoidance and easier/harder deltas meaningful
+    while the scrape is down — with a single hardcoded fallback they were all
+    no-ops.
+    """
     exclude = memory.seen_keys(sid)
     try:
         return codeforces.random_problem(exclude_keys=exclude, min_rating=lo, max_rating=hi)
     except Exception as exc:
-        log.warning("Codeforces fetch failed (%s); using offline fallback", exc)
+        log.warning("Codeforces fetch failed (%s); using the offline bank", exc)
+    try:
+        return bank.random_problem(exclude_keys=exclude, min_rating=lo, max_rating=hi)
+    except Exception as exc:            # pragma: no cover — the bank is static
+        log.error("offline bank failed too (%s); using the single fallback", exc)
         return fallback_problem()
 
 
@@ -63,8 +74,15 @@ def current(sid: str) -> Problem:
     if ref:
         key, cid, idx = ref
         try:
-            p = fallback_problem() if (key == "fallback" or cid is None) \
-                else codeforces.fetch_problem(cid, idx)
+            bank_id = bank.parse_key(key)
+            if bank_id:
+                p = bank.get(bank_id)
+                if p is None:
+                    raise LookupError(f"unknown bank problem {bank_id!r}")
+            elif key == "fallback" or cid is None:
+                p = fallback_problem()
+            else:
+                p = codeforces.fetch_problem(cid, idx)
             _cache[sid] = p
             return p
         except Exception as exc:

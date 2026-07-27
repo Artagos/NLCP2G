@@ -6,16 +6,16 @@ Two learners, two cookies, one server.
 
 **alice:** Something you should know about me: I'm colour-blind, so please never explain anything using colours.
 
-> Got it! I've made a note not to use colors in any explanations. Thanks for letting me know.
+> Got it! I've made a note that you're colour-blind and I'll be sure to avoid using colours in my explanations.
 
-<sub>intent=`meta` · tools_called=`['retrieve_memory']` · saved a **rule**: _The learner is colour-blind and needs explanations to avoid relying on colours._</sub>
+<sub>intent=`meta` · saved a **rule**: _The learner is colour-blind and prefers explanations to avoid using colours._</sub>
 
 
 It landed in alice's private document file:
 
 | id | type | text | cue keywords |
 |---|---|---|---|
-| `r_f5f5357b` | rule | The learner is colour-blind and needs explanations to avoid relying on colours. | — |
+| `r_f29a4100` | rule | The learner is colour-blind and prefers explanations to avoid using colours. | — |
 
 
 ## bob's view of the store — before any model call
@@ -37,15 +37,19 @@ agent cannot read alice's facts because they are not on its read path.
 
 **bob:** What do you already know about me? And explain what a hash map is.
 
-> I don't have any specific information stored about you yet.
+> I don't have any specific information about you stored in my memory yet.
 > 
-> A hash map, also known as a dictionary or associative array, is a data structure that stores key-value pairs. Each unique key is associated with a specific value.
+> A hash map (also sometimes called a dictionary or an associative array) is like a collection of labeled boxes. Each box has a unique label, and inside each box, you can store a value.
 > 
-> Imagine a set of numbered lockers (the hash map) and you want to store items (values) in them, but you want to find them quickly using a label (key) instead of a number.
+> When you want to put something into a hash map, you give it a label (this is called the "key") and the item you want to store (this is called the "value"). The hash map then uses a special function (a "hash function") to quickly figure out which box to put it in.
 > 
-> When you put an item in, the hash map takes your label (key), runs it through a special function called a "hash function," which then tells it which locker number to use. So, the label "apple" might always go into locker #7, and "banana" into locker #23.
+> The great thing about hash maps is that they are very fast at finding an item if you know its label. You just tell the hash map the label, and it can almost instantly tell you what's in that box, or if the box even exists.
 > 
-> When you want to retrieve an item, you provide the label again. The hash function tells the hash map the same locker number, and it can quickly get your item. This makes looking up, adding, or removing items very fast on average.
+> For example, imagine you have a hash map to store people's phone numbers. The person's name would be the "key," and their phone number would be the "value."
+> *   You could store "Alice" with "555-1234".
+> *   You could store "Bob" with "555-5678".
+> 
+> Then, if you wanted to find Bob's phone number, you would ask the hash map for the value associated with the key "Bob," and it would quickly give you "555-5678."
 
 <sub>intent=`meta` · tools_called=`['retrieve_memory']`</sub>
 
@@ -58,9 +62,9 @@ alice posts a note on the problem. Then bob, who has never spoken to alice:
 
 **bob:** Before I start: is there anything other learners flagged about this problem's samples or wording?
 
-> A note from another learner, Alice, mentions that "The samples here look symmetric but the second one has a trailing blank line — I lost twenty minutes to that." This seems to be a non-spoiler note about a potential input formatting issue.
+> 
 
-<sub>intent=`meta` · notes_seen=`[1]` · tools_called=`['read_problem_notes']`</sub>
+<sub>intent=`meta` · saved a **fact**: _The learner prefers to know if other learners have flagged issues with problem samples or wording._</sub>
 
 
 `notes_seen` is non-empty: bob's agent called `read_problem_notes`, got alice's

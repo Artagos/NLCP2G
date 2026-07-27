@@ -33,15 +33,18 @@ os.environ["CP_TUTOR_REPORTS"] = os.path.join(_TMP, "reports")
 
 from fastapi.testclient import TestClient  # noqa: E402
 
-from backend import codeforces, critic, docstore, memory, monitor, state  # noqa: E402
+from backend import bank, codeforces, critic, docstore, memory, monitor, state  # noqa: E402
 from backend import main as api  # noqa: E402  (this module defines its own main())
 
 TRACE_DIR = os.path.join(os.path.dirname(__file__), "..", "traces")
 
-# Keep the problem deterministic: make the Codeforces fetch fail so state.py
-# falls back to the built-in problem, which ships with real samples.
+# Keep the traces reproducible, and keep every learner on the SAME problem —
+# notes are per-problem, so alice and bob landing on different ones would leave
+# nothing to share. Codeforces is forced to fail, and the bank is pinned.
+DEMO_PROBLEM = "count-pairs"
 codeforces.random_problem = lambda **kw: (_ for _ in ()).throw(
-    RuntimeError("demo: forced offline fallback"))
+    RuntimeError("demo: forced offline, using the bank"))
+bank.random_problem = lambda **kw: bank.get(DEMO_PROBLEM)
 
 
 class Learner:

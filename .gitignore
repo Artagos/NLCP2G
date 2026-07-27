@@ -7,3 +7,8 @@ venv/
 cp_tutor.db
 node_modules/
 frontend/dist/
+
+# runtime memory + monitor output (traces/ holds the committed evidence)
+memory_store/
+reports/
+.pytest_cache/

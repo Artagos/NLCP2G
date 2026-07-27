@@ -123,6 +123,84 @@ main { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
 }
 .send:disabled { opacity: .5; cursor: default; }
 
+/* ---- identity bar ---- */
+.idbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.idlabel { font-size: 12px; color: #888; }
+.idname {
+  font: 600 13px system-ui; padding: 3px 9px; border: 1px solid #8886;
+  border-radius: 999px; background: transparent; color: inherit; cursor: pointer;
+}
+.idname:hover { border-color: #2563eb; color: #2563eb; }
+.idinput {
+  font: 600 13px system-ui; padding: 3px 9px; border: 1px solid #2563eb;
+  border-radius: 999px; background: transparent; color: inherit; width: 140px;
+}
+.idhint { font-size: 11px; color: #888; opacity: .75; }
+
+/* ---- left-panel tabs ---- */
+.tabs { display: flex; gap: 2px; border-bottom: 1px solid #8883; margin-bottom: 14px; }
+.tab {
+  font: 13px system-ui; padding: 7px 12px; border: 0; border-bottom: 2px solid transparent;
+  background: transparent; color: inherit; opacity: .6; cursor: pointer;
+}
+.tab:hover { opacity: 1; }
+.tab.active { opacity: 1; font-weight: 600; border-bottom-color: #2563eb; color: #2563eb; }
+
+/* ---- shared panel furniture ---- */
+.panel-body { min-width: 0; }
+.panel-h { font-size: 13px; text-transform: uppercase; letter-spacing: .04em;
+           opacity: .65; margin: 20px 0 6px; }
+.panel-h:first-child { margin-top: 0; }
+.panel-hint { font-size: 12.5px; color: #888; line-height: 1.55; margin: 6px 0 10px; }
+.panel-err { font-size: 13px; color: #dc2626; }
+.link-btn {
+  font: 11px system-ui; border: 0; background: transparent; color: #2563eb;
+  cursor: pointer; padding: 0 4px; text-decoration: underline;
+}
+
+.chips { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0; }
+.chip {
+  font: 11px ui-monospace, monospace; padding: 2px 7px; border-radius: 999px;
+  background: #8882; white-space: nowrap;
+}
+.chip.cue { background: #2563eb22; color: #2563eb; }
+.chip.ok { background: #16a34a22; color: #16a34a; }
+.chip.warn { background: #d9770622; color: #d97706; }
+.chip.bad { background: #dc262622; color: #dc2626; }
+.chip.muted { opacity: .55; }
+
+/* ---- notes ---- */
+.note-composer { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.note-composer textarea {
+  resize: vertical; padding: 8px; border-radius: 8px; border: 1px solid #8886;
+  font: inherit; font-size: 13px; background: transparent; color: inherit;
+}
+.note-composer .new-btn { align-self: flex-start; }
+.note { border: 1px solid #8883; border-radius: 8px; padding: 9px 11px; margin-bottom: 8px; }
+.note-head { display: flex; align-items: center; justify-content: space-between; }
+.note-author { font: 600 12px system-ui; color: #2563eb; }
+.note-body { font-size: 13.5px; line-height: 1.5; white-space: pre-wrap;
+             overflow-wrap: break-word; margin-top: 3px; }
+
+/* ---- memory documents ---- */
+.memdoc { border-left: 2px solid #2563eb55; padding: 4px 0 4px 10px; margin-bottom: 10px; }
+.memdoc-text { font-size: 13.5px; line-height: 1.5; overflow-wrap: break-word; }
+.memdoc-cue { font-size: 11.5px; color: #888; font-style: italic; margin-top: 2px; }
+.memdoc-meta { font: 11px ui-monospace, monospace; color: #888; margin-top: 3px; }
+.rules-dump {
+  font: 11.5px/1.5 ui-monospace, monospace; background: #0001; padding: 10px;
+  border-radius: 6px; max-width: 100%; overflow-x: auto; white-space: pre-wrap;
+}
+
+/* ---- monitor ---- */
+.judgment { border: 1px solid #8883; border-radius: 8px; padding: 9px 11px; margin-bottom: 10px; }
+.judgment-q { font-size: 12.5px; color: #888; font-style: italic; margin: 4px 0;
+              overflow-wrap: break-word; }
+.judgment-r { font-size: 13px; line-height: 1.5; overflow-wrap: break-word; }
+.report { font-size: 13px; }
+.report table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; }
+.report th, .report td { border: 1px solid #8884; padding: 3px 8px; font-size: 12px; }
+
 /* ---- responsive: stack on narrow screens ---- */
 @media (max-width: 800px) {
   .app { grid-template-columns: 1fr; grid-template-rows: 50vh 1fr; }

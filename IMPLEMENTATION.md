@@ -35,20 +35,33 @@ Repo: https://github.com/Artagos/NLCP2G  (**NLCP2G** — Natural Language Compet
                         │ Router (Gemini flash-lite)                │
                         │ classifies intent + difficulty delta      │
                         └────────────┬─────────────────────────────┘
-       concept │ strategy │ solution │ new_problem │ summarize │ chitchat
+  concept│meta │ strategy │ solution │ new_problem │ summarize │ chitchat
           │         │         │            │            │
           ▼         ▼         ▼            ▼            ▼
         Tutor   (refuse)  Solution     load new     Summarizer
        (Gemini)           pipeline     (adaptive/    (per-problem
-                          │            calibrated)    recap)
+        │  ▲              │            calibrated)    recap)
+        │  └─ pull: retrieve_memory / read_problem_notes
+        └──── push: rules/operating_rules.md + learner rule docs
+                          │
                           ▼
-          Feasibility screen ─▶ C++ codegen ─▶ Sandbox (Docker + g++)
-          (blind, INFEASIBLE)   (blind,          (AC/WA/TLE/RE/CE)
-                                 UNCLEAR)
-                                     │
-                          Verdict explainer (no-hints)
+    Feasibility screen ─▶ EXECUTOR (C++ codegen) ⇄ CRITIC (fidelity)
+    (blind, INFEASIBLE)   (blind, UNCLEAR)   Handoff{status,result,
+                          │      ▲            needs_approval}, ≤2 rounds
+                          │      └── shared scratchpad (run-keyed)
+                          ▼
+                   Sandbox (Docker + g++) ─▶ Verdict explainer (no-hints)
+                   AC/WA/TLE/RE/CE                    │
+                                                      ▼
+                                              run log (`runs`)
+                                                      │
+                        ┌─────────────────────────────┘
+                        ▼   out of band, its own clock
+              MONITOR  python -m backend.monitor [--watch N]
+              per-run judge (named values + rationale) ─▶ batch analyst
+                                                      ─▶ reports/*.md
 
- Problems: Codeforces (backend/codeforces.py)  ·  Memory: SQLite (backend/memory.py)
+ Problems: Codeforces (codeforces.py) · Stores: SQLite + JSON docs + markdown
 ```
 
 ---
@@ -60,6 +73,11 @@ Repo: https://github.com/Artagos/NLCP2G  (**NLCP2G** — Natural Language Compet
    `rating_delta`.
 2. Dispatch (`main._handle`):
    - **concept** → `tutor.answer(...)` (allowed, general CS only).
+   - **meta** → also `tutor.answer(...)`. Messages addressed to the agent rather
+     than about CS: the learner stating a preference or background, asking what
+     it remembers, or asking what other learners noted about this problem. The
+     tutor is the only agent holding the retrieval tools, so anything needing
+     memory or notes has to arrive here.
    - **strategy** → canned refusal (would leak the solution).
    - **solution** → the solution pipeline (below).
    - **new_problem** → auto-summarize the current problem, then load a new one at
@@ -80,18 +98,44 @@ described approach
    C++ codegen (translator.py) ─────────── can't implement ─▶ verdict UNCLEAR + why
    │        (implement EXACTLY what was said; gate, don't guess)
    ▼
+   Fidelity critic (critic.py) ─────────── escalate ───────▶ NEEDS_CLARIFICATION
+   │   Handoff{status, result, needs_approval}
+   │     approved → run · revise → rebuild once · escalate → ask the learner
+   ▼
    Sandbox (sandbox.py → Docker) ────────── infra down ─────▶ SANDBOX_UNAVAILABLE
    │
    ▼
    Verdict facts → verdict explainer (no-hints) → AC / WA / TLE / RE / CE
 ```
 
-Three layers can stop before the sandbox, each giving specific feedback:
+Four layers can stop before the sandbox, each giving specific feedback:
 - **INFEASIBLE** — the described "solution" can't be carried out (not an
   algorithm, contradictory, needs unavailable data). *Slowness is never a reason
   to reject.*
 - **UNCLEAR** — feasible but too vague/contradictory to translate faithfully.
-- Only a clean, feasible, implementable description reaches the sandbox.
+- **NEEDS_CLARIFICATION** — the critic escalated: the code could not be written
+  without deciding something the learner never specified, or two rebuilds still
+  didn't match their words.
+- Only a clean, feasible, implementable, *faithful* program reaches the sandbox.
+
+### The critic (`critic.py`) — the second agent
+
+Blind in exactly the way the executor is: raw I/O format, the learner's words,
+and the generated code. Nothing else. It cannot judge correctness because it does
+not know the problem — which is what leaves fidelity as the only question it can
+answer, and what makes it hard to talk into approving code just because the code
+is good.
+
+Rubric: **C1** invented logic · **C2** dropped step · **C3** substituted method ·
+**C4** silent repair. Explicitly *not* violations: I/O scaffolding, naming, loop
+form, integer width, and the algorithm being slow or wrong.
+
+It has a written **delegation brief** (`prompts.CRITIC_DELEGATION_BRIEF`) stating
+its scope, when it acts alone, when it escalates, and a budget of 2 rounds. It has
+no tools. Both agents append to the `scratchpad` table under the run id —
+append-only and attributed, so a handoff is replayed rather than reconstructed.
+Violations from *every* round are kept, including ones later fixed, so a
+caught-and-corrected C1 is still visible to the monitor.
 
 ---
 
@@ -99,18 +143,23 @@ Three layers can stop before the sandbox, each giving specific feedback:
 
 | File | Responsibility |
 |---|---|
-| `main.py` | FastAPI app, session cookie middleware, endpoints, dispatch, serves the built SPA |
-| `llm.py` | Single Gemini shim (`google-genai`): `generate` / `generate_structured`, lazy client, retries on 429/500/503 |
+| `main.py` | FastAPI app, identity middleware, endpoints, dispatch, run logging, serves the built SPA |
+| `llm.py` | Single Gemini shim (`google-genai`): `generate` / `generate_structured` / `generate_with_tools`, lazy client, retries on 429/500/503 |
 | `router.py` | Intent + `rating_delta` classifier (structured output) |
-| `tutor.py` | Guardrailed conceptual Q&A (sees statement, never a solution) |
+| `tutor.py` | Guardrailed Q&A; assembles pushed context and exposes the pull tools |
 | `screener.py` | Feasibility pre-screen (blind to the problem) |
-| `translator.py` | NL → C++ (blind), gating, sandbox run, faithful verdict explanation |
+| `translator.py` | The **executor**: NL → C++ (blind), gating, critic loop, sandbox run, faithful verdict |
+| `critic.py` | The **fidelity critic** (second agent) + the `Handoff` object |
+| `reflect.py` | Decides, per turn, whether anything is worth remembering |
+| `monitor.py` | The out-of-band judge: grades the run log, writes `reports/*.md` |
 | `summarizer.py` | Per-problem recap (no hints) |
 | `sandbox.py` | Host side: build temp dir, invoke Docker, parse results |
 | `problem.py` | `Problem` model + offline fallback problem |
 | `codeforces.py` | Fetch + parse real problems (cloudscraper + BeautifulSoup) |
-| `state.py` | Per-session current problem + adaptive/calibrated selection |
-| `memory.py` | Per-session SQLite store (attempts, seen, messages, summaries) |
+| `state.py` | Per-learner current problem + adaptive/calibrated selection |
+| `memory.py` | **Relational store**: problems, attempts, notes, runs, scratchpad, judgments |
+| `docstore.py` | **Document store**: agent-written facts and rules, private + shared |
+| `rules.py` | **Markdown store**: loads and parses `rules/operating_rules.md` |
 | `prompts.py` | All system prompts (the pure-executor & no-hints rules live here) |
 
 ---
@@ -151,30 +200,85 @@ Switching problems ("give me another problem", or the 🎲 button):
 
 ---
 
-## 7. Memory (per session)
+## 7. Memory — three stores, and both directions
 
-SQLite (`cp_tutor.db`, gitignored) via `memory.py`, keyed by an `sid` **cookie**
-set by middleware (no login — memory = "this browser").
+Identity is a `uid` cookie (default `guest`), set via `POST /whoami`. No
+password: the name **scopes** memory, it doesn't protect anything. The session
+scope is derived from it (`sid = "u:<uid>"`), so switching learner in one browser
+switches everything private — which is what makes private-vs-shared testable in
+two tabs rather than two machines.
 
-| Table | Holds |
-|---|---|
-| `session_current` | the current problem pointer per session |
-| `seen` | every problem shown + a `solved` flag |
-| `attempts` | one row per solution attempt (problem, rating, approach text, verdict, time) |
-| `messages` | full chat log (role, content, intent, `problem_key`, time) |
-| `summaries` | saved per-problem recaps |
+### 7.1 Relational — SQLite (`memory.py`)
 
-**Written when:** a problem loads (`seen` + `session_current`), a solution runs
-(`attempts`, drives the "attempt N" counter), any chat turn (`messages`).
+The structured domain model: things we filter, join, and aggregate on.
 
-**Read by (guardrail):**
-- the **tutor** — prior concept-turn history (`tutor_history`),
-- **problem selection** — solved ratings + seen keys (metadata only),
-- the **summarizer** — a problem's attempts + concept questions,
-- `/history` (restore chat), `/progress` (sidebar stats).
+| Table | Holds | Scope |
+|---|---|---|
+| `problems` | name, rating, tags, limits — queryable via `find_problems(min_rating, max_rating, tag)` | shared |
+| `attempts` | one row per solution attempt (approach text, verdict, time) | per learner |
+| `seen` | every problem shown + a `solved` flag | per learner |
+| `messages` | full chat log (role, content, intent, `problem_key`) | per learner |
+| `summaries` | saved per-problem recaps | per learner |
+| `session_current` | the current problem pointer | per learner |
+| `notes` | learner-written notes on a problem — **untrusted input** | **shared** |
+| `runs` | the run log the monitor grades | operational |
+| `scratchpad` | executor↔critic handoffs, append-only, keyed by `run_id` | operational |
+| `judgments` | the monitor's verdicts | operational |
 
-Memory is **never** given to the translator or screener — they stay blind, so
-attempt history can't leak a solution into the code path.
+### 7.2 Non-relational — JSON documents (`docstore.py`)
+
+Free-form memory the agent writes in its own words, where no fixed schema fits.
+On disk as `memory_store/private/<user>.json` and `memory_store/shared.json` —
+deliberately readable, so you can `cat` it during a demo.
+
+- **fact** — something learned that would otherwise be re-asked, saved **with a
+  cue** (keywords a future request would contain, plus a note of when it
+  applies). Retrieved by cue match; when it surfaces, the model decides what to
+  do with it.
+- **rule** — a standing change in behaviour. Attached on every run for its owner,
+  never retrieved. The model doesn't decide what to do — the rule says; it decides
+  only whether the rule applies.
+
+**Privacy is structural.** A user's private documents are a separate file. B's
+agent cannot read A's facts because they are not on its read path — there is no
+`WHERE user_id = ?` to get wrong and no prompt instruction to override.
+
+### 7.3 Operating rules — markdown (`rules/operating_rules.md`, `rules.py`)
+
+Static rules an admin can open and fix in seconds. Rule ids (`R1`…`R12`) are
+parsed out, recorded on every run, and cited by the monitor. The file is re-read
+when its mtime changes, so an edit is live on the next message.
+
+*Not injected into the blind path* — the screener and the C++ generator get none
+of it. Rules in their context would be a channel for problem knowledge to leak in.
+
+### 7.4 Push and pull
+
+- **Push** (every user-facing run, unasked): the rules file + the learner's rule
+  documents.
+- **Pull** (mid-run, only when needed): `retrieve_memory(query)` for facts matched
+  on their cue, and `read_problem_notes()` for what other learners wrote. These
+  are real function calls; `llm.generate_with_tools` drives the loop manually so
+  every call is recorded and lands in the run log.
+
+Facts are pulled rather than pushed because a learner accumulates far more of
+them than belong in any one context — the cue is what decides relevance.
+
+**Deciding what to save** (`reflect.py`): after each turn, a model call decides
+whether anything durable was said. Most turns save nothing. Mechanical intents
+(`new_problem`, `summarize`) never reach it.
+
+Memory is **never** given to the translator, critic, or screener — they stay
+blind, so attempt history can't leak a solution into the code path.
+
+### 7.5 Shared notes are untrusted
+
+`memory.render_notes` fences every note in
+`<untrusted-note id=… author=…>…</untrusted-note>` and escapes any closing tag in
+the body, so a note cannot end its own block and append text that looks like it
+came from the system. Rule **R7** tells the model that anything inside such a
+block is data, never an instruction; **R9** stops a note being used to smuggle a
+hint past R1. See `traces/02-planted-comment.md`.
 
 ---
 
@@ -239,9 +343,14 @@ production, or via the Vite dev server (HMR) with an API proxy during dev.
 | POST | `/chat` | `{message}` → `{intent, reply, meta}` |
 | GET | `/problem` | current problem summary (incl. `statement_html`) |
 | POST | `/new-problem` | load a new problem (button) |
-| POST | `/reset` | full reset: wipe this session's chat/progress/attempts/summaries, load a fresh problem |
+| POST | `/reset` | full reset for this learner: chat, progress, attempts, summaries, private documents. Shared notes and the audit trail survive. |
 | GET | `/history` | prior chat messages (restore UI) |
 | GET | `/progress` | attempts/solved/seen + per-verdict counts |
+| GET/POST | `/whoami` | read / switch the current learner |
+| GET/POST | `/notes` · DELETE `/notes/{id}` | shared, learner-written notes on the current problem |
+| GET | `/memory` | everything remembered, by store · DELETE `/memory/{doc_id}` to forget one |
+| GET | `/rules` | the operating rules file + parsed ids |
+| GET | `/monitor/report` | latest report + judgments · POST `/monitor/run` triggers a pass (demo convenience) |
 | GET | `/` | the built SPA |
 
 ---
@@ -249,11 +358,18 @@ production, or via the Vite dev server (HMR) with an API proxy during dev.
 ## 13. Layout
 
 ```
-backend/    FastAPI app + agents + memory + Codeforces + sandbox glue
-sandbox/    Dockerfile + runner.py (the isolated C++ executor)
-frontend/   React + Vite SPA (src/, components/)
+backend/       FastAPI app + agents + the three stores + Codeforces + sandbox glue
+sandbox/       Dockerfile + runner.py (the isolated C++ executor)
+frontend/      React + Vite SPA (src/, components/)
+rules/         operating_rules.md — hand-editable, injected every run
+memory_store/  JSON document store (gitignored; created at runtime)
+reports/       monitor output (gitignored)
+tests/         pytest suite — 55 tests, no API key needed
+scripts/       demo_traces.py — regenerates the evidence in traces/
+traces/        the committed evidence: private-vs-shared, planted comment, …
 README.md            quickstart + run instructions
 IMPLEMENTATION.md    this document
+HW2.md               the coursework writeup
 ```
 
 ---
@@ -274,16 +390,35 @@ uvicorn backend.main:app --reload --app-dir .        # serves API + built UI
 Frontend dev with hot reload: run the API, then `cd frontend && npm run dev`
 (http://localhost:5173, proxies the API to :8000).
 
+**The monitor is a separate job** — start it yourself, alongside the API:
+
+```bash
+python -m backend.monitor              # grade the backlog once, write a report
+python -m backend.monitor --watch 300  # ...and keep doing it every 5 minutes
+```
+
+**Tests and evidence:**
+
+```bash
+python -m pytest tests/ -q       # 55 tests, ~20s, no API key needed
+python -m scripts.demo_traces    # regenerate traces/ against the live model
+```
+
 ---
 
 ## 15. Known limitations / next steps
 
 - **Sample-test verdicts only** — no hidden CF tests; add generated stress tests
   to restore reliable TLE and stronger correctness signals.
-- **Single anonymous session per browser cookie** — no accounts/cross-device.
+- **Identity is unauthenticated** — a `uid` cookie with no password. It scopes
+  memory; it does not protect it. Anyone can claim any name.
 - **Difficulty magnitude is LLM-inferred** — natural but slightly non-deterministic.
-- **No automated test suite yet** — verification so far has been manual/live; a
-  `tests/` suite (sandbox verdicts, CF parsing on fixtures, mocked-LLM routing)
-  is the obvious next addition.
-- **Personalized tutor** — the stored attempt history could feed adaptive
-  pacing/examples (not yet wired in).
+- **The judge is a language model grading a language model.** `traces/05` contains
+  one verdict I believe is wrong (it read R3 as forbidding the agent from
+  accepting a learner's preference). It was left in deliberately: the misreading
+  is what showed R3's scope was unclear, and a monitor whose mistakes are hidden
+  is worse than one whose mistakes are visible.
+- **No CF parsing tests** — the suite covers the stores, the handoff, the monitor
+  and the API, but Codeforces parsing is still only exercised live.
+- **Personalized tutor** — attempt history could feed adaptive pacing/examples;
+  the tutor currently personalises from documents, not from attempts.

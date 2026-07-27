@@ -47,12 +47,21 @@ routed through a single shim (`backend/llm.py`) so the provider is swappable.
 ## Architecture
 
 ```
- Chat UI ──▶ Router ──┬─▶ Tutor        conceptual Q&A, no hints
-   (Gemini flash-lite)├─▶ Solution pipeline (all blind to the problem):
-                      │      Feasibility screen ─▶ Codegen gate ─▶ C++ ─▶ Sandbox
-                      │      (INFEASIBLE)          (UNCLEAR)              (AC/WA/TLE/RE/CE)
+ Chat UI ──▶ Router ──┬─▶ Tutor        conceptual Q&A + memory, no hints
+   (Gemini flash-lite)│      push: operating rules · pull: facts, shared notes
+                      ├─▶ Solution pipeline (all blind to the problem):
+                      │      Feasibility screen ─▶ Executor ⇄ Critic ─▶ Sandbox
+                      │      (INFEASIBLE)      (UNCLEAR)  (fidelity)  (AC/WA/TLE/RE/CE)
                       └─▶ (refusal / chitchat handled inline)
+                                       │
+                                  run log ──▶ Monitor (separate job, LLM-as-judge)
 ```
+
+**Three memory stores**, each fitting what it holds — SQLite for the structured
+domain model, a JSON document store for what the agent writes in its own words,
+and markdown for operating rules an admin edits by hand. **A fidelity critic**
+reviews every generated program against the learner's exact words. **A monitor**
+grades past runs out of band. See [`HW2.md`](HW2.md) and [`traces/`](traces/).
 
 ## Problems: live from Codeforces
 
@@ -74,19 +83,30 @@ only as an **offline fallback** when Codeforces is unreachable.
 
 ```
 backend/
-  main.py         FastAPI app + /chat, /problem, /new-problem
-  llm.py          Gemini shim (the only LLM-provider-specific file)
+  main.py         FastAPI app, identity, endpoints, dispatch, run logging
+  llm.py          Gemini shim (the only LLM-provider-specific file) + tool calling
   codeforces.py   fetch + parse real problems (cloudscraper + BeautifulSoup)
-  memory.py       per-session SQLite store (attempts, progress, chat, seen)
-  state.py        per-session current problem + adaptive selection
-  router.py       intent classifier (concept/strategy/solution/new_problem/chitchat)
-  tutor.py        guardrailed conceptual Q&A
+  memory.py       relational store: problems, attempts, notes, runs, scratchpad
+  docstore.py     document store: agent-written facts + rules, private and shared
+  rules.py        markdown store: loads rules/operating_rules.md, live on edit
+  state.py        per-learner current problem + adaptive selection
+  router.py       intent classifier (concept/meta/strategy/solution/…)
+  tutor.py        guardrailed Q&A; pushes rules, pulls facts and notes
   screener.py     feasibility pre-screen (blind to the problem)
-  translator.py   NL approach → C++ → sandbox → faithful verdict
+  translator.py   the executor: NL approach → C++ → critic loop → sandbox
+  critic.py       the fidelity critic (second agent) + the Handoff object
+  reflect.py      decides, per turn, whether anything is worth remembering
+  monitor.py      the out-of-band judge (python -m backend.monitor)
   sandbox.py      host-side: build temp dir, invoke Docker, parse results
   problem.py      Problem model + offline fallback problem
   prompts.py      system prompts (pure-executor + no-hints rules live here)
   requirements.txt
+rules/
+  operating_rules.md   hand-editable rules, injected on every run
+tests/            55 pytest tests (no API key needed — model calls are stubbed)
+scripts/
+  demo_traces.py  regenerates traces/ against the live model
+traces/           committed evidence: private-vs-shared, planted comment, …
 sandbox/
   Dockerfile      python:3.11-slim + g++, bakes in runner.py
   runner.py       runs inside the container: compile + run tests with limits
@@ -105,24 +125,54 @@ frontend/         React + Vite single-page app
       Message.jsx        Markdown + syntax-highlighted C++ per bubble
 ```
 
-## Memory (per session)
+## Memory — three stores
 
-Each browser gets a `sid` cookie; everything below is persisted in a SQLite DB
-(`cp_tutor.db`, gitignored) keyed by it — `backend/memory.py`:
+Identity is a `uid` cookie (default `guest`), switchable from the UI. No
+password: the name **scopes** memory, it doesn't protect anything.
 
-- **Attempts & progress** — every solution attempt (problem, approach, verdict,
-  time) is recorded. The chat shows "attempt N"; `GET /progress` returns
-  solved/seen/attempt counts and a per-verdict breakdown (shown in the sidebar).
-- **Persistent conversation** — the full chat is stored and restored via
-  `GET /history`, so a refresh keeps context; the tutor also recalls prior
-  concept turns.
-- **Adaptive problem selection** — "new problem" excludes already-seen problems
-  and targets a difficulty band derived from the ratings you've solved (starts
-  800–1000, climbs as you solve harder ones). See `state._band`.
+**1 · Relational — SQLite** (`backend/memory.py`, `cp_tutor.db`, gitignored).
+The structured domain model: `problems` (queryable by rating and tag),
+`attempts` (one row per try, with its verdict), `seen`, `messages`, `summaries`,
+plus shared `notes`, the `runs` log, and the agents' `scratchpad`.
 
-**Guardrail:** memory is only read by the tutor (which already sees the
-statement) and the problem-selection logic (metadata only). It is **never**
-handed to the translator or screener — they stay blind, so no solution can leak.
+**2 · Non-relational — JSON documents** (`backend/docstore.py`, `memory_store/`).
+What the agent writes in its own words:
+- a **fact** is saved with a *cue* — the keywords a future request would contain
+  — and is pulled back when the cue matches;
+- a **rule** is attached on every run for its owner and never retrieved.
+
+`backend/reflect.py` decides after each turn whether anything was worth saving.
+Most turns save nothing.
+
+**3 · Markdown — operating rules** (`rules/operating_rules.md`). Static rules,
+pushed into every user-facing run. Edit the file and the next message picks it
+up — no restart. Rule ids (`R1`…`R12`) are recorded per run and cited by the
+monitor.
+
+**Push and pull.** Rules are *pushed* (always present). Facts and shared notes
+are *pulled* mid-run through real tools the model calls itself
+(`retrieve_memory`, `read_problem_notes`).
+
+**Private vs shared.** A learner's facts live in their own file, so another
+learner's agent cannot read them — there is no filter to get wrong. Notes are
+shared: one learner writes, everyone's agent can read. They arrive fenced as
+`<untrusted-note author=…>` and are treated as data, never instructions
+(see [`traces/02-planted-comment.md`](traces/02-planted-comment.md)).
+
+**Guardrail:** memory is **never** handed to the translator, critic, or screener
+— they stay blind, so no solution can leak into the code path.
+
+## Tests and evidence
+
+```bash
+python -m pytest tests/ -q       # 55 tests, ~20s, no API key needed
+python -m scripts.demo_traces    # regenerate traces/ against the live model
+python -m backend.monitor        # grade the run log, write reports/monitor-*.md
+```
+
+[`traces/`](traces/) holds live runs proving the claims the unit tests can't:
+private stays private, shared reaches everyone, a planted comment gets quoted
+rather than obeyed, and the monitor's own findings.
 
 ## Running it
 

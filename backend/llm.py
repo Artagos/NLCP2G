@@ -83,6 +83,114 @@ def generate(system: str, messages: list[dict], model: str = MAIN_MODEL) -> str:
     return (resp.text or "").strip()
 
 
+# --------------------------------------------------------------- tool calling
+
+class Tool:
+    """One callable the model may invoke mid-run.
+
+    `params` is a small JSON-schema fragment (object with string/integer/boolean
+    properties) — enough for the retrieval tools, and it keeps the declaration
+    readable next to the function it describes.
+    """
+
+    def __init__(self, name: str, description: str, params: dict, fn: Callable[..., str]):
+        self.name = name
+        self.description = description
+        self.params = params
+        self.fn = fn
+
+
+_TYPES = {
+    "string": types.Type.STRING,
+    "integer": types.Type.INTEGER,
+    "number": types.Type.NUMBER,
+    "boolean": types.Type.BOOLEAN,
+}
+
+
+def _schema(spec: dict) -> types.Schema:
+    props = {
+        name: types.Schema(
+            type=_TYPES.get(p.get("type", "string"), types.Type.STRING),
+            description=p.get("description", ""),
+        )
+        for name, p in (spec.get("properties") or {}).items()
+    }
+    return types.Schema(
+        type=types.Type.OBJECT,
+        properties=props or None,
+        required=spec.get("required") or None,
+    )
+
+
+def generate_with_tools(
+    system: str,
+    messages: list[dict],
+    tools: list[Tool],
+    model: str = MAIN_MODEL,
+    max_rounds: int = 4,
+) -> tuple[str, list[dict]]:
+    """Generate a reply, letting the model *pull* context through tools.
+
+    Returns (text, calls) where `calls` is [{name, args, result}] in order — the
+    trace of what the agent chose to fetch, which is logged with the run.
+
+    Function calling is driven manually rather than by the SDK's automatic mode
+    so that every call is observable and recorded; a monitor that cannot see
+    which memories were fetched cannot judge whether they were used.
+    """
+    if not tools:
+        return generate(system, messages, model), []
+
+    by_name = {t.name: t for t in tools}
+    declarations = [
+        types.FunctionDeclaration(name=t.name, description=t.description,
+                                  parameters=_schema(t.params))
+        for t in tools
+    ]
+    config = types.GenerateContentConfig(
+        system_instruction=system,
+        tools=[types.Tool(function_declarations=declarations)],
+        # we run the loop ourselves; don't let the SDK invoke anything
+        automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
+    )
+
+    contents = _to_contents(messages)
+    calls: list[dict] = []
+
+    for _ in range(max_rounds):
+        resp = _with_retries(lambda: _get_client().models.generate_content(
+            model=model, contents=contents, config=config))
+
+        candidate = (resp.candidates or [None])[0]
+        parts = list(getattr(getattr(candidate, "content", None), "parts", None) or [])
+        requested = [p.function_call for p in parts if getattr(p, "function_call", None)]
+
+        if not requested:
+            return (resp.text or "").strip(), calls
+
+        # echo the model's turn back, then answer each call it made
+        contents.append(types.Content(role="model", parts=parts))
+        replies = []
+        for fc in requested:
+            tool = by_name.get(fc.name)
+            args = dict(fc.args or {})
+            if tool is None:
+                result = f"No such tool: {fc.name}"
+            else:
+                try:
+                    result = tool.fn(**args)
+                except Exception as exc:      # a broken tool must not kill the turn
+                    result = f"Tool error: {type(exc).__name__}: {exc}"
+            calls.append({"name": fc.name, "args": args, "result": result})
+            replies.append(types.Part.from_function_response(
+                name=fc.name, response={"result": result}))
+        contents.append(types.Content(role="user", parts=replies))
+
+    # ran out of rounds — ask for a final answer with no tools available
+    return generate(system, messages, model), calls
+
+
 def generate_structured(
     system: str,
     messages: list[dict],

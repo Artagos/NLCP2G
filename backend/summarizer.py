@@ -10,9 +10,10 @@ solution, or advice on what approach to use (see prompts.SUMMARIZER_SYSTEM).
 """
 from __future__ import annotations
 
+from . import rules
 from .llm import generate
 from .problem import Problem
-from .prompts import SUMMARIZER_SYSTEM
+from .prompts import SUMMARIZER_SYSTEM, with_pushed
 
 
 def summarize(problem: Problem, attempts: list[dict], questions: list[str]) -> str:
@@ -32,4 +33,7 @@ def summarize(problem: Problem, attempts: list[dict], questions: list[str]) -> s
         for q in questions:
             lines.append(f"  - {q}")
     digest = "\n".join(lines)
-    return generate(SUMMARIZER_SYSTEM, [{"role": "user", "content": digest}])
+    # operating rules are pushed here too — R1 (no hints) has to hold in a recap
+    # of an unsolved problem just as much as in a live answer
+    return generate(with_pushed(SUMMARIZER_SYSTEM, rules.block()),
+                    [{"role": "user", "content": digest}])

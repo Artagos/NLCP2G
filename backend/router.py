@@ -1,7 +1,7 @@
 """Intent router — the first layer of the guardrail.
 
-A cheap Gemini call classifies each message into concept / strategy / solution /
-chitchat. Only `concept` reaches the tutor freely; `strategy` is refused.
+A cheap Gemini call classifies each message. Only `concept` and `meta` reach the
+tutor freely; `strategy` is refused.
 """
 from __future__ import annotations
 
@@ -12,7 +12,8 @@ from pydantic import BaseModel
 from .llm import ROUTER_MODEL, generate_structured
 from .prompts import ROUTER_SYSTEM
 
-Intent = Literal["concept", "strategy", "solution", "new_problem", "summarize", "chitchat"]
+Intent = Literal["concept", "meta", "strategy", "solution", "new_problem",
+                 "summarize", "chitchat"]
 
 
 class Routed(BaseModel):

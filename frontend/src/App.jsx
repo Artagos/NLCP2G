@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import ProblemPanel from "./components/ProblemPanel.jsx";
+import LeftPanel from "./components/LeftPanel.jsx";
 import Chat from "./components/Chat.jsx";
-import { getHistory, getProblem, getProgress, newProblem, resetSession, sendChat } from "./api.js";
+import {
+  getHistory, getProblem, getProgress, newProblem, resetSession, sendChat,
+  setUser as setUserApi, whoami,
+} from "./api.js";
 
 const WELCOME =
   "Read the problem on the left, then describe how you'd solve it and I'll build and run your approach. I won't tell you how to solve it — that's yours. Ask me general concepts anytime, or say \"give me another problem\" to switch.";
@@ -10,6 +13,10 @@ function tagFor(d) {
   let tag = d.intent;
   if (d.meta?.verdict) tag += ` · ${d.meta.verdict}`;
   if (d.meta?.attempt_number) tag += ` · attempt ${d.meta.attempt_number}`;
+  // surface the second agent when it actually did something
+  if (d.meta?.critic_rounds > 1) tag += ` · critic: ${d.meta.critic_rounds} rounds`;
+  if (d.meta?.critic_status === "escalate") tag += " · escalated";
+  if (d.meta?.memory_saved) tag += ` · remembered a ${d.meta.memory_saved.type}`;
   return tag;
 }
 
@@ -21,6 +28,7 @@ export default function App() {
   const [messages, setMessages] = useState([]);
   const [sending, setSending] = useState(false);
   const [loadingNew, setLoadingNew] = useState(false);
+  const [user, setUser] = useState("guest");
   const [leftW, setLeftW] = useState(() => Number(localStorage.getItem("cp_leftw")) || 560);
   const [focus, setFocus] = useState(() => localStorage.getItem("cp_focus") === "1");
 
@@ -47,20 +55,40 @@ export default function App() {
     document.addEventListener("mouseup", onUp);
   }, []);
 
+  // Load (or reload) everything scoped to the current learner. Switching user
+  // switches the whole scope, so this runs again on every switch.
+  const loadAll = useCallback(async () => {
+    const [who, p, pr, h] = await Promise.all([
+      whoami(), getProblem(), getProgress(), getHistory(),
+    ]);
+    setUser(who.user);
+    setProblem(p);
+    setProgress(pr);
+    setMessages(
+      h.messages.length
+        ? h.messages.map((m) => ({ role: m.role, content: m.content, tag: m.intent || "" }))
+        : [{ role: "assistant", content: WELCOME, tag: "tutor" }],
+    );
+  }, []);
+
   useEffect(() => {
-    (async () => {
-      const [p, pr, h] = await Promise.all([getProblem(), getProgress(), getHistory()]);
-      setProblem(p);
-      setProgress(pr);
-      setMessages(
-        h.messages.length
-          ? h.messages.map((m) => ({ role: m.role, content: m.content, tag: m.intent || "" }))
-          : [{ role: "assistant", content: WELCOME, tag: "tutor" }],
-      );
-    })().catch(() => {
+    loadAll().catch(() => {
       setMessages([{ role: "assistant", content: "Couldn't reach the server.", tag: "error" }]);
     });
-  }, []);
+  }, [loadAll]);
+
+  const handleSwitchUser = useCallback(async (name) => {
+    setLoadingNew(true);
+    try {
+      const { user: uid } = await setUserApi(name);
+      setUser(uid);
+      await loadAll();
+    } catch (e) {
+      setMessages((m) => [...m, { role: "assistant", content: `Couldn't switch user: ${e}`, tag: "error" }]);
+    } finally {
+      setLoadingNew(false);
+    }
+  }, [loadAll]);
 
   const handleSend = useCallback(async (text) => {
     setMessages((m) => [...m, { role: "user", content: text }]);
@@ -120,7 +148,9 @@ export default function App() {
 
   return (
     <div className={`app${focus ? " focus" : ""}`} style={{ "--left-w": `${leftW}px` }}>
-      <ProblemPanel
+      <LeftPanel
+        user={user}
+        onSwitchUser={handleSwitchUser}
         problem={problem}
         progress={progress}
         onNew={handleNew}

@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react";
 
-// Left panel: problem name, metadata, progress line, and the rich HTML statement
-// (with MathJax typesetting the $$$…$$$ math after each update).
+// Problem name, metadata, progress line, and the rich HTML statement (with
+// MathJax typesetting the $$$…$$$ math after each update). Rendered inside the
+// left panel's "Problem" tab — the <aside> itself lives in LeftPanel.
 export default function ProblemPanel({ problem, progress, onNew, loadingNew, onSummarize, onReset, focus, onToggleFocus, busy }) {
   const stmtRef = useRef(null);
 
@@ -19,7 +20,7 @@ export default function ProblemPanel({ problem, progress, onNew, loadingNew, onS
     meta.push(`${problem.num_sample_tests} sample test(s)`);
 
   return (
-    <aside>
+    <>
       <div className="head">
         <h1>{problem ? problem.name : "loading…"}</h1>
         <div className="head-btns">
@@ -74,6 +75,6 @@ export default function ProblemPanel({ problem, progress, onNew, loadingNew, onS
       ) : (
         <pre className="statement-text">{problem?.statement || ""}</pre>
       )}
-    </aside>
+    </>
   );
 }

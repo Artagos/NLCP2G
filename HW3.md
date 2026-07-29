@@ -19,17 +19,17 @@ every linked learner.
 
 **Silence branch.** `triggers.decide(state, now)` returns `Fire` or
 `Silence(reason)`; the sweep records both. Two of the eight reasons come from the
-product's promise rather than politeness: `awaiting_learner` (the agent already
-asked a question, so a nudge repeats it or supplies the missing step) and
-`would_hint` (after two timeouts, an unprompted message can only read as *your
-approach is too slow*, which rule R1 forbids). Nudge text is templated, never
-model-written — it's the one message nobody asked for.
+product's promise, not politeness: `awaiting_learner` (the agent already asked a
+question, so a nudge repeats it or supplies the missing step) and `would_hint`
+(after two timeouts, an unprompted message can only read as *your approach is too
+slow*, which rule R1 forbids). Nudge text is templated, never model-written —
+it's the one message nobody asked for.
 
 **Queue:** per-learner FIFO, cap 2 waiting. Not *drop* — the queued message is a
 paragraph describing an algorithm, the most expensive thing a learner produces.
 Not *interrupt* — killing a run mid-flight leaves the attempt counter disagreeing
 with what ran. **It costs head-of-line blocking**, paid deliberately, with an ack
-saying where you are in line; overflow is refused out loud.
+saying your place in line; overflow is refused out loud.
 
 **Admin subagent:** an allow-listed chat reaches a separate agent that can
 rewrite the operating rules, force the auditor, mute the trigger, purge notes,
@@ -48,8 +48,8 @@ is enforced by what a tool returns, not by what a prompt promises.
 ## How I tested it
 
 **65 new tests, 153 total** (`pytest tests/ -q`, ~30s, no token, no API key). The
-trigger and the channel are exactly what "I sent it a message" can't test, so both
-were made injectable: `decide()` takes `now` and reads no clock; every send goes
+trigger and the channel are what "I sent it a message" can't test, so both were
+made injectable: `decide()` takes `now` and reads no clock; every send goes
 through a `FakeChannel` that records instead of transmitting.
 
 - **Firing the trigger on purpose:** `python -m backend.scheduler --once --now
@@ -72,9 +72,9 @@ through a `FakeChannel` that records instead of transmitting.
 - **Idempotency:** the same Telegram `update_id` twice yields one reply.
 
 One test initially passed for the wrong reason — my isolation case had both
-learners awaiting the same gate, proving nothing — which is its own argument for
-controllable fakes over real timing.
+learners awaiting the same gate — an argument for controllable fakes over real
+timing.
 
 **Not yet live:** the above runs against the fake channel; the token and one real
-exchange are pending. `python -m backend.bot` is wired and logs which bot
-identity it acts as via `getMe`.
+exchange are pending. `python -m backend.bot` logs which identity it acts as
+via `getMe`.

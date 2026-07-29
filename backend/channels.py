@@ -121,16 +121,36 @@ class FakeChannel(Channel):
 
 # -------------------------------------------------------------------- telegram
 
+def _silence_http_client_logging() -> None:
+    """Stop httpx logging the token.
+
+    The Telegram Bot API puts the credential in the *path*
+    (`api.telegram.org/bot<TOKEN>/getMe`), and httpx logs every request at INFO
+    as "HTTP Request: POST <full url>". Every entrypoint here calls
+    `logging.basicConfig(level=INFO)`, so the bot token was printed on the first
+    API call and on every call after it, straight into whatever collects stdout.
+
+    Nothing in this module logged the token. The HTTP client underneath it did,
+    which is the same thing from the outside. The guard belongs here rather than
+    in each CLI because constructing a TelegramChannel is the moment the risk
+    starts, whoever constructed it.
+    """
+    for name in ("httpx", "httpcore"):
+        logging.getLogger(name).setLevel(logging.WARNING)
+
+
 class TelegramChannel(Channel):
     """Telegram Bot API over long polling.
 
     The token belongs to a bot created with @BotFather — a disposable identity,
-    never a personal account. It is read from the environment and never logged.
+    never a personal account. It is read from the environment, and neither this
+    class nor the HTTP client beneath it ever writes it to a log.
     """
 
     name = "telegram"
 
     def __init__(self, token: str | None = None, timeout: int = 30):
+        _silence_http_client_logging()
         self.token = token or os.environ.get("TELEGRAM_BOT_TOKEN", "")
         if not self.token:
             raise RuntimeError(

@@ -8,10 +8,11 @@ test releases when it wants — rather than a real turn we hope is slow enough.
 from __future__ import annotations
 
 import asyncio
+import logging
 from types import SimpleNamespace
 
 from backend import admin, bot as botmod, memory, router
-from backend.channels import FakeChannel, split_message
+from backend.channels import FakeChannel, TelegramChannel, split_message
 from backend.main import ChatResponse
 from backend.turnqueue import TurnQueue
 
@@ -165,6 +166,30 @@ def test_a_short_reply_is_one_chunk_and_an_empty_one_is_none():
 
 def test_a_word_longer_than_the_limit_is_still_cut():
     assert all(len(c) <= 50 for c in split_message("z" * 500, limit=50))
+
+
+# ------------------------------------------------------------------ credentials
+
+def test_the_bot_token_cannot_reach_a_log(monkeypatch, caplog):
+    """Found by reading the bot's own startup output.
+
+    Telegram puts the credential in the URL *path*, and httpx logs every request
+    at INFO as "HTTP Request: POST <full url>". All four CLIs here call
+    basicConfig(level=INFO), so the token was printed on the first API call and
+    every call after it — into stdout, and into anything collecting stdout.
+    """
+    monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "12345:NOT-A-REAL-TOKEN-VALUE")
+    logging.getLogger("httpx").setLevel(logging.INFO)        # the leaking state
+    channel = TelegramChannel()
+
+    assert logging.getLogger("httpx").getEffectiveLevel() >= logging.WARNING
+
+    # the record httpx itself emits, with the real URL it would build
+    with caplog.at_level(logging.INFO):
+        logging.getLogger("httpx").info(
+            'HTTP Request: POST https://api.telegram.org/bot%s/getMe "200 OK"',
+            channel.token)
+    assert "NOT-A-REAL-TOKEN-VALUE" not in caplog.text
 
 
 # ----------------------------------------------------------------- bot dispatch

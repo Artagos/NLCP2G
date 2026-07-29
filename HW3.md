@@ -25,7 +25,8 @@ question, so a nudge repeats it or supplies the missing step) and `would_hint`
 slow*, which rule R1 forbids). Nudge text is templated, never model-written —
 it's the one message nobody asked for.
 
-**Queue:** per-learner FIFO, cap 2 waiting. Not *drop* — the queued message is a
+**Queue:** per-learner FIFO, 3 messages allowed to wait (2 in the demo, so the
+overflow branch is short to show). Not *drop* — the queued message is a
 paragraph describing an algorithm, the most expensive thing a learner produces.
 Not *interrupt* — killing a run mid-flight leaves the attempt counter disagreeing
 with what ran. **It costs head-of-line blocking**, paid deliberately, with an ack

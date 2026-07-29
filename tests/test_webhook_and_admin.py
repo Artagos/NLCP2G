@@ -15,7 +15,8 @@ import json
 import pytest
 from fastapi.testclient import TestClient
 
-from backend import admin, docstore, hooks, memory, monitor, rules, scheduler, translator
+from backend import (admin, bot as botmod, docstore, hooks, memory, monitor, rules,
+                     scheduler, translator)
 from backend.channels import FakeChannel
 from backend.outbound import set_channel
 from backend.sandbox import RunResult
@@ -113,6 +114,37 @@ def test_a_signed_verdict_is_delivered_to_the_learners_chat(client):
     assert sent and "AC" in sent[0]
     assert "attempt 1" in sent[0]
     assert memory.get_job(job_id)["status"] == "done"
+
+
+def test_constructing_a_bot_is_enough_to_wire_up_delivery(monkeypatch):
+    """The deployment invariant, which the fixture above quietly assumes.
+
+    `outbound` is a module-level slot, so the channel a bot registers exists only
+    inside that bot's own process — and the thing that looks it up is this
+    webhook. Serve the API as a *separate* process and the worker's callback is
+    accepted, recorded, and then dropped with "no channel registered": the
+    learner is told their run was queued and never hears the verdict. Every other
+    test here installs the channel by hand and so cannot see that.
+
+    This one installs nothing. It builds a Bot the way `backend.bot` does and
+    asserts the verdict reaches that bot's own channel — which holds only while
+    the bot is the process serving this endpoint.
+    """
+    monkeypatch.setenv("CP_TUTOR_WEBHOOK_SECRET", SECRET)
+    monkeypatch.setattr(translator, "_explain", lambda facts: "Here's what happened.")
+    set_channel(None)
+    try:
+        bot = botmod.Bot(FakeChannel(name="telegram"))
+        api = TestClient(__import__("backend.main", fromlist=["app"]).app)
+        job_id = _job()
+
+        resp = _post(api, {"job_id": job_id, "ok": True, "results": AC})
+
+        assert resp.json()["status"] == "delivered"
+        assert bot.channel.texts_to("1001"), \
+            "the verdict never reached the channel the bot registered"
+    finally:
+        set_channel(None)
 
 
 def test_delivery_records_the_attempt_so_progress_and_memory_agree(client):

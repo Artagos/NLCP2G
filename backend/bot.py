@@ -216,17 +216,50 @@ class Bot:
         set_channel(None)
 
 
-async def _main(fake: bool) -> None:
+async def _serve_api(port: int) -> None:
+    """Serve the FastAPI app in this same process.
+
+    Not a convenience. `outbound` is a module-level slot, so the channel the bot
+    registers is only visible inside the bot's own process — and the thing that
+    looks it up is the run-complete webhook handler, which lives in the API. Run
+    them as two processes and the worker's callback is accepted, recorded, and
+    then dropped with "no channel registered": the learner is told their run was
+    queued and never hears the verdict.
+
+    So the process that owns the channel serves the webhook. The web UI comes
+    along for free on the same port.
+    """
+    import uvicorn
+
+    from .main import app
+
+    config = uvicorn.Config(app, host="127.0.0.1", port=port, log_level="warning")
+    server = uvicorn.Server(config)
+    # let KeyboardInterrupt propagate through asyncio.run and stop the whole
+    # process, rather than uvicorn catching it and leaving the poll loop running
+    server.install_signal_handlers = lambda: None
+    await server.serve()
+
+
+async def _main(fake: bool, serve: bool, port: int) -> None:
     memory.init()
     channel: Channel = FakeChannel(name="telegram") if fake else TelegramChannel()
     bot = Bot(channel)
     if not fake:
         me = await channel.me()          # prove which identity we're acting as
         log.info("acting as @%s (id %s)", me.get("username"), me.get("id"))
+
+    api_task: asyncio.Task | None = None
+    if serve:
+        api_task = asyncio.create_task(_serve_api(port), name="api")
+        log.info("serving the API and the run-complete webhook on 127.0.0.1:%d "
+                 "(point the worker's CP_TUTOR_WEBHOOK_URL here)", port)
     try:
         await bot.run()
         await bot.queue.drain(timeout=300)
     finally:
+        if api_task is not None:
+            api_task.cancel()
         await bot.close()
 
 
@@ -234,9 +267,15 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="NLCP2G chat bot.")
     parser.add_argument("--fake", action="store_true",
                         help="use a fake channel (no token needed)")
+    parser.add_argument("--no-serve", action="store_true",
+                        help="do not serve the API here — only correct if something "
+                             "else in THIS process serves /hooks/run-complete")
+    parser.add_argument("--port", type=int, default=8000)
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-    asyncio.run(_main(args.fake))
+    # the fake channel is for scripted demos: no worker, so no callback to serve
+    serve = not args.no_serve and not args.fake
+    asyncio.run(_main(args.fake, serve, args.port))
 
 
 if __name__ == "__main__":

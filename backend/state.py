@@ -90,6 +90,26 @@ def current(sid: str) -> Problem:
     return load_new(sid)
 
 
+def problem_for_key(key: str) -> Problem:
+    """Rebuild a Problem from its memory key, with no session involved.
+
+    The sandbox worker runs in a different process from the one that built the
+    program, so it needs to reconstruct the test suite from the key alone.
+    """
+    bank_id = bank.parse_key(key)
+    if bank_id:
+        problem = bank.get(bank_id)
+        if problem is None:
+            raise LookupError(f"unknown bank problem {bank_id!r}")
+        return problem
+    if key == "fallback":
+        return fallback_problem()
+    cid, idx = codeforces.parse_ref(key)
+    if cid is None:
+        raise LookupError(f"cannot resolve problem key {key!r}")
+    return codeforces.fetch_problem(cid, idx)
+
+
 def reset(sid: str) -> None:
     """Drop the cached problem for a session (call alongside memory.reset)."""
     _cache.pop(sid, None)

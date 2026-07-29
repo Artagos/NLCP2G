@@ -103,6 +103,51 @@ CREATE TABLE IF NOT EXISTS judgments(
   task_completion TEXT, injection_resisted TEXT, rationale TEXT,
   cited_rules TEXT, judged_at REAL
 );
+
+-- ---- channel surface (HW3) ----
+
+-- which chat on which channel belongs to which learner
+CREATE TABLE IF NOT EXISTS channel_links(
+  channel TEXT, chat_id TEXT, user_id TEXT, display_name TEXT,
+  tz_offset INTEGER DEFAULT 0, created_at REAL,
+  PRIMARY KEY (channel, chat_id)
+);
+
+-- delivered update ids, so a redelivery after a crash isn't answered twice
+CREATE TABLE IF NOT EXISTS bot_updates(
+  channel TEXT, update_id TEXT, seen_at REAL,
+  PRIMARY KEY (channel, update_id)
+);
+
+-- sandbox work handed to the out-of-process worker; the worker calls the
+-- run-complete webhook when it finishes
+CREATE TABLE IF NOT EXISTS run_jobs(
+  job_id TEXT PRIMARY KEY, run_id TEXT, user_id TEXT, channel TEXT, chat_id TEXT,
+  problem_key TEXT, described_approach TEXT, approach_summary TEXT, cpp_source TEXT,
+  critic_status TEXT, critic_rounds INTEGER, violations TEXT,
+  status TEXT, created_at REAL, claimed_at REAL, finished_at REAL
+);
+CREATE INDEX IF NOT EXISTS jobs_by_status ON run_jobs(status, created_at);
+
+-- every nudge DECISION, fired or not. A silence with no record is
+-- indistinguishable from the bot being down, so the record is the point.
+CREATE TABLE IF NOT EXISTS nudges(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id TEXT, chat_id TEXT, decision TEXT, reason TEXT, kind TEXT,
+  problem_key TEXT, detail TEXT, created_at REAL
+);
+CREATE INDEX IF NOT EXISTS nudges_by_user ON nudges(user_id, created_at);
+
+-- what the privileged path did, and to whom
+CREATE TABLE IF NOT EXISTS admin_audit(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  actor TEXT, tool TEXT, args TEXT, result TEXT, created_at REAL
+);
+
+-- operator switches the admin agent can flip at runtime
+CREATE TABLE IF NOT EXISTS settings(
+  key TEXT PRIMARY KEY, value TEXT, updated_at REAL
+);
 """
 
 
@@ -184,6 +229,22 @@ def seen_keys(sid: str) -> set[str]:
     with _conn() as c:
         rows = c.execute("SELECT problem_key FROM seen WHERE sid=?", (sid,)).fetchall()
     return {r["problem_key"] for r in rows}
+
+
+def seen_row(sid: str, key: str) -> dict | None:
+    """Name/rating/solved for a problem this learner has been shown.
+
+    Read-only on purpose: the background trigger needs to know what problem
+    someone is on WITHOUT `state.current()`, which would assign them a new one as
+    a side effect — a scheduler sweep must never hand out homework.
+    """
+    with _conn() as c:
+        row = c.execute(
+            "SELECT problem_name, rating, solved FROM seen WHERE sid=? AND problem_key=?",
+            (sid, key),
+        ).fetchone()
+    return {"name": row["problem_name"], "rating": row["rating"],
+            "solved": bool(row["solved"])} if row else None
 
 
 def solved_ratings(sid: str) -> list[int]:
@@ -501,6 +562,200 @@ def save_judgment(run_id: str, prompt_adherence: str, hint_leakage: str,
             (run_id, prompt_adherence, hint_leakage, task_completion, injection_resisted,
              rationale, json.dumps(cited_rules or []), time.time()),
         )
+
+
+# ---- channel links: chat <-> learner ----
+
+def link_chat(channel: str, chat_id: str, user_id: str,
+              display_name: str | None = None, tz_offset: int = 0) -> None:
+    with _conn() as c:
+        c.execute(
+            "INSERT INTO channel_links(channel, chat_id, user_id, display_name, "
+            "tz_offset, created_at) VALUES (?,?,?,?,?,?) "
+            "ON CONFLICT(channel, chat_id) DO UPDATE SET user_id=excluded.user_id, "
+            "display_name=COALESCE(excluded.display_name, channel_links.display_name), "
+            "tz_offset=excluded.tz_offset",
+            (channel, str(chat_id), user_id, display_name, tz_offset, time.time()),
+        )
+
+
+def get_link(channel: str, chat_id: str) -> dict | None:
+    with _conn() as c:
+        row = c.execute(
+            "SELECT * FROM channel_links WHERE channel=? AND chat_id=?",
+            (channel, str(chat_id)),
+        ).fetchone()
+    return dict(row) if row else None
+
+
+def all_links(channel: str | None = None) -> list[dict]:
+    sql = "SELECT * FROM channel_links"
+    args: list = []
+    if channel:
+        sql += " WHERE channel=?"
+        args.append(channel)
+    with _conn() as c:
+        return [dict(r) for r in c.execute(sql, args).fetchall()]
+
+
+def set_tz_offset(channel: str, chat_id: str, tz_offset: int) -> None:
+    with _conn() as c:
+        c.execute("UPDATE channel_links SET tz_offset=? WHERE channel=? AND chat_id=?",
+                  (tz_offset, channel, str(chat_id)))
+
+
+# ---- update de-duplication ----
+
+def claim_update(channel: str, update_id: str) -> bool:
+    """True the first time we see this update, False on a redelivery.
+
+    Telegram resends updates that weren't acknowledged, so without this a crash
+    mid-turn means the learner's message gets answered twice.
+    """
+    with _conn() as c:
+        try:
+            c.execute("INSERT INTO bot_updates(channel, update_id, seen_at) VALUES (?,?,?)",
+                      (channel, str(update_id), time.time()))
+        except sqlite3.IntegrityError:
+            return False
+    return True
+
+
+# ---- run jobs (the async sandbox hand-off) ----
+
+def enqueue_job(*, run_id: str, user_id: str, channel: str, chat_id: str,
+                problem_key: str, described_approach: str, approach_summary: str,
+                cpp_source: str, critic_status: str = "", critic_rounds: int = 0,
+                violations: list[str] | None = None) -> str:
+    job_id = uuid.uuid4().hex[:12]
+    with _conn() as c:
+        c.execute(
+            "INSERT INTO run_jobs(job_id, run_id, user_id, channel, chat_id, problem_key, "
+            "described_approach, approach_summary, cpp_source, critic_status, critic_rounds, "
+            "violations, status, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,'pending',?)",
+            (job_id, run_id, user_id, channel, str(chat_id), problem_key, described_approach,
+             approach_summary, cpp_source, critic_status, critic_rounds,
+             json.dumps(violations or []), time.time()),
+        )
+    return job_id
+
+
+def claim_job() -> dict | None:
+    """Atomically take the oldest pending job. Safe with several workers: the
+    UPDATE ... WHERE status='pending' only succeeds for one of them."""
+    with _conn() as c:
+        row = c.execute(
+            "SELECT job_id FROM run_jobs WHERE status='pending' ORDER BY created_at LIMIT 1"
+        ).fetchone()
+        if not row:
+            return None
+        cur = c.execute(
+            "UPDATE run_jobs SET status='running', claimed_at=? "
+            "WHERE job_id=? AND status='pending'", (time.time(), row["job_id"]),
+        )
+        if cur.rowcount == 0:            # another worker got there first
+            return None
+        job = c.execute("SELECT * FROM run_jobs WHERE job_id=?", (row["job_id"],)).fetchone()
+    out = dict(job)
+    out["violations"] = json.loads(out.get("violations") or "[]")
+    return out
+
+
+def get_job(job_id: str) -> dict | None:
+    with _conn() as c:
+        row = c.execute("SELECT * FROM run_jobs WHERE job_id=?", (job_id,)).fetchone()
+    if not row:
+        return None
+    out = dict(row)
+    out["violations"] = json.loads(out.get("violations") or "[]")
+    return out
+
+
+def finish_job(job_id: str, status: str = "done") -> None:
+    with _conn() as c:
+        c.execute("UPDATE run_jobs SET status=?, finished_at=? WHERE job_id=?",
+                  (status, time.time(), job_id))
+
+
+def pending_jobs(user_id: str | None = None) -> list[dict]:
+    sql = "SELECT * FROM run_jobs WHERE status IN ('pending','running')"
+    args: list = []
+    if user_id:
+        sql += " AND user_id=?"
+        args.append(user_id)
+    with _conn() as c:
+        return [dict(r) for r in c.execute(sql + " ORDER BY created_at", args).fetchall()]
+
+
+# ---- nudge decisions (fired AND silent) ----
+
+def record_nudge(user_id: str, chat_id: str, decision: str, reason: str,
+                 kind: str = "", problem_key: str | None = None,
+                 detail: str = "") -> None:
+    with _conn() as c:
+        c.execute(
+            "INSERT INTO nudges(user_id, chat_id, decision, reason, kind, problem_key, "
+            "detail, created_at) VALUES (?,?,?,?,?,?,?,?)",
+            (user_id, str(chat_id), decision, reason, kind, problem_key, detail, time.time()),
+        )
+
+
+def last_nudge_at(user_id: str, fired_only: bool = True) -> float | None:
+    sql = "SELECT MAX(created_at) t FROM nudges WHERE user_id=?"
+    if fired_only:
+        sql += " AND decision='fired'"
+    with _conn() as c:
+        return c.execute(sql, (user_id,)).fetchone()["t"]
+
+
+def nudges_for_problem(user_id: str, problem_key: str) -> int:
+    with _conn() as c:
+        return c.execute(
+            "SELECT COUNT(*) n FROM nudges WHERE user_id=? AND problem_key=? "
+            "AND decision='fired'", (user_id, problem_key),
+        ).fetchone()["n"]
+
+
+def recent_nudges(limit: int = 50) -> list[dict]:
+    with _conn() as c:
+        return [dict(r) for r in c.execute(
+            "SELECT * FROM nudges ORDER BY id DESC LIMIT ?", (limit,)).fetchall()]
+
+
+def last_activity_at(sid: str) -> float | None:
+    with _conn() as c:
+        return c.execute("SELECT MAX(created_at) t FROM messages WHERE sid=?",
+                         (sid,)).fetchone()["t"]
+
+
+# ---- admin audit + settings ----
+
+def audit_admin(actor: str, tool: str, args: dict, result: str) -> None:
+    with _conn() as c:
+        c.execute(
+            "INSERT INTO admin_audit(actor, tool, args, result, created_at) VALUES (?,?,?,?,?)",
+            (actor, tool, json.dumps(args, default=str), result[:2000], time.time()),
+        )
+
+
+def admin_log(limit: int = 50) -> list[dict]:
+    with _conn() as c:
+        rows = c.execute("SELECT * FROM admin_audit ORDER BY id DESC LIMIT ?",
+                         (limit,)).fetchall()
+    return [{**dict(r), "args": json.loads(r["args"] or "{}")} for r in rows]
+
+
+def set_setting(key: str, value: str) -> None:
+    with _conn() as c:
+        c.execute("INSERT INTO settings(key, value, updated_at) VALUES (?,?,?) "
+                  "ON CONFLICT(key) DO UPDATE SET value=excluded.value, "
+                  "updated_at=excluded.updated_at", (key, value, time.time()))
+
+
+def get_setting(key: str, default: str | None = None) -> str | None:
+    with _conn() as c:
+        row = c.execute("SELECT value FROM settings WHERE key=?", (key,)).fetchone()
+    return row["value"] if row else default
 
 
 def judgments(limit: int = 50) -> list[dict]:

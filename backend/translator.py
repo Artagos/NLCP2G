@@ -57,10 +57,10 @@ def _generate_cpp(problem: Problem, described_approach: str,
     )
 
 
-def _verdict_facts(program: GeneratedProgram, run: RunResult) -> str:
+def _verdict_facts(approach_summary: str, run: RunResult) -> str:
     """Deterministic, factual summary of what happened — the ONLY thing the
     verdict-explainer LLM is allowed to work from."""
-    lines = [f"Approach we implemented: {program.approach_summary}"]
+    lines = [f"Approach we implemented: {approach_summary}"]
 
     if not run.ok:
         lines.append("Outcome: COMPILE ERROR")
@@ -153,21 +153,79 @@ def _scratch(run_id: str | None, agent: str, round_: int, status: str, payload: 
         memory.scratch(run_id, agent, round_, status, payload)
 
 
-def translate_and_run(problem: Problem, described_approach: str,
-                      run_id: str | None = None) -> TranslationOutcome:
+class BuildResult(BaseModel):
+    """What came out of the blind pipeline, before anything was executed.
+
+    Split out from `translate_and_run` so the sandbox step can happen somewhere
+    else: over a chat channel the run is handed to an out-of-process worker and
+    the verdict arrives later through the run-complete webhook. `ready` False
+    means the pipeline already has its final answer (infeasible, unclear, or the
+    critic escalated) and nothing should be executed at all.
+    """
+
+    ready: bool
+    outcome: TranslationOutcome | None = None    # set when ready is False
+    cpp_source: str = ""
+    approach_summary: str = ""
+    critic_status: str = ""
+    critic_rounds: int = 0
+    violations: list[str] = []
+
+
+def finish_run(approach_summary: str, cpp_source: str, run: RunResult,
+               critic_status: str = "", critic_rounds: int = 0,
+               violations: list[str] | None = None,
+               run_id: str | None = None) -> TranslationOutcome:
+    """Turn a completed sandbox run into the reply the learner sees."""
+    violations = violations or []
+
+    if run.infra_error:
+        return TranslationOutcome(
+            reply=(
+                "I built your program, but couldn't run it just now — the "
+                "sandbox that executes code isn't available at the moment. "
+                "This isn't a problem with your solution. Please try again in a bit."
+            ),
+            cpp_source=cpp_source, verdict="SANDBOX_UNAVAILABLE",
+            approach_summary=approach_summary, critic_status=critic_status,
+            critic_rounds=critic_rounds, violations=violations,
+        )
+
+    facts = _verdict_facts(approach_summary, run)
+    reply = _explain(facts)
+
+    if not run.ok:
+        verdict = "CE"
+    elif run.all_accepted:
+        verdict = "AC"
+    else:
+        verdict = run.first_failure()["verdict"]
+
+    _scratch(run_id, "sandbox", critic_rounds or 1, verdict,
+             {"tests": len(run.results), "compile_ok": run.ok})
+
+    return TranslationOutcome(
+        reply=reply, cpp_source=cpp_source, verdict=verdict,
+        approach_summary=approach_summary, critic_status=critic_status,
+        critic_rounds=critic_rounds, violations=violations,
+    )
+
+
+def build_program(problem: Problem, described_approach: str,
+                  run_id: str | None = None) -> BuildResult:
     # Pre-screen: is the described solution even possible/feasible? (Blind to the
     # problem — same clean context as codegen.) Runs before any code is written.
     verdict = screener.screen(problem, described_approach)
     _scratch(run_id, "screener", 0, "feasible" if verdict.feasible else "infeasible",
              {"issue": verdict.issue})
     if not verdict.feasible:
-        return TranslationOutcome(
+        return BuildResult(ready=False, outcome=TranslationOutcome(
             reply=_infeasible_reply(verdict.issue or
                                     "The described solution can't be carried out as stated."),
             cpp_source="",
             verdict="INFEASIBLE",
             approach_summary="",
-        )
+        ))
 
     # ---- Executor <-> Critic loop, capped at critic.MAX_ROUNDS ----
     program: GeneratedProgram | None = None
@@ -188,7 +246,8 @@ def translate_and_run(problem: Problem, described_approach: str,
 
         # Gate: the description wasn't implementable — specific feedback, no run.
         if not program.can_implement:
-            return TranslationOutcome(
+            return BuildResult(ready=False, critic_status="not_reached",
+                               critic_rounds=rounds, outcome=TranslationOutcome(
                 reply=_gate_reply(program.blocking_issue or
                                   "The described steps were too ambiguous to implement."),
                 cpp_source="",
@@ -196,7 +255,7 @@ def translate_and_run(problem: Problem, described_approach: str,
                 approach_summary="",
                 critic_status="not_reached",
                 critic_rounds=rounds,
-            )
+            ))
 
         handoff = critic.review(problem, described_approach, program.cpp_source,
                                 program.approach_summary)
@@ -228,7 +287,8 @@ def translate_and_run(problem: Problem, described_approach: str,
         _scratch(run_id, "critic", rounds, "escalate", {"reason": "round budget exhausted"})
 
     if handoff.needs_approval:
-        return TranslationOutcome(
+        return BuildResult(ready=False, critic_status="escalate", critic_rounds=rounds,
+                           violations=violations, outcome=TranslationOutcome(
             reply=_escalation_reply(handoff.result or
                                     "Part of the approach wasn't specified."),
             cpp_source=program.cpp_source,
@@ -237,45 +297,28 @@ def translate_and_run(problem: Problem, described_approach: str,
             critic_status="escalate",
             critic_rounds=rounds,
             violations=violations,
-        )
+        ))
 
-    run = run_cpp(problem, program.cpp_source)
-
-    # Sandbox infrastructure failure (e.g. Docker down) — not the user's code.
-    if run.infra_error:
-        return TranslationOutcome(
-            reply=(
-                "I built your program, but couldn't run it just now — the "
-                "sandbox that executes code isn't available at the moment. "
-                "This isn't a problem with your solution. Please try again in a bit."
-            ),
-            cpp_source=program.cpp_source,
-            verdict="SANDBOX_UNAVAILABLE",
-            approach_summary=program.approach_summary,
-            critic_status=handoff.status,
-            critic_rounds=rounds,
-            violations=violations,
-        )
-
-    facts = _verdict_facts(program, run)
-    reply = _explain(facts)
-
-    if not run.ok:
-        verdict = "CE"
-    elif run.all_accepted:
-        verdict = "AC"
-    else:
-        verdict = run.first_failure()["verdict"]
-
-    _scratch(run_id, "sandbox", rounds, verdict,
-             {"tests": len(run.results), "compile_ok": run.ok})
-
-    return TranslationOutcome(
-        reply=reply,
+    # Approved and faithful. Nothing has been executed yet — the caller decides
+    # whether to run it here and now, or hand it to a worker.
+    return BuildResult(
+        ready=True,
         cpp_source=program.cpp_source,
-        verdict=verdict,
         approach_summary=program.approach_summary,
         critic_status=handoff.status,
         critic_rounds=rounds,
         violations=violations,
     )
+
+
+def translate_and_run(problem: Problem, described_approach: str,
+                      run_id: str | None = None) -> TranslationOutcome:
+    """The synchronous path (web UI): build, run, and report in one call."""
+    built = build_program(problem, described_approach, run_id=run_id)
+    if not built.ready:
+        return built.outcome
+    run = run_cpp(problem, built.cpp_source)
+    return finish_run(built.approach_summary, built.cpp_source, run,
+                      critic_status=built.critic_status,
+                      critic_rounds=built.critic_rounds,
+                      violations=built.violations, run_id=run_id)

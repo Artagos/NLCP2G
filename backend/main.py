@@ -28,6 +28,7 @@ GET  /                                     -> the built SPA
 """
 from __future__ import annotations
 
+import json
 import logging
 import os
 import uuid
@@ -37,7 +38,8 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from . import docstore, memory, monitor, reflect, router, rules, state, summarizer, translator, tutor
+from . import (docstore, hooks, memory, monitor, outbound, reflect, router, rules,
+               state, summarizer, translator, tutor)
 from .problem import Problem
 from .prompts import REFUSAL_MESSAGE
 
@@ -231,6 +233,39 @@ def monitor_run(limit: int = 25) -> dict:
     return {"report_file": os.path.basename(path) if path else None}
 
 
+@app.post("/hooks/run-complete")
+async def run_complete(request: Request) -> JSONResponse:
+    """The interactive-mode trigger: a worker reporting a finished sandbox run.
+
+    Authenticated with an HMAC over the raw body, checked before the payload is
+    parsed or the job looked up — this endpoint is reachable by anyone who finds
+    the URL, and a forged verdict would land in a learner's chat as if we had
+    run their code.
+    """
+    body = await request.body()
+    if not hooks.verify(body, request.headers.get(hooks.SIGNATURE_HEADER)):
+        log.warning("rejected an unsigned run-complete callback")
+        return JSONResponse({"status": "bad_signature"}, status_code=401)
+
+    try:
+        payload = json.loads(body)
+    except ValueError:
+        return JSONResponse({"status": "bad_json"}, status_code=400)
+
+    delivery = hooks.handle_completion(payload)
+    if delivery.get("status") != "delivered":
+        return JSONResponse(delivery, status_code=200)
+
+    channel = outbound.get_channel()
+    if channel is None:
+        # the verdict is recorded; there is just nowhere to push it right now
+        log.warning("no channel registered; verdict for %s not delivered",
+                    delivery.get("job_id"))
+        return JSONResponse({**delivery, "status": "recorded_undelivered"})
+    await channel.send(delivery["chat_id"], delivery["text"])
+    return JSONResponse({"status": "delivered", "verdict": delivery.get("verdict")})
+
+
 @app.get("/rules")
 def get_rules() -> dict:
     return {"text": rules.text(), "ids": rules.ids(), "titles": rules.titles()}
@@ -299,8 +334,16 @@ def _summarize_current(sid: str) -> ChatResponse:
     return ChatResponse(intent="summarize", reply=recap, meta={"recap": recap})
 
 
-def _handle(sid: str, uid: str, message: str, run_id: str) -> ChatResponse:
-    routed = router.route(message)
+def _handle(sid: str, uid: str, message: str, run_id: str,
+            defer: dict | None = None, routed=None) -> ChatResponse:
+    """Route one message and produce a reply.
+
+    `routed` lets a caller that already classified the message (the bot, which
+    needs the intent before deciding how to queue) avoid a second router call.
+    `defer` is set when the sandbox run must be handed to a worker instead of
+    executed inline — see the solution branch.
+    """
+    routed = routed or router.route(message)
     prob = state.current(sid)
 
     if routed.intent == "summarize":
@@ -350,6 +393,40 @@ def _handle(sid: str, uid: str, message: str, run_id: str) -> ChatResponse:
         )
 
     if routed.intent == "solution":
+        # Over a chat channel the sandbox run is deferred: `defer` carries the
+        # channel and chat to report back to, the program is handed to a worker,
+        # and the verdict arrives later through /hooks/run-complete. The web UI
+        # passes defer=None and runs inline, as before.
+        if defer is not None:
+            built = translator.build_program(prob, message, run_id=run_id)
+            if not built.ready:
+                outcome = built.outcome
+                n = memory.record_attempt(sid, prob.url or "fallback", prob.name,
+                                          prob.rating, message, outcome.verdict)
+                return ChatResponse(
+                    intent="solution", reply=outcome.reply,
+                    meta={"verdict": outcome.verdict, "attempt_number": n,
+                          "critic_status": outcome.critic_status,
+                          "critic_rounds": outcome.critic_rounds},
+                )
+            job_id = memory.enqueue_job(
+                run_id=run_id, user_id=uid, channel=defer["channel"],
+                chat_id=defer["chat_id"], problem_key=prob.url or "fallback",
+                described_approach=message, approach_summary=built.approach_summary,
+                cpp_source=built.cpp_source, critic_status=built.critic_status,
+                critic_rounds=built.critic_rounds, violations=built.violations,
+            )
+            return ChatResponse(
+                intent="solution",
+                reply=("Built it, and a fidelity check passed. It's queued to run "
+                       "against the tests now — I'll message you the moment there's "
+                       "a verdict. You don't need to wait here."),
+                meta={"verdict": "QUEUED", "job_id": job_id,
+                      "critic_status": built.critic_status,
+                      "critic_rounds": built.critic_rounds,
+                      "violations": built.violations},
+            )
+
         outcome = translator.translate_and_run(prob, message, run_id=run_id)
         n = memory.record_attempt(sid, prob.url or "fallback", prob.name,
                                   prob.rating, message, outcome.verdict)

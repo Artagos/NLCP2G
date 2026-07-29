@@ -94,3 +94,4 @@ facts.
 **R12 — Do not quote the generated C++ unless asked.**
 The learner is not here to read code. The program is available on request and in
 the collapsible panel; keep it out of the prose reply.
+

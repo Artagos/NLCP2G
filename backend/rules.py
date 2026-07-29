@@ -54,6 +54,43 @@ def titles() -> dict[str, str]:
     return {m.group(1): m.group(2).strip() for m in _RULE_RE.finditer(_read())}
 
 
+def _next_id() -> str:
+    existing = [int(r[1:]) for r in ids()] or [0]
+    return f"R{max(existing) + 1}"
+
+
+def add_rule(title: str, body: str) -> str:
+    """Append a rule to the markdown file. Returns the new rule id.
+
+    Writing to the same file a human edits is deliberate: there is exactly one
+    place rules live, so a rule added by the admin agent is visible to, and
+    editable by, whoever opens the file next.
+    """
+    rule_id = _next_id()
+    title = title.strip().rstrip(".") + "."
+    entry = f"\n**{rule_id} — {title}**\n{body.strip()}\n"
+    with open(_PATH, "a", encoding="utf-8") as fh:
+        fh.write(entry)
+    global _cache
+    _cache = None
+    return rule_id
+
+
+def remove_rule(rule_id: str) -> bool:
+    """Delete one rule block (its header and body up to the next blank line)."""
+    text = _read()
+    match = re.search(rf"^\*\*{re.escape(rule_id)}\s*[—-].*?(?=\n\s*\n|\Z)",
+                      text, re.MULTILINE | re.DOTALL)
+    if not match:
+        return False
+    updated = (text[:match.start()] + text[match.end():]).replace("\n\n\n\n", "\n\n")
+    with open(_PATH, "w", encoding="utf-8") as fh:
+        fh.write(updated)
+    global _cache
+    _cache = None
+    return True
+
+
 def block() -> str:
     """The rules formatted for injection into a system prompt."""
     body = _read()

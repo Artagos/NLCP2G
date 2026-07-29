@@ -27,7 +27,7 @@ import asyncio
 import logging
 import uuid
 
-from . import admin, main as api, memory, router, state
+from . import admin, main as api, memory, reflect, router, state
 from .channels import Channel, FakeChannel, TelegramChannel
 from .outbound import set_channel
 from .turnqueue import TurnQueue
@@ -117,24 +117,33 @@ class Bot:
 
         run_id = uuid.uuid4().hex[:12]
         routed = router.route(text)
+        # The problem active when the message was sent. A new_problem turn switches
+        # it inside _handle, and this exchange belongs to the problem being *left* —
+        # tagging it with the new one would drop it out of the recap it belongs to.
+        prob = state.current(sid)
+        tag_key = prob.url or "fallback"
         resp = api._handle(sid, user_id, text, run_id, routed=routed,
                            defer={"channel": self.channel.name, "chat_id": str(chat_id)})
 
-        memory.add_message(sid, "user", text, resp.intent,
-                           state.current(sid).url or "fallback")
+        memory.add_message(sid, "user", text, resp.intent, tag_key)
         # a deferred run's assistant message is written when the verdict lands
         if resp.meta.get("verdict") != "QUEUED":
-            memory.add_message(sid, "assistant", resp.reply, resp.intent,
-                               state.current(sid).url or "fallback")
+            memory.add_message(sid, "assistant", resp.reply, resp.intent, tag_key)
             memory.log_run(run_id=run_id, user_id=user_id, sid=sid,
-                           problem_key=state.current(sid).url or "fallback",
-                           problem_name=state.current(sid).name, intent=resp.intent,
+                           problem_key=tag_key,
+                           problem_name=prob.name, intent=resp.intent,
                            user_message=text, reply=resp.reply,
                            verdict=resp.meta.get("verdict"),
                            rules_applied=resp.meta.get("rules_applied") or [],
                            facts_used=resp.meta.get("facts_used") or [],
                            notes_seen=resp.meta.get("notes_seen") or [],
                            tools_called=resp.meta.get("tools_called") or [])
+            # Same as the web path: decide whether this turn taught us anything
+            # durable. Without this the agent silently stops learning the moment
+            # the learner moves from the browser to the chat — the memory the
+            # whole design is built on would only ever fill up on one entry point.
+            # Skipped on a QUEUED turn: the reply there is a bare acknowledgement.
+            reflect.consider(user_id, text, resp.reply, resp.intent, tag_key)
 
         if resp.intent == "new_problem":
             return f"{resp.reply}\n\n{problem_text(sid)}"

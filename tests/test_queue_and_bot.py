@@ -8,9 +8,11 @@ test releases when it wants — rather than a real turn we hope is slow enough.
 from __future__ import annotations
 
 import asyncio
+from types import SimpleNamespace
 
 from backend import admin, bot as botmod, memory, router
 from backend.channels import FakeChannel, split_message
+from backend.main import ChatResponse
 from backend.turnqueue import TurnQueue
 
 
@@ -243,6 +245,86 @@ def test_an_allow_listed_chat_reaches_the_admin_subagent(monkeypatch):
 
     run(scenario())
     assert channel.texts_to("999") == ["admin did: list the rules"]
+
+
+# ------------------------------------------------- the channel path vs the web path
+#
+# The bot and the web API are two entry points onto one `_handle`. Anything the
+# web path does *around* that call has to be done here too, or a feature quietly
+# exists only in the browser. These two both regressed exactly that way.
+
+class _Prob:
+    def __init__(self, url, name):
+        self.url, self.name, self.rating = url, name, None
+        self.source, self.statement = "bank", "..."
+
+
+def _stub_turn(monkeypatch, prob, intent="concept", reply="ok", meta=None,
+               on_handle=None):
+    """Run a real _sync_turn with the model calls and the writes stubbed out."""
+    monkeypatch.setattr(botmod.state, "current", lambda sid: prob["p"])
+    monkeypatch.setattr(botmod.router, "route",
+                        lambda m: SimpleNamespace(intent=intent, rating_delta=0,
+                                                  reason=""))
+
+    def fake_handle(*a, **k):
+        if on_handle:
+            on_handle()
+        return ChatResponse(intent=intent, reply=reply, meta=meta or {})
+
+    monkeypatch.setattr(botmod.api, "_handle", fake_handle)
+    monkeypatch.setattr(botmod.memory, "log_run", lambda **k: None)
+
+    tagged, reflected = [], []
+    monkeypatch.setattr(botmod.memory, "add_message",
+                        lambda sid, role, text, i, key: tagged.append((role, key)))
+    # patch the module slot, not the function on it, so each of these tests fails
+    # for its own reason on code where bot.py doesn't import reflect at all
+    monkeypatch.setattr(
+        botmod, "reflect",
+        SimpleNamespace(consider=lambda uid, msg, rep, i, key=None:
+                        reflected.append((uid, msg, i))),
+        raising=False)
+    return tagged, reflected
+
+
+def test_a_chat_turn_can_still_teach_the_agent_something(monkeypatch):
+    """Reflection ran only in the web endpoint, so the agent stopped learning the
+    moment a learner moved to the chat — with no error to notice."""
+    prob = {"p": _Prob("p/x", "X")}
+    _, reflected = _stub_turn(monkeypatch, prob, reply="A hash map is...")
+    b = botmod.Bot(FakeChannel(name="telegram"))
+
+    b._sync_turn("u:tg1", "tg1", "1", "keep answers to three sentences from now on")
+
+    assert reflected == [("tg1", "keep answers to three sentences from now on",
+                          "concept")]
+
+
+def test_a_queued_run_is_not_reflected_on_its_own_acknowledgement(monkeypatch):
+    prob = {"p": _Prob("p/x", "X")}
+    _, reflected = _stub_turn(monkeypatch, prob, intent="solution",
+                              reply="Queued to run.", meta={"verdict": "QUEUED"})
+    b = botmod.Bot(FakeChannel(name="telegram"))
+
+    b._sync_turn("u:tg1", "tg1", "1", "loop over every pair and count them")
+
+    assert reflected == []          # the reply is an ack, not something learned
+
+
+def test_a_new_problem_turn_is_tagged_to_the_problem_being_left(monkeypatch):
+    """`_handle` switches the current problem, so the key has to be captured
+    before the call — otherwise the last exchange on a problem lands in the next
+    problem's recap instead of its own."""
+    prob = {"p": _Prob("p/old", "Old")}
+    tagged, _ = _stub_turn(
+        monkeypatch, prob, intent="new_problem", reply="switched",
+        on_handle=lambda: prob.__setitem__("p", _Prob("p/new", "New")))
+    b = botmod.Bot(FakeChannel(name="telegram"))
+
+    b._sync_turn("u:tg1", "tg1", "1", "give me another problem")
+
+    assert [key for _, key in tagged] == ["p/old", "p/old"]
 
 
 def test_the_queue_ack_tells_the_learner_where_they_stand(monkeypatch):

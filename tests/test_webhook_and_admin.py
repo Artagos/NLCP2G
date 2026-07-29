@@ -210,6 +210,32 @@ def test_result_from_payload_maps_onto_the_sandbox_shape():
     assert isinstance(run, RunResult) and run.all_accepted
 
 
+# ------------------------------------------------------- how much a pass proves
+
+def test_a_pass_says_how_many_tests_it_passed(monkeypatch):
+    """Found on a live run: a scraped Codeforces problem shipped exactly ONE
+    sample test, an unrelated approach happened to match its output, and the
+    learner was told "passed every test" — the identical sentence a seven-test
+    bank problem earns. The count is part of the verdict, and a one-test pass has
+    to arrive with its own caveat attached.
+    """
+    one = [{"name": "sample1", "verdict": "AC", "time_ms": 21, "time_limit_ms": 2000}]
+    facts = translator._verdict_facts("counts the even numbers",
+                                      RunResult(ok=True, compile_error=None, results=one))
+
+    assert "passed all 1 test" in facts
+    assert "weak evidence" in facts
+    assert "fast enough" in facts        # a sample cannot show a timeout either
+
+    many = [{"name": f"stress_{i}", "verdict": "AC", "time_ms": 30 + i,
+             "time_limit_ms": 4000} for i in range(7)]
+    strong = translator._verdict_facts("counts the even numbers",
+                                       RunResult(ok=True, compile_error=None, results=many))
+
+    assert "passed all 7 tests" in strong
+    assert "weak evidence" not in strong    # seven tests earn the plain claim
+
+
 # ------------------------------------------------------------ job queue basics
 
 def test_a_job_is_claimed_exactly_once():

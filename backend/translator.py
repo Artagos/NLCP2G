@@ -69,7 +69,21 @@ def _verdict_facts(approach_summary: str, run: RunResult) -> str:
 
     if run.all_accepted:
         slowest = max(run.results, key=lambda r: r["time_ms"])
-        lines.append("Outcome: ACCEPTED — passed every test.")
+        n = len(run.results)
+        lines.append(f"Outcome: ACCEPTED — passed all {n} test{'' if n == 1 else 's'}.")
+        # How many tests there were is part of the verdict, not trivia. A scraped
+        # Codeforces problem ships only its published samples — sometimes exactly
+        # one — while a bank problem carries six or seven including generated
+        # stress cases. Saying "passed every test" for both told the learner the
+        # same thing about wildly different amounts of evidence, and "every test"
+        # invites the strongest possible reading of the weakest possible check.
+        if n < 3:
+            lines.append(
+                f"Only {n} test{' was' if n == 1 else 's were'} available for this "
+                "problem, so passing is real but weak evidence: it does not show "
+                "the approach is correct in general, and it cannot show whether it "
+                "is fast enough on a large input."
+            )
         lines.append(
             f"Slowest test '{slowest['name']}': {slowest['time_ms']} ms "
             f"(limit {slowest['time_limit_ms']} ms)."

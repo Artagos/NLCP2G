@@ -1,8 +1,11 @@
 """What happens when a message arrives while the agent is mid-turn.
 
-A turn here is expensive and slow: the feasibility screen, code generation, up to
-two critic rounds, then a sandbox run. Twenty to sixty seconds, during which the
-learner can and will send something else.
+A turn here is expensive and slow: the feasibility screen, code generation, and up
+to two critic rounds — several chained model calls, ten seconds and up, during
+which the learner can and will send something else. (On the channel the sandbox
+run itself is *not* in this queue: it is handed to the worker process and its
+verdict arrives by webhook. That is what keeps a sixty-second Docker run from
+holding a queue slot at all.)
 
 Of the four available strategies — drop the new input, queue it, interrupt the
 current turn, or run both in parallel — this implements **per-learner FIFO**:

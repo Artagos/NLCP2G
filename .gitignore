@@ -12,3 +12,6 @@ frontend/dist/
 memory_store/
 reports/
 .pytest_cache/
+
+# bind-mounted state for the compose stack — the db, the docstore, the reports
+data/

@@ -1,0 +1,33 @@
+# Keep the build context small and keep secrets out of the image.
+.git
+.gitignore
+.claude
+.env
+.env.example
+.venv
+venv
+__pycache__
+**/__pycache__
+*.pyc
+.pytest_cache
+
+# build artefacts — stage 1 rebuilds the UI from source
+node_modules
+**/node_modules
+frontend/dist
+
+# runtime state lives in a mounted volume, never baked in
+data
+*.db
+memory_store
+reports
+
+# not needed to run the system
+tests
+traces
+docs
+scripts
+# root-level docs only — rules/operating_rules.md IS the rules store and must
+# be in the image, so this must not be a bare *.md
+/*.md
+!rules/operating_rules.md

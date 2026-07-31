@@ -1,0 +1,94 @@
+# NLCP2G, locally, in containers.
+#
+#   docker compose build sandbox            # the C++ jail (once)
+#   docker compose up -d                    # bot + worker + scheduler + monitor
+#   docker compose logs -f app
+#
+# Web UI:  http://localhost:8000        Chat: whichever bot TELEGRAM_BOT_TOKEN is.
+#
+# `name` is pinned because the worker passes the volume name to the host daemon
+# by hand (see CP_TUTOR_SANDBOX_VOLUME) — a compose-generated prefix would drift.
+name: nlcp2g
+
+services:
+
+  # The learner-facing process: Telegram poll loop + FastAPI + the run-complete
+  # webhook + the built web UI, all in one. They share a process on purpose —
+  # the webhook can only reach the chat through the channel the bot registered.
+  app:
+    build: .
+    image: nlcp2g
+    command: python -m backend.bot --host 0.0.0.0
+    env_file: [.env]
+    environment: &state
+      CP_TUTOR_DB: /data/cp_tutor.db
+      CP_TUTOR_DOCSTORE: /data/memory_store
+      CP_TUTOR_REPORTS: /data/reports
+    ports: ["8000:8000"]
+    volumes:
+      - ./data:/data
+      # bind-mounted, not baked in: edit a rule on the host, save, and the next
+      # message runs under it. That hot reload is a feature of the design.
+      - ./rules:/app/rules
+    restart: unless-stopped
+
+  # Executes learner code. The only service that needs the Docker socket, and the
+  # only one that would survive being moved to another machine.
+  worker:
+    build: .
+    image: nlcp2g
+    command: python -m backend.worker
+    env_file: [.env]
+    environment:
+      CP_TUTOR_DB: /data/cp_tutor.db
+      CP_TUTOR_DOCSTORE: /data/memory_store
+      CP_TUTOR_REPORTS: /data/reports
+      CP_TUTOR_WEBHOOK_URL: http://app:8000/hooks/run-complete
+      # sibling-container mode: name a shared volume instead of a host path,
+      # which the host daemon could not resolve from in here anyway
+      CP_TUTOR_SANDBOX_VOLUME: nlcp2g_sandboxwork
+      CP_TUTOR_SANDBOX_WORKROOT: /sandboxwork
+    volumes:
+      - ./data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+      - sandboxwork:/sandboxwork
+    depends_on: [app]
+    restart: unless-stopped
+
+  # The background trigger. Mostly decides to stay quiet, and records why.
+  scheduler:
+    build: .
+    image: nlcp2g
+    command: python -m backend.scheduler --interval 900
+    env_file: [.env]
+    environment: *state
+    volumes:
+      - ./data:/data
+      - ./rules:/app/rules
+    depends_on: [app]
+    restart: unless-stopped
+
+  # The judge. Grades runs after they shipped; never in a learner's way.
+  monitor:
+    build: .
+    image: nlcp2g
+    command: python -m backend.monitor --watch 300
+    env_file: [.env]
+    environment: *state
+    volumes:
+      - ./data:/data
+      - ./rules:/app/rules
+    restart: unless-stopped
+
+  # Not a service — a build target. `docker compose build sandbox` produces the
+  # image the worker starts per run. It never runs under compose itself, hence
+  # the profile: `up` ignores it.
+  sandbox:
+    build: ./sandbox
+    image: cp-tutor-sandbox
+    profiles: ["build-only"]
+
+volumes:
+  # Shared between the worker and each sandbox container. Referenced by name so
+  # both resolve it identically against the same daemon.
+  sandboxwork:

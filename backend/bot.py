@@ -25,6 +25,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import logging
+import os
 import uuid
 
 from . import admin, main as api, memory, reflect, router, state
@@ -216,7 +217,7 @@ class Bot:
         set_channel(None)
 
 
-async def _serve_api(port: int) -> None:
+async def _serve_api(port: int, host: str = "127.0.0.1") -> None:
     """Serve the FastAPI app in this same process.
 
     Not a convenience. `outbound` is a module-level slot, so the channel the bot
@@ -233,7 +234,7 @@ async def _serve_api(port: int) -> None:
 
     from .main import app
 
-    config = uvicorn.Config(app, host="127.0.0.1", port=port, log_level="warning")
+    config = uvicorn.Config(app, host=host, port=port, log_level="warning")
     server = uvicorn.Server(config)
     # let KeyboardInterrupt propagate through asyncio.run and stop the whole
     # process, rather than uvicorn catching it and leaving the poll loop running
@@ -241,7 +242,7 @@ async def _serve_api(port: int) -> None:
     await server.serve()
 
 
-async def _main(fake: bool, serve: bool, port: int) -> None:
+async def _main(fake: bool, serve: bool, port: int, host: str) -> None:
     memory.init()
     channel: Channel = FakeChannel(name="telegram") if fake else TelegramChannel()
     bot = Bot(channel)
@@ -251,9 +252,9 @@ async def _main(fake: bool, serve: bool, port: int) -> None:
 
     api_task: asyncio.Task | None = None
     if serve:
-        api_task = asyncio.create_task(_serve_api(port), name="api")
-        log.info("serving the API and the run-complete webhook on 127.0.0.1:%d "
-                 "(point the worker's CP_TUTOR_WEBHOOK_URL here)", port)
+        api_task = asyncio.create_task(_serve_api(port, host), name="api")
+        log.info("serving the API and the run-complete webhook on %s:%d "
+                 "(point the worker's CP_TUTOR_WEBHOOK_URL here)", host, port)
     try:
         await bot.run()
         await bot.queue.drain(timeout=300)
@@ -271,11 +272,14 @@ def main() -> None:
                         help="do not serve the API here — only correct if something "
                              "else in THIS process serves /hooks/run-complete")
     parser.add_argument("--port", type=int, default=8000)
+    parser.add_argument("--host", default=os.environ.get("CP_TUTOR_BIND", "127.0.0.1"),
+                        help="bind address. Loopback by default; a container has "
+                             "to bind 0.0.0.0 or its published port reaches nothing")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     # the fake channel is for scripted demos: no worker, so no callback to serve
     serve = not args.no_serve and not args.fake
-    asyncio.run(_main(args.fake, serve, args.port))
+    asyncio.run(_main(args.fake, serve, args.port, args.host))
 
 
 if __name__ == "__main__":

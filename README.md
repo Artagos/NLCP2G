@@ -46,6 +46,10 @@ routed through a single shim (`backend/llm.py`) so the provider is swappable.
 
 ## Architecture
 
+Every moving piece on one page — entry points, the nine LLM roles, both non-user
+triggers, the three stores and the four processes:
+[`docs/architecture.svg`](docs/architecture.svg).
+
 ```
  Chat UI ──▶ Router ──┬─▶ Tutor        conceptual Q&A + memory, no hints
    (Gemini flash-lite)│      push: operating rules · pull: facts, shared notes
@@ -196,37 +200,50 @@ rather than obeyed, and the monitor's own findings.
 
 ## Running it
 
-Prereqs: Python 3.11+, Docker Desktop running, a free Gemini API key
+**Full instructions: [`LOCAL_SETUP.md`](LOCAL_SETUP.md).** The short version —
+all you need is Docker:
+
+```bash
+cp .env.example .env             # add GEMINI_API_KEY (and a bot token, if you want chat)
+docker compose build sandbox     # the C++ jail
+docker compose up -d             # app + worker + scheduler + monitor
+```
+
+Open **http://localhost:8000**. `docker compose logs -f app` to watch,
+`docker compose down` to stop (your data survives, in `./data`).
+
+That brings up all four processes at once, including the Telegram bot and both
+non-user triggers. Nothing is installed on the host — the React UI is built
+inside the image.
+
+<details>
+<summary>Without Docker Compose (host Python + Node)</summary>
+
+Prereqs: Python 3.11+, Node 22+, Docker Desktop running, a free Gemini API key
 (https://aistudio.google.com/apikey).
 
 ```bash
-# 1. Build the sandbox image (once)
-docker build -t cp-tutor-sandbox ./sandbox
-
-# 2. Install backend deps
+docker build -t cp-tutor-sandbox ./sandbox     # the sandbox image (once)
 pip install -r backend/requirements.txt
-
-# 3. Set your free Gemini key — either put it in a .env file (auto-loaded):
-#      cp .env.example .env   # then edit .env and paste your key
-#    or export it:
-#      (PowerShell)  $env:GEMINI_API_KEY = "..."
-#      (bash)        export GEMINI_API_KEY=...
-#    NOTE: .env is gitignored. Never put a real key in .env.example (tracked).
-
-# 4. Build the React frontend (once, or after UI changes)
+cp .env.example .env                           # then paste your key in
 cd frontend && npm install && npm run build && cd ..
 
-# 5. Run the API (also serves the built frontend from frontend/dist)
-uvicorn backend.main:app --reload --app-dir .
-
-# 6. Open the UI
-#    visit http://localhost:8000
+python -m backend.bot                          # API + webhook + UI + chat bot
+python -m backend.worker                       # in a second terminal, if using chat
 ```
 
-**Frontend dev (hot reload):** instead of steps 4–6, run the API
-(`uvicorn backend.main:app --app-dir .`) and, in another terminal,
-`cd frontend && npm run dev` — then open http://localhost:5173. Vite proxies the
-API calls to the backend on :8000, so cookies/session work.
+`python -m backend.bot` serves the API **and** runs the poll loop in one
+process, which is required rather than convenient — see the note under
+[Running it on Telegram](#running-it-on-telegram-hw3).
+
+For the web UI alone, without a bot token:
+`uvicorn backend.main:app --app-dir .`
+
+**Frontend dev (hot reload):** run the API, then `cd frontend && npm run dev`
+and open http://localhost:5173. Vite proxies API calls to :8000, so the session
+cookie works.
+
+</details>
 
 Then chat. Try:
 - "what is a hash map?"          → tutor answers (allowed)
@@ -251,24 +268,33 @@ Then chat. Try:
 ## Running it on Telegram (HW3)
 
 The agent also lives on a chat channel, with a background heartbeat and an
-out-of-process sandbox worker. Three processes:
+out-of-process sandbox worker. `docker compose up -d` starts all of it; by hand
+it is three processes:
 
 ```bash
 # 0. Create a bot with @BotFather, put the token in .env (never a personal
 #    account). Add your own chat id to CP_TUTOR_ADMIN_CHAT_IDS to reach the
 #    operator agent — empty means nobody is an admin.
 
-uvicorn backend.main:app --app-dir .      # API + the run-complete webhook
-python -m backend.bot                     # the chat bot (long polling)
-python -m backend.worker                  # the sandbox worker (needs Docker)
+python -m backend.bot                        # chat bot AND the API + webhook
+python -m backend.worker                     # the sandbox worker (needs Docker)
 python -m backend.scheduler --interval 900   # the background nudge trigger
 ```
 
-Only the worker needs Docker, which is why it is a separate process: the bot,
-API and scheduler can live on a small always-on host while execution happens
-wherever a worker runs. With no worker running, jobs simply queue — the learner
-was already told their run was accepted, and the trigger stays quiet while a run
-is in flight.
+**The bot serves the API itself, and must.** The run-complete webhook reaches a
+learner's chat through the channel object the bot registered at startup, and
+that object only exists inside the bot's own process. Run `uvicorn` separately
+and every verdict is accepted, recorded, and then dropped with "no channel
+registered" — the learner is told their run was queued and never hears back.
+`tests/test_webhook_and_admin.py::test_constructing_a_bot_is_enough_to_wire_up_delivery`
+pins it.
+
+**Who needs Docker:** the worker always, and the bot process too if you use the
+web UI, because `/chat` runs the sandbox inline rather than deferring (a browser
+can hold a 20s request open; a chat cannot). The scheduler and monitor never
+execute code and never need it. With no worker running, chat jobs simply
+queue — the learner was already told their run was accepted, and the trigger
+stays quiet while a run is in flight.
 
 **Firing the triggers on purpose:**
 

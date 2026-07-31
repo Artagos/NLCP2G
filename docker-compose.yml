@@ -6,48 +6,63 @@
 #
 # Web UI:  http://localhost:8000        Chat: whichever bot TELEGRAM_BOT_TOKEN is.
 #
-# `name` is pinned because the worker passes the volume name to the host daemon
-# by hand (see CP_TUTOR_SANDBOX_VOLUME) — a compose-generated prefix would drift.
+# `name` is pinned because the sandbox volume is passed to the host daemon by
+# name (see CP_TUTOR_SANDBOX_VOLUME) — a compose-generated prefix would drift.
 name: nlcp2g
+
+# Where state lives. Shared by every service; they are one system with one
+# database, differing only in what they are responsible for.
+x-state: &state
+  CP_TUTOR_DB: /data/cp_tutor.db
+  CP_TUTOR_DOCSTORE: /data/memory_store
+  CP_TUTOR_REPORTS: /data/reports
+
+# Everything needed to start sandbox containers. Two services need this, for
+# different reasons — see the note on `app` below.
+x-sandbox: &sandbox
+  CP_TUTOR_SANDBOX_VOLUME: nlcp2g_sandboxwork
+  CP_TUTOR_SANDBOX_WORKROOT: /sandboxwork
 
 services:
 
   # The learner-facing process: Telegram poll loop + FastAPI + the run-complete
   # webhook + the built web UI, all in one. They share a process on purpose —
-  # the webhook can only reach the chat through the channel the bot registered.
+  # the webhook can only reach a chat through the channel object the bot
+  # registered at startup, and that object lives in the bot's own process.
+  #
+  # It gets the Docker socket because the WEB path runs the sandbox INLINE:
+  # a browser can hold a 20s request open, so /chat compiles and runs in the
+  # same call rather than deferring to the worker. Only the chat path defers.
+  # Without the socket here, every web attempt returns SANDBOX_UNAVAILABLE
+  # while Telegram works fine — which reads as "Docker is broken" and isn't.
   app:
     build: .
     image: nlcp2g
     command: python -m backend.bot --host 0.0.0.0
     env_file: [.env]
-    environment: &state
-      CP_TUTOR_DB: /data/cp_tutor.db
-      CP_TUTOR_DOCSTORE: /data/memory_store
-      CP_TUTOR_REPORTS: /data/reports
+    environment:
+      <<: [*state, *sandbox]
     ports: ["8000:8000"]
     volumes:
       - ./data:/data
       # bind-mounted, not baked in: edit a rule on the host, save, and the next
       # message runs under it. That hot reload is a feature of the design.
       - ./rules:/app/rules
+      - /var/run/docker.sock:/var/run/docker.sock
+      - sandboxwork:/sandboxwork
     restart: unless-stopped
 
-  # Executes learner code. The only service that needs the Docker socket, and the
-  # only one that would survive being moved to another machine.
+  # Executes learner code for the CHAT path, where a run cannot block the
+  # conversation. The only service that would survive being moved to another
+  # machine, which is the whole reason the split exists.
   worker:
     build: .
     image: nlcp2g
     command: python -m backend.worker
     env_file: [.env]
     environment:
-      CP_TUTOR_DB: /data/cp_tutor.db
-      CP_TUTOR_DOCSTORE: /data/memory_store
-      CP_TUTOR_REPORTS: /data/reports
+      <<: [*state, *sandbox]
       CP_TUTOR_WEBHOOK_URL: http://app:8000/hooks/run-complete
-      # sibling-container mode: name a shared volume instead of a host path,
-      # which the host daemon could not resolve from in here anyway
-      CP_TUTOR_SANDBOX_VOLUME: nlcp2g_sandboxwork
-      CP_TUTOR_SANDBOX_WORKROOT: /sandboxwork
     volumes:
       - ./data:/data
       - /var/run/docker.sock:/var/run/docker.sock
@@ -56,6 +71,7 @@ services:
     restart: unless-stopped
 
   # The background trigger. Mostly decides to stay quiet, and records why.
+  # Runs no code, so no socket.
   scheduler:
     build: .
     image: nlcp2g
@@ -81,14 +97,13 @@ services:
     restart: unless-stopped
 
   # Not a service — a build target. `docker compose build sandbox` produces the
-  # image the worker starts per run. It never runs under compose itself, hence
-  # the profile: `up` ignores it.
+  # image started per run. It never runs under compose itself, hence the profile.
   sandbox:
     build: ./sandbox
     image: cp-tutor-sandbox
     profiles: ["build-only"]
 
 volumes:
-  # Shared between the worker and each sandbox container. Referenced by name so
-  # both resolve it identically against the same daemon.
+  # Shared between whoever starts a run and the sandbox container it starts.
+  # Referenced by name so both resolve it identically against the same daemon.
   sandboxwork:

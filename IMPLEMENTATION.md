@@ -64,6 +64,40 @@ Repo: https://github.com/Artagos/NLCP2G  (**NLCP2G** — Natural Language Compet
  Problems: Codeforces (codeforces.py) · Stores: SQLite + JSON docs + markdown
 ```
 
+### 2.1 How that is built: a graph per agent
+
+Everything above is **LangGraph**. Each agent is its own compiled graph in
+`backend/graphs/`, with an explicit `TypedDict` state in `graphs/schema.py`, and
+one graph — `turn.py` — routes between them. The diagrams in the README are
+generated from these objects by `scripts/draw_graph.py`, so they cannot drift.
+
+| graph | shape | why it is a graph |
+|---|---|---|
+| `turn` | router → 6 branches → respond | the branch is the guardrail; `strategy` reaches a node with no model call |
+| `solution` | screen → execute ⇄ critique → 4 exits | the only cycle: the critic's round budget |
+| `tutor` | agent ⇄ tools | a ReAct loop over three LangChain tools |
+| `admin` | agent ⇄ tools | the same shape, eleven privileged tools |
+| `monitor` | load → grade\* → aggregate → analyse → report | one run per superstep, so one failure costs one verdict |
+| `sweep` | gather → decide → fire \| silent | the silence branch, with its reason, is the interesting half |
+| `reflect` | START → assess → persist | the skip is an *edge*: mechanical intents never reach a model |
+| `summarize` | digest → narrate | the model only ever sees the deterministic digest |
+
+**The rule the refactor was built on: public function signatures did not change.**
+`tutor.answer`, `translator.build_program`, `monitor.run_once`,
+`reflect.consider`, `summarizer.summarize`, `scheduler.sweep`, `admin.handle`
+and `main._handle` all take what they took and return what they returned; their
+bodies invoke a graph. Two consequences worth knowing:
+
+* `bot.py`, `worker.py`, `hooks.py` and the whole HW3 channel path needed **no
+  changes at all** — queue, webhook and HMAC included.
+* Graph nodes call their agents through the *module* (`critic.review(...)`,
+  never `from ..critic import review`), so the pre-refactor tests still stub the
+  same seams. `tests/test_critic_loop.py` — eight tests pinning the cycle's
+  control flow and the exact scratchpad order — passes unmodified.
+
+Only `turn` is compiled with a checkpointer. The others hold objects too large
+or too live to persist (a `Problem`, a `Channel`) and start fresh each time.
+
 ---
 
 ## 3. The chat pipeline (per message)
@@ -144,7 +178,9 @@ caught-and-corrected C1 is still visible to the monitor.
 | File | Responsibility |
 |---|---|
 | `main.py` | FastAPI app, identity middleware, endpoints, dispatch, run logging, serves the built SPA |
-| `llm.py` | Single Gemini shim (`google-genai`): `generate` / `generate_structured` / `generate_with_tools`, lazy client, retries on 429/500/503 |
+| `llm.py` | The chat model, in one place: `chat_model()` (LangChain, retrying), plus `generate` / `generate_structured` for single calls |
+| `graphs/` | Every agent as a compiled LangGraph, and the `TypedDict` state each runs on — see §2.1 |
+| `tools/` | The LangChain tools the models may call: three for the tutor, eleven for the operator |
 | `router.py` | Intent + `rating_delta` classifier (structured output) |
 | `tutor.py` | Guardrailed Q&A; assembles pushed context and exposes the pull tools |
 | `screener.py` | Feasibility pre-screen (blind to the problem) |
@@ -281,9 +317,16 @@ of it. Rules in their context would be a channel for problem knowledge to leak i
 - **Push** (every user-facing run, unasked): the rules file + the learner's rule
   documents.
 - **Pull** (mid-run, only when needed): `retrieve_memory(query)` for facts matched
-  on their cue, and `read_problem_notes()` for what other learners wrote. These
-  are real function calls; `llm.generate_with_tools` drives the loop manually so
-  every call is recorded and lands in the run log.
+  on their cue, `list_known_facts()` for all of them when the request carries no
+  cue at all ("what do you know about me?"), and `read_problem_notes()` for what
+  other learners wrote. These are LangChain tools bound to the model, dispatched
+  by a `ToolNode` inside the tutor graph; each returns a `Command` that both
+  answers the call and records what it touched, so every pull lands in the run
+  log for the monitor.
+
+  The learner id is *injected from graph state*, not passed as an argument the
+  model fills in. The model decides whether to look something up; it never
+  decides whose memory to look in.
 
 Facts are pulled rather than pushed because a learner accumulates far more of
 them than belong in any one context — the cue is what decides relevance.
@@ -337,13 +380,27 @@ never blamed on the user's code. **LLM-generated code is never run outside this.
 
 ## 10. LLM backend
 
-Google **Gemini free tier** via `google-genai`, behind one shim (`llm.py`) so the
-provider lives in a single file. Router uses `gemini-2.5-flash-lite`; tutor,
-screener, translator, summarizer use `gemini-2.5-flash` (both env-overridable).
-Structured outputs use Pydantic `response_schema`. Transient 429/500/503 errors
-are retried with backoff; `/chat` degrades gracefully on failure.
+Google **Gemini free tier** through **LangChain** (`langchain-google-genai`),
+constructed in one place — `llm.chat_model()` — so the provider lives in a single
+file and every graph binds tools and structures output through the standard
+`BaseChatModel` interface. Router uses `gemini-2.5-flash-lite`; tutor, screener,
+translator, summarizer use `gemini-2.5-flash` (both env-overridable).
+
+* **Structured output**: `.with_structured_output(PydanticModel)` — used by the
+  router, screener, code generator, critic, reflector and the monitor's judge.
+  Everywhere a reply is branched on rather than shown to a human, the shape is
+  guaranteed and callers read fields instead of parsing prose.
+* **Retries**: `.with_retry(...)` over the google-api-core transport exceptions
+  (429 / 500 / 503), four attempts with exponential jitter. `/chat` still
+  degrades gracefully on top of that.
+* **`generate` and `generate_structured` stay plain functions.** A single call
+  with no tools and no branching gains nothing from being a graph, and they are
+  the one seam the whole test suite stubs.
+* **Tracing is off.** LangSmith would send learner messages and generated code
+  off the machine. `LANGCHAIN_TRACING_V2` is deliberately unset.
 
 Auth: `GEMINI_API_KEY` in a gitignored `.env` (auto-loaded via python-dotenv).
+No additional credentials were introduced by the framework move.
 
 ---
 
@@ -388,7 +445,7 @@ frontend/      React + Vite SPA (src/, components/)
 rules/         operating_rules.md — hand-editable, injected every run
 memory_store/  JSON document store (gitignored; created at runtime)
 reports/       monitor output (gitignored)
-tests/         pytest suite — 55 tests, no API key needed
+tests/         pytest suite — 186 tests, no API key or daemon needed
 scripts/       demo_traces.py — regenerates the evidence in traces/
 traces/        the committed evidence: private-vs-shared, planted comment, …
 README.md            quickstart + run instructions
@@ -424,7 +481,7 @@ python -m backend.monitor --watch 300  # ...and keep doing it every 5 minutes
 **Tests and evidence:**
 
 ```bash
-python -m pytest tests/ -q       # 55 tests, ~20s, no API key needed
+python -m pytest tests/ -q       # 186 tests, ~40s, no API key needed
 python -m scripts.demo_traces    # regenerate traces/ against the live model
 ```
 

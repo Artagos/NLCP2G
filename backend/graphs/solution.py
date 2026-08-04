@@ -31,6 +31,7 @@ from __future__ import annotations
 from langgraph.graph import END, START, StateGraph
 
 from .. import critic, memory, screener, translator
+from ..prompts import executor_revision_note
 from .schema import SolutionState
 
 
@@ -187,8 +188,12 @@ def _after_critique(state: SolutionState) -> str:
 
 
 def _revision_note(state: SolutionState) -> dict:
-    """Hand the critic's findings back to the executor as an imperative list."""
-    return {"revision": translator.executor_revision_note(
+    """Hand the critic's findings back to the executor as an imperative list.
+
+    Imported directly from prompts, unlike the agents above: this is pure
+    formatting with nothing to stub, so binding it at import time costs nothing.
+    """
+    return {"revision": executor_revision_note(
         critic.fix_list(state["handoff"]), state["rounds"] + 1)}
 
 

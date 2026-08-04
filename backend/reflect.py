@@ -27,9 +27,6 @@ from .prompts import REFLECT_SYSTEM
 
 log = logging.getLogger("cp_tutor.reflect")
 
-# Nothing durable is ever learned from these — they're mechanical commands.
-_SKIP_INTENTS = {"new_problem", "summarize", "error"}
-
 
 class MemoryDecision(BaseModel):
     save: bool
@@ -43,14 +40,17 @@ class MemoryDecision(BaseModel):
     reason: str = ""
 
 
-def consider(user_id: str, user_message: str, assistant_reply: str,
-             intent: str, problem_key: str | None = None) -> dict | None:
-    """Look at one exchange; save a document if it earned it. Returns it, or None."""
-    if intent in _SKIP_INTENTS or not user_message.strip():
-        return None
+def decide(user_message: str, assistant_reply: str,
+           intent: str) -> MemoryDecision | None:
+    """Ask the model whether this exchange left anything worth keeping.
 
+    Returns None if the model itself failed. Memory is best-effort: a reflection
+    that breaks must never break the turn it is reflecting on, and the learner
+    should not see an error because the agent could not decide whether to
+    remember something.
+    """
     try:
-        decision = generate_structured(
+        return generate_structured(
             REFLECT_SYSTEM,
             [{
                 "role": "user",
@@ -64,22 +64,38 @@ def consider(user_id: str, user_message: str, assistant_reply: str,
             }],
             MemoryDecision,
         )
-    except Exception as exc:            # memory is best-effort; never break a turn
+    except Exception as exc:
         log.warning("reflection failed: %s", exc)
         return None
 
-    if not decision.save or not decision.text.strip():
-        return None
 
+def persist(*, user_id: str, kind: str, text: str, cue_keywords: list[str],
+            cue_note: str, intent: str, problem_key: str | None) -> dict:
+    """Write the document. Facts carry their cue; rules deliberately do not."""
     doc = docstore.save(
-        doc_type=decision.kind,
-        text=decision.text,
+        doc_type=kind,
+        text=text,
         user_id=user_id,
         scope="private",                # everything the agent infers is private
-        cue_keywords=decision.cue_keywords if decision.kind == "fact" else [],
-        cue_note=decision.cue_note if decision.kind == "fact" else "",
+        cue_keywords=cue_keywords if kind == "fact" else [],
+        cue_note=cue_note if kind == "fact" else "",
         source=f"chat:{intent}",
         problem_key=problem_key,
     )
-    log.info("saved %s for %s: %s", decision.kind, user_id, decision.text)
+    log.info("saved %s for %s: %s", kind, user_id, text)
     return doc
+
+
+def consider(user_id: str, user_message: str, assistant_reply: str,
+             intent: str, problem_key: str | None = None) -> dict | None:
+    """Look at one exchange; save a document if it earned it. Returns it, or None.
+
+    The decision is a graph (`graphs/reflect.py`) — three nodes, whose shape
+    says that mechanical intents never reach the model at all.
+    """
+    # imported here rather than at module scope: the graph's nodes call decide()
+    # and persist() in this module, so eager import is a cycle
+    from .graphs import reflect as reflect_graph
+
+    return reflect_graph.run(user_id, user_message, assistant_reply, intent,
+                             problem_key).get("saved")

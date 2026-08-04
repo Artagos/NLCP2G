@@ -29,8 +29,8 @@ from pydantic import BaseModel
 from . import memory, rules
 from .llm import generate, generate_structured
 from .problem import Problem
-from .prompts import (executor_revision_note, translator_codegen_system,
-                      with_pushed, VERDICT_EXPLAINER_SYSTEM)
+from .prompts import (translator_codegen_system, with_pushed,
+                      VERDICT_EXPLAINER_SYSTEM)
 from .sandbox import RunResult, run_cpp
 
 

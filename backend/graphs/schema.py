@@ -195,18 +195,20 @@ class MonitorState(TypedDict, total=False):
     report_path: str | None
 
 
-class SweepState(TypedDict, total=False):
-    """One pass of the background trigger over every linked learner.
+class NudgeState(TypedDict, total=False):
+    """Whether to say something unprompted to one learner, and what happened.
 
-    `decisions` accumulates `(user_id, Decision)`; the Decision is `Fire` or
+    The graph runs once per linked learner. `decision` is `Fire` or
     `Silence(reason)` from triggers.py, and both are recorded — a silence with a
     reason is the interesting half of this system, not an absence of output.
     """
 
-    links: list[dict]
-    dry_run: bool
+    link: dict
+    channel: Any                # channels.Channel; never persisted
     now: float
-    decisions: Annotated[list[tuple], operator.add]
+    dry_run: bool
+    learner: Any                # triggers.LearnerState
+    decision: Any               # triggers.Decision
 
 
 class ReflectState(TypedDict, total=False):

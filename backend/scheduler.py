@@ -26,9 +26,11 @@ import logging
 import time
 from datetime import datetime
 
-from . import memory, triggers
+from . import memory
 from .channels import Channel, FakeChannel, TelegramChannel
-from .triggers import Decision, Fire, LearnerState, Silence
+# `decide` itself is called by the sweep graph, not from here — this module
+# still owns gathering the state it decides on, and reporting the outcome.
+from .triggers import Decision, Fire, LearnerState
 
 log = logging.getLogger("cp_tutor.scheduler")
 
@@ -69,33 +71,22 @@ def gather(link: dict) -> LearnerState:
 async def sweep(channel: Channel, now: float | None = None,
                 dry_run: bool = False) -> list[tuple[str, Decision]]:
     """One pass over every linked learner. Returns the decisions, for the caller
-    to report; every decision is also persisted."""
+    to report; every decision is also persisted.
+
+    The per-learner decision — gather, decide, then fire or record the silence —
+    is a graph (`graphs/sweep.py`). This is the loop that runs it over everyone
+    who has linked a chat.
+    """
+    # imported here rather than at module scope: the graph's nodes call back
+    # into this module for `gather`, so importing it eagerly would be a cycle
+    from .graphs import sweep as sweep_graph
+
     now = time.time() if now is None else now
     outcomes: list[tuple[str, Decision]] = []
 
     for link in memory.all_links(channel.name):
-        state = gather(link)
-        decision = triggers.decide(state, now)
-        outcomes.append((state.user_id, decision))
-
-        if isinstance(decision, Fire):
-            if not dry_run:
-                try:
-                    await channel.send(state.chat_id, decision.text)
-                except Exception as exc:
-                    # a send failure is not a decision to stay silent; record it
-                    # as such rather than letting it masquerade as one
-                    log.warning("nudge delivery to %s failed: %s", state.chat_id, exc)
-                    memory.record_nudge(state.user_id, state.chat_id, "failed",
-                                        "delivery_error", decision.kind,
-                                        state.problem_key, str(exc)[:300])
-                    continue
-            memory.record_nudge(state.user_id, state.chat_id,
-                                "dry-run" if dry_run else "fired", "", decision.kind,
-                                state.problem_key, decision.text[:500])
-        else:
-            memory.record_nudge(state.user_id, state.chat_id, "silent",
-                                decision.reason, "", state.problem_key, decision.detail)
+        final = await sweep_graph.run(link, channel, now, dry_run)
+        outcomes.append((final["learner"].user_id, final["decision"]))
 
     return outcomes
 

@@ -238,22 +238,25 @@ def latest_report() -> tuple[str, str] | None:
 # ----------------------------------------------------------------- the job
 
 def run_once(limit: int = 25) -> str | None:
+    """One pass: grade the backlog, analyse it, write the report.
+
+    The pass itself is a graph (`graphs/monitor.py`) — a cycle over the ungraded
+    runs, then the two aggregate stages. This is its entry point, unchanged so
+    that `python -m backend.monitor`, the admin's `run_monitor` tool and the
+    demo endpoint all keep working the way they did.
+    """
+    # imported here rather than at module scope: the graph's nodes call grade(),
+    # analyse() and write_report() in this module, so eager import is a cycle
+    from .graphs import monitor as monitor_graph
+
     memory.init()
-    pending = memory.ungraded_runs(limit)
-    log.info("monitor: %d ungraded run(s)", len(pending))
+    final = monitor_graph.run(limit)
 
-    graded = 0
-    for run in pending:
-        if grade(run) is not None:
-            graded += 1
-
-    judged = memory.judgments(limit=200)
-    if not judged:
+    path = final.get("report_path")
+    if not path:
         log.info("monitor: nothing judged yet, no report written")
         return None
-
-    path = write_report(judged, analyse(judged), graded)
-    log.info("monitor: wrote %s", path)
+    log.info("monitor: graded %d run(s), wrote %s", final.get("graded", 0), path)
     return path
 
 

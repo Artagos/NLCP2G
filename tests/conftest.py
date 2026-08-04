@@ -24,13 +24,23 @@ import pytest  # noqa: E402
 
 @pytest.fixture(autouse=True)
 def fresh_db():
-    """Each test starts from an empty schema."""
+    """Each test starts from an empty schema.
+
+    The turn graph's checkpointer keeps its own connection to this same file, so
+    it has to be closed before the file is removed — on Windows an open handle
+    makes the delete fail outright, and on POSIX it would quietly keep writing
+    to an unlinked inode.
+    """
     from backend import memory
+    from backend.graphs import turn
+
+    turn.reset()
     db = os.environ["CP_TUTOR_DB"]
     if os.path.exists(db):
         os.remove(db)
     memory.init()
     yield
+    turn.reset()
     shutil.rmtree(os.environ["CP_TUTOR_DOCSTORE"], ignore_errors=True)
 
 

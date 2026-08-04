@@ -13,6 +13,12 @@ Steps:
   3. The sandbox compiles & runs it against the test suite.
   4. The LLM phrases the verdict facts conversationally, under strict no-hints rules.
 
+Steps 1–2 and their cycle are a compiled graph — `graphs/solution.py` — and this
+module is the seam around it: `build_program` runs the graph and hands back a
+`BuildResult`, `finish_run` turns a completed sandbox run into a reply. The
+split is what lets the two callers differ: the web UI runs the program inline,
+while a chat channel hands it to a worker and reports back by webhook.
+
 Step 4 only ever sees the deterministic verdict facts we hand it — never a
 license to invent strategy advice.
 """
@@ -20,11 +26,11 @@ from __future__ import annotations
 
 from pydantic import BaseModel
 
-from . import critic, memory, rules, screener
+from . import memory, rules
 from .llm import generate, generate_structured
 from .problem import Problem
-from .prompts import (executor_revision_note, translator_codegen_system,
-                      with_pushed, VERDICT_EXPLAINER_SYSTEM)
+from .prompts import (translator_codegen_system, with_pushed,
+                      VERDICT_EXPLAINER_SYSTEM)
 from .sandbox import RunResult, run_cpp
 
 
@@ -227,101 +233,50 @@ def finish_run(approach_summary: str, cpp_source: str, run: RunResult,
 
 def build_program(problem: Problem, described_approach: str,
                   run_id: str | None = None) -> BuildResult:
-    # Pre-screen: is the described solution even possible/feasible? (Blind to the
-    # problem — same clean context as codegen.) Runs before any code is written.
-    verdict = screener.screen(problem, described_approach)
-    _scratch(run_id, "screener", 0, "feasible" if verdict.feasible else "infeasible",
-             {"issue": verdict.issue})
-    if not verdict.feasible:
-        return BuildResult(ready=False, outcome=TranslationOutcome(
-            reply=_infeasible_reply(verdict.issue or
-                                    "The described solution can't be carried out as stated."),
-            cpp_source="",
-            verdict="INFEASIBLE",
-            approach_summary="",
-        ))
+    """Run the blind pipeline and report what came out of it.
 
-    # ---- Executor <-> Critic loop, capped at critic.MAX_ROUNDS ----
-    program: GeneratedProgram | None = None
-    handoff: critic.Handoff | None = None
-    revision = ""
-    rounds = 0
-    # every violation raised across all rounds, including ones later fixed — a
-    # caught-and-corrected C1 is exactly what the monitor needs to see
-    violations: list[str] = []
+    The screener, the executor⇄critic cycle and the round budget are a compiled
+    graph (`graphs/solution.py`). This function is its entry point: it exists so
+    that everything upstream — the turn graph, the deferred chat path, the tests
+    — still deals in a `BuildResult` and does not need to know there is a graph
+    down there at all.
+    """
+    # imported here rather than at module scope: the graph's nodes call back
+    # into this module (`translator._generate_cpp`, the reply builders), and
+    # importing it eagerly would be a cycle
+    from .graphs import solution as solution_graph
 
-    for rounds in range(1, critic.MAX_ROUNDS + 1):
-        program = _generate_cpp(problem, described_approach, revision)
-        _scratch(run_id, "executor", rounds,
-                 "generated" if program.can_implement else "gated",
-                 {"approach_summary": program.approach_summary,
-                  "blocking_issue": program.blocking_issue,
-                  "source_len": len(program.cpp_source)})
+    final = solution_graph.run(problem, described_approach, run_id)
+    violations = final.get("violations") or []
+    rounds = final.get("rounds", 0)
+    status = final.get("critic_status", "")
 
-        # Gate: the description wasn't implementable — specific feedback, no run.
-        if not program.can_implement:
-            return BuildResult(ready=False, critic_status="not_reached",
-                               critic_rounds=rounds, outcome=TranslationOutcome(
-                reply=_gate_reply(program.blocking_issue or
-                                  "The described steps were too ambiguous to implement."),
-                cpp_source="",
-                verdict="UNCLEAR",
-                approach_summary="",
-                critic_status="not_reached",
-                critic_rounds=rounds,
-            ))
-
-        handoff = critic.review(problem, described_approach, program.cpp_source,
-                                program.approach_summary)
-        _scratch(run_id, "critic", rounds, handoff.status,
-                 {"result": handoff.result, "confidence": handoff.confidence,
-                  "violations": [v.model_dump() for v in handoff.violations]})
-        violations += [f"{v.rule}: {v.why}".strip(": ") for v in handoff.violations]
-
-        # branch on the handoff fields, not on prose
-        if handoff.status == "approved":
-            break
-        if handoff.needs_approval:                      # escalate -> ask the learner
-            break
-        revision = executor_revision_note(critic.fix_list(handoff), rounds + 1)
-
-    assert program is not None and handoff is not None
-
-    # Budget spent and still not faithful: escalate rather than loop or ship it.
-    if handoff.status == "revise":
-        handoff = critic.Handoff(
-            status="escalate", needs_approval=True, confidence=handoff.confidence,
-            result=(
-                "After two attempts I still couldn't produce a program that "
-                "matches your description without adding steps of my own. The "
-                "part I keep having to invent is:\n\n"
-                + critic.fix_list(handoff)
-                + "\n\nCould you spell that part out?"),
-        )
-        _scratch(run_id, "critic", rounds, "escalate", {"reason": "round budget exhausted"})
-
-    if handoff.needs_approval:
-        return BuildResult(ready=False, critic_status="escalate", critic_rounds=rounds,
-                           violations=violations, outcome=TranslationOutcome(
-            reply=_escalation_reply(handoff.result or
-                                    "Part of the approach wasn't specified."),
-            cpp_source=program.cpp_source,
-            verdict="NEEDS_CLARIFICATION",
-            approach_summary=program.approach_summary,
-            critic_status="escalate",
+    if final.get("ready"):
+        return BuildResult(
+            ready=True,
+            cpp_source=final.get("cpp_source", ""),
+            approach_summary=final.get("approach_summary", ""),
+            critic_status=status,
             critic_rounds=rounds,
             violations=violations,
-        ))
+        )
 
-    # Approved and faithful. Nothing has been executed yet — the caller decides
-    # whether to run it here and now, or hand it to a worker.
+    # One of the three exits that never runs anything: infeasible, unclear, or
+    # the critic asking the learner a question.
     return BuildResult(
-        ready=True,
-        cpp_source=program.cpp_source,
-        approach_summary=program.approach_summary,
-        critic_status=handoff.status,
+        ready=False,
+        critic_status=status,
         critic_rounds=rounds,
         violations=violations,
+        outcome=TranslationOutcome(
+            reply=final.get("reply", ""),
+            cpp_source=final.get("cpp_source", ""),
+            verdict=final.get("verdict", ""),
+            approach_summary=final.get("approach_summary", ""),
+            critic_status=status,
+            critic_rounds=rounds,
+            violations=violations,
+        ),
     )
 
 

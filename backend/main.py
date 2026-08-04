@@ -38,10 +38,9 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from . import (docstore, hooks, memory, monitor, outbound, reflect, router, rules,
-               state, summarizer, translator, tutor)
+from . import docstore, hooks, memory, monitor, outbound, reflect, rules, state
+from .graphs import turn
 from .problem import Problem
-from .prompts import REFUSAL_MESSAGE
 
 app = FastAPI(title="NLCP2G")
 log = logging.getLogger("cp_tutor.main")
@@ -97,17 +96,9 @@ class NoteRequest(BaseModel):
 
 
 def _summary(p: Problem) -> dict:
-    # every problem the system serves also lands in the relational catalogue,
-    # so it can be queried by rating and tag later
-    key = p.url or "fallback"
-    memory.upsert_problem(key, p.name, p.rating, p.tags, p.url, p.source,
-                          p.time_limit_ms, p.memory_limit_mb, len(p.tests))
-    return {
-        "key": key,
-        "name": p.name, "statement": p.statement, "statement_html": p.statement_html,
-        "tags": p.tags, "url": p.url, "rating": p.rating, "source": p.source,
-        "time_limit_ms": p.time_limit_ms, "num_sample_tests": len(p.tests),
-    }
+    # shared with the turn graph, which reports the same shape in the meta of a
+    # new_problem turn — see state.summary
+    return state.summary(p)
 
 
 # ------------------------------------------------------------------ identity
@@ -318,139 +309,26 @@ def chat(request: Request, req: ChatRequest) -> ChatResponse:
     return resp
 
 
-def _summarize_current(sid: str) -> ChatResponse:
-    prob = state.current(sid)
-    key = prob.url or "fallback"
-    if not memory.has_activity(sid, key):
-        return ChatResponse(
-            intent="summarize",
-            reply=("There's nothing to summarize on this problem yet — describe an "
-                   "approach and I'll run it, or ask me a concept question first."),
-            meta={},
-        )
-    recap = summarizer.summarize(
-        prob, memory.attempts_for(sid, key), memory.concept_questions_for(sid, key))
-    memory.save_summary(sid, key, prob.name, recap)
-    return ChatResponse(intent="summarize", reply=recap, meta={"recap": recap})
-
-
 def _handle(sid: str, uid: str, message: str, run_id: str,
             defer: dict | None = None, routed=None) -> ChatResponse:
     """Route one message and produce a reply.
 
+    The routing, the guardrail branch, the tutor and the blind solution pipeline
+    are all a compiled LangGraph (`graphs/turn.py`), checkpointed per learner.
+    This function is the boundary between that and the HTTP layer: it takes the
+    same arguments it always did and returns the same `ChatResponse`, which is
+    why `bot.py` and the whole Telegram path needed no changes.
+
     `routed` lets a caller that already classified the message (the bot, which
     needs the intent before deciding how to queue) avoid a second router call.
     `defer` is set when the sandbox run must be handed to a worker instead of
-    executed inline — see the solution branch.
+    executed inline.
     """
-    routed = routed or router.route(message)
-    prob = state.current(sid)
-
-    if routed.intent == "summarize":
-        return _summarize_current(sid)
-
-    if routed.intent == "new_problem":
-        # auto-summarize the problem being left, if there was any activity on it
-        old_key = prob.url or "fallback"
-        recap = None
-        if memory.has_activity(sid, old_key):
-            recap = summarizer.summarize(
-                prob, memory.attempts_for(sid, old_key),
-                memory.concept_questions_for(sid, old_key))
-            memory.save_summary(sid, old_key, prob.name, recap)
-
-        delta = max(-500, min(500, routed.rating_delta or 0))
-        new_prob = state.load_new(sid, delta)
-        label = "a harder problem" if delta > 0 else \
-                "an easier problem" if delta < 0 else "a new problem"
-        rating = f" (rating {new_prob.rating})" if new_prob.rating else ""
-        announce = (f"Here's {label}: {new_prob.name}{rating}. It's shown on the "
-                    "left. Read it, then describe how you'd solve it and I'll build "
-                    "and run your approach — or ask me about any general concept.")
-        reply = (f"Recap of {prob.name}:\n{recap}\n\n{announce}") if recap else announce
-        return ChatResponse(
-            intent="new_problem",
-            reply=reply,
-            meta={"problem": _summary(new_prob), "rating_delta": delta,
-                  "recap": recap, "reason": routed.reason},
-        )
-
-    if routed.intent == "strategy":
-        return ChatResponse(intent="strategy", reply=REFUSAL_MESSAGE,
-                            meta={"reason": routed.reason, "rules_applied": rules.ids()})
-
-    # `concept` (general CS) and `meta` (about the learner, or about what other
-    # learners wrote) both go to the tutor — it is the only agent holding the
-    # retrieval tools, so anything needing memory or notes has to arrive here.
-    if routed.intent in ("concept", "meta"):
-        answer = tutor.answer(prob, message, memory.tutor_history(sid),
-                              user_id=uid, problem_key=prob.url or "fallback")
-        return ChatResponse(
-            intent=routed.intent, reply=answer.reply,
-            meta={"reason": routed.reason, "rules_applied": answer.rules_applied,
-                  "facts_used": answer.facts_used, "notes_seen": answer.notes_seen,
-                  "tools_called": answer.tools_called},
-        )
-
-    if routed.intent == "solution":
-        # Over a chat channel the sandbox run is deferred: `defer` carries the
-        # channel and chat to report back to, the program is handed to a worker,
-        # and the verdict arrives later through /hooks/run-complete. The web UI
-        # passes defer=None and runs inline, as before.
-        if defer is not None:
-            built = translator.build_program(prob, message, run_id=run_id)
-            if not built.ready:
-                outcome = built.outcome
-                n = memory.record_attempt(sid, prob.url or "fallback", prob.name,
-                                          prob.rating, message, outcome.verdict)
-                return ChatResponse(
-                    intent="solution", reply=outcome.reply,
-                    meta={"verdict": outcome.verdict, "attempt_number": n,
-                          "critic_status": outcome.critic_status,
-                          "critic_rounds": outcome.critic_rounds},
-                )
-            job_id = memory.enqueue_job(
-                run_id=run_id, user_id=uid, channel=defer["channel"],
-                chat_id=defer["chat_id"], problem_key=prob.url or "fallback",
-                described_approach=message, approach_summary=built.approach_summary,
-                cpp_source=built.cpp_source, critic_status=built.critic_status,
-                critic_rounds=built.critic_rounds, violations=built.violations,
-            )
-            return ChatResponse(
-                intent="solution",
-                reply=("Built it, and a fidelity check passed. It's queued to run "
-                       "against the tests now — I'll message you the moment there's "
-                       "a verdict. You don't need to wait here."),
-                meta={"verdict": "QUEUED", "job_id": job_id,
-                      "critic_status": built.critic_status,
-                      "critic_rounds": built.critic_rounds,
-                      "violations": built.violations},
-            )
-
-        outcome = translator.translate_and_run(prob, message, run_id=run_id)
-        n = memory.record_attempt(sid, prob.url or "fallback", prob.name,
-                                  prob.rating, message, outcome.verdict)
-        return ChatResponse(
-            intent="solution",
-            reply=outcome.reply,
-            meta={
-                "verdict": outcome.verdict,
-                "attempt_number": n,
-                "approach_summary": outcome.approach_summary,
-                "cpp_source": outcome.cpp_source,
-                "critic_status": outcome.critic_status,
-                "critic_rounds": outcome.critic_rounds,
-                "violations": outcome.violations,
-                "handoffs": memory.scratch_for(run_id),
-            },
-        )
-
+    final = turn.run(sid, uid, message, run_id, defer=defer, routed=routed)
     return ChatResponse(
-        intent="chitchat",
-        reply=("Hi! Describe the solution you have in mind for the problem on the "
-               "left and I'll run it, ask me to explain any general programming "
-               "concept, or say 'give me another problem' to switch."),
-        meta={"reason": routed.reason},
+        intent=final.get("intent") or "chitchat",
+        reply=final.get("reply") or "",
+        meta=final.get("meta") or {},
     )
 
 

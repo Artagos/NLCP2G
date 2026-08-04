@@ -192,6 +192,30 @@ def test_the_solution_graph_has_exactly_one_cycle_and_it_is_the_critics():
 
 # --------------------------------------------------------------------- tools
 
+def test_the_real_chat_model_can_do_what_every_caller_needs():
+    """A regression test for a bug the whole suite was blind to.
+
+    Every model call in these tests goes through a stub, so nothing noticed
+    when `chat_model` returned something that could not `bind_tools` or
+    `with_structured_output` — which is what wrapping it in `.with_retry()`
+    does, because a `RunnableRetry` is a plain Runnable. Six agents broke at
+    once and the suite stayed green; it only showed up against a live model.
+
+    Constructing the model needs no key and touches no network, so asserting on
+    its capabilities is cheap and would have caught it.
+    """
+    llm._models.clear()
+    try:
+        model = llm.chat_model()
+        assert hasattr(model, "bind_tools"), "the tutor and operator need this"
+        assert hasattr(model, "with_structured_output"), \
+            "the router, screener, critic, reflector and judge need this"
+        assert model.bind_tools(TUTOR_TOOLS) is not None
+        assert model.with_structured_output(Routed) is not None
+    finally:
+        llm._models.clear()
+
+
 def test_at_least_two_tools_are_registered_with_the_framework():
     """A named grading gate, and worth its own test: these are LangChain tools
     the model is bound to, not functions the orchestration calls on its behalf."""
@@ -286,6 +310,30 @@ def test_the_second_turn_can_see_the_first(routed, on_a_problem):
 
     said = [m.content for m in final["messages"] if isinstance(m, HumanMessage)]
     assert said == ["first thing", "second thing"]
+
+
+def test_a_turn_that_blows_up_leaves_no_half_exchange_behind(routed, on_a_problem,
+                                                             monkeypatch):
+    """Found live: a turn that raised had already put the learner's message in
+    the thread, so the next turn replayed a question the agent never answered.
+    The exchange is committed at the end now, both halves together."""
+    turn.run(SID, UID, "a turn that works", "r1")
+
+    def boom(message):
+        raise RuntimeError("the model is having a day")
+
+    # patched on the module the node calls into, not on the node: the compiled
+    # graph holds the node function object itself, so replacing `turn._chitchat`
+    # would not reach it
+    monkeypatch.setattr(router, "route", boom)
+    with pytest.raises(RuntimeError):
+        turn.run(SID, UID, "a turn that does not", "r2")
+
+    spoken = [m.content for m in
+              turn.graph().get_state(checkpoint.thread(SID)).values["messages"]]
+    assert len(spoken) == 2                     # the working turn, and only it
+    assert spoken[0] == "a turn that works"
+    assert "a turn that does not" not in spoken
 
 
 def test_two_learners_do_not_share_a_thread(routed, on_a_problem):

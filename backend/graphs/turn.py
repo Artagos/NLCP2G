@@ -141,16 +141,17 @@ def _history(state: TurnState) -> list[dict]:
     """Prior conversation for the tutor, from the checkpoint.
 
     The checkpointed thread is the live conversation, so this is what makes the
-    checkpointer load-bearing rather than decorative. It falls back to the
-    relational store when the thread is empty — a learner whose account predates
-    this graph, or one whose checkpoints were cleared, should not lose their
-    history — and it is trimmed, because the thread is unbounded and a context
-    window is not.
+    checkpointer load-bearing rather than decorative. It holds completed turns
+    only (see `_respond`), so everything in it is prior context — this turn's
+    own message is passed to the tutor separately.
+
+    Falls back to the relational store when the thread is empty: a learner whose
+    account predates this graph, or whose checkpoints were cleared, should not
+    lose their history. Trimmed either way, because the thread is unbounded and
+    a context window is not.
     """
-    messages = [m for m in (state.get("messages") or [])
-                if isinstance(m, (HumanMessage, AIMessage))]
-    # the last entry is this turn's own message; the tutor gets it separately
-    prior = messages[:-1]
+    prior = [m for m in (state.get("messages") or [])
+             if isinstance(m, (HumanMessage, AIMessage))]
     if not prior:
         return memory.tutor_history(state["sid"])[-checkpoint.HISTORY_WINDOW:]
     return [{"role": "assistant" if isinstance(m, AIMessage) else "user",
@@ -241,13 +242,19 @@ def _verdict(state: TurnState) -> dict:
 # ------------------------------------------------------------------- the end
 
 def _respond(state: TurnState) -> dict:
-    """Append the answer to the conversation.
+    """Commit the exchange to the conversation — the question *and* the answer.
 
-    Every branch lands here, which is what makes the checkpointed thread a real
-    transcript rather than a record of whichever paths happened to remember to
-    write to it.
+    Both are written here, at the end, rather than the question being seeded at
+    the start. A turn that raises partway (an overloaded model, a sandbox that
+    will not start) then leaves the thread untouched instead of a question with
+    no answer, which the next turn would replay at the model as if it had been
+    ignored. The thread holds completed turns only.
+
+    Every branch lands here, which is what makes it a real transcript rather
+    than a record of whichever paths remembered to write to it.
     """
-    return {"messages": [AIMessage(content=state.get("reply") or "")]}
+    return {"messages": [HumanMessage(content=state["message"]),
+                         AIMessage(content=state.get("reply") or "")]}
 
 
 # ---------------------------------------------------------------- the wiring
@@ -320,6 +327,9 @@ def run(sid: str, uid: str, message: str, run_id: str,
         "ready": False, "cpp_source": "", "approach_summary": "",
         "critic_status": "", "critic_rounds": 0, "violations": [],
         "reply": "", "verdict": "", "meta": {},
-        "messages": [HumanMessage(content=message)],
+        # deliberately NOT seeded with this turn's message: `_respond` commits
+        # the question and the answer together, so a turn that fails partway
+        # leaves no half-exchange behind
+        "messages": [],
     }
     return graph().invoke(seed, checkpoint.thread(sid))

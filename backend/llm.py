@@ -37,54 +37,36 @@ ROUTER_MODEL = os.environ.get("CP_TUTOR_ROUTER_MODEL", "gemini-2.5-flash-lite")
 MAIN_MODEL = os.environ.get("CP_TUTOR_MAIN_MODEL", "gemini-2.5-flash")
 
 # Transient failures worth retrying: overloaded, rate-limited, server errors.
-# LangChain surfaces provider errors through the google-api-core exception
-# hierarchy, so retry on the transport exceptions rather than parsing codes.
-_MAX_ATTEMPTS = 4
+# The free tier throttles hard, and a 503 should cost a second, not a turn.
+MAX_ATTEMPTS = 4
 
 T = TypeVar("T", bound=BaseModel)
 
 _models: dict[str, BaseChatModel] = {}
 
 
-def _retryable() -> tuple[type[BaseException], ...]:
-    """The exception types worth another attempt.
-
-    Imported lazily and defensively: google-api-core is a transitive dependency
-    of the Gemini integration, and a retry policy is not worth an import error
-    at module scope if that ever stops being true.
-    """
-    try:
-        from google.api_core import exceptions as gexc
-        return (gexc.ResourceExhausted,      # 429
-                gexc.ServiceUnavailable,     # 503, the common one on free tier
-                gexc.InternalServerError,    # 500
-                gexc.DeadlineExceeded,
-                gexc.Aborted)
-    except Exception:                        # pragma: no cover
-        return (ConnectionError, TimeoutError)
-
-
 def chat_model(model: str = MAIN_MODEL, **kwargs) -> BaseChatModel:
-    """A retrying chat model, memoised per (model, kwargs).
+    """The chat model, memoised per (model, kwargs).
 
     Lazy so the package still imports without a key present (tests, CI): nothing
     here touches the network or validates credentials until something invokes it.
+
+    Retries are the integration's own (`max_retries`), which backs off on the
+    google-api-core transient errors — 429, 500, 503. That is deliberate and it
+    is *not* the same as wrapping this in `.with_retry()`: a `RunnableRetry` is
+    a plain Runnable, so it has neither `bind_tools` nor
+    `with_structured_output`, and every caller in this system needs one or the
+    other. Wrapping here would break the tutor, the operator, the router, the
+    critic and the judge simultaneously, and no stubbed test would notice.
     """
     cache_key = model + repr(sorted(kwargs.items()))
     if cache_key not in _models:
         api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
-        llm = ChatGoogleGenerativeAI(
+        _models[cache_key] = ChatGoogleGenerativeAI(
             model=model,
             google_api_key=api_key,
-            # the free tier throttles hard; let LangChain hold the line rather
-            # than surfacing a 429 as a broken turn
-            max_retries=0,          # we own the retry policy, below
+            max_retries=MAX_ATTEMPTS,
             **kwargs,
-        )
-        _models[cache_key] = llm.with_retry(
-            retry_if_exception_type=_retryable(),
-            stop_after_attempt=_MAX_ATTEMPTS,
-            wait_exponential_jitter=True,
         )
     return _models[cache_key]
 

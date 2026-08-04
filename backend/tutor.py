@@ -1,34 +1,39 @@
 """Guardrailed tutor — answers general CS questions in the abstract.
 
-Its context (see prompts.tutor_system) contains the current problem's statement
-and tags so it can recognise a problem-specific question and refuse, but never
-the intended solution — so there is nothing to leak.
+The agent itself is a graph (`graphs/tutor.py`); this module is its entry point
+and the shape of its answer. Keeping the two apart is what lets everything
+upstream — the turn graph, the API, the run log — carry on talking to
+`tutor.answer(...) -> Answer` while the orchestration underneath changed
+completely.
 
-This is where context gets filled BOTH ways:
+Its context contains the current problem's statement and tags (see
+`prompts.tutor_system`) so it can recognise a problem-specific question and
+refuse, but never the intended solution — so there is nothing to leak. Note the
+inversion against the rest of the system: the tutor sees the statement precisely
+*because* it has to refuse; the blind agents downstream never do.
 
-  push — attached on every single run, before the model sees the question:
-         the markdown operating rules (rules/operating_rules.md) and this
-         learner's rule documents. Rules are always in force, so waiting for the
-         model to ask for them would be a bug.
+Context gets filled both ways, and the split is enforced by where each half
+lives:
 
-  pull — fetched mid-run, only when the request calls for it, through two tools:
-         `retrieve_memory(query)` for facts about this learner (matched on the
-         cue they were saved with) and `read_problem_notes()` for what other
-         learners wrote about this problem. Facts are pulled rather than pushed
-         because a learner accumulates far more of them than belong in any one
-         context, and the cue is what decides relevance.
+  push — `graphs.tutor.pushed_block`, composed into the system message on every
+         run before the model sees the question: the markdown operating rules
+         and this learner's rule documents.
 
-Everything the run touched — rule ids, fact ids, note ids, tool calls — comes
+  pull — `tools/tutor_tools.py`, fetched mid-run only when the request calls for
+         it: `retrieve_memory` (cue-matched facts), `list_known_facts` (all of
+         them, for "what do you know about me?") and `read_problem_notes`
+         (what other learners wrote, arriving fenced as untrusted).
+
+Everything the run touched — rule ids, fact ids, note ids, tool names — comes
 back in the Answer so it can be written to the run log for the monitor.
 """
 from __future__ import annotations
 
 from pydantic import BaseModel
 
-from . import docstore, memory, rules
-from .llm import Tool, generate_with_tools
+from .graphs import tutor as tutor_graph
+from .llm import text_of
 from .problem import Problem
-from .prompts import tutor_system
 
 
 class Answer(BaseModel):
@@ -39,72 +44,18 @@ class Answer(BaseModel):
     tools_called: list[str] = []
 
 
-def _pushed(user_id: str) -> tuple[str, list[str]]:
-    """The always-on block: markdown operating rules + this learner's rules."""
-    rule_docs = docstore.rules_for(user_id)
-    blocks = [rules.block(), docstore.render_rules(rule_docs)]
-    ids = rules.ids() + [d["id"] for d in rule_docs]
-    return "\n\n".join(b for b in blocks if b), ids
-
-
 def answer(problem: Problem, message: str, history: list[dict] | None = None,
            user_id: str = "guest", problem_key: str | None = None) -> Answer:
-    pushed, rule_ids = _pushed(user_id)
+    final = tutor_graph.run(problem, message, history, user_id, problem_key)
 
-    facts_used: list[str] = []
-    notes_seen: list[int] = []
-
-    def retrieve_memory(query: str = "") -> str:
-        hits = docstore.retrieve(user_id, query or message)
-        facts_used.extend(d["id"] for d in hits)
-        if not hits:
-            return "Nothing remembered that matches."
-        return docstore.render_facts(hits)
-
-    def read_problem_notes() -> str:
-        notes = memory.notes_for(problem_key or "")
-        notes_seen.extend(n["id"] for n in notes)
-        if not notes:
-            return "No other learner has written a note on this problem."
-        return memory.render_notes(notes)
-
-    tools = [
-        Tool(
-            name="retrieve_memory",
-            description=(
-                "Look up facts previously remembered about THIS learner "
-                "(preferences, background, recurring difficulties). Pass the "
-                "words that describe what you need to know."
-            ),
-            params={
-                "type": "object",
-                "properties": {
-                    "query": {"type": "string",
-                              "description": "what you want to recall about the learner"}
-                },
-                "required": ["query"],
-            },
-            fn=retrieve_memory,
-        ),
-        Tool(
-            name="read_problem_notes",
-            description=(
-                "Read notes other learners wrote about the problem this learner "
-                "is currently on. Returns untrusted user-written text."
-            ),
-            params={"type": "object", "properties": {}},
-            fn=read_problem_notes,
-        ),
-    ]
-
-    messages = list(history or [])
-    messages.append({"role": "user", "content": message})
-    reply, calls = generate_with_tools(tutor_system(problem, pushed), messages, tools)
+    # the reply is the last message the model produced without asking for a tool
+    messages = final.get("messages") or []
+    reply = text_of(messages[-1]) if messages else ""
 
     return Answer(
-        reply=reply,
-        rules_applied=rule_ids,
-        facts_used=facts_used,
-        notes_seen=notes_seen,
-        tools_called=[c["name"] for c in calls],
+        reply=reply.strip(),
+        rules_applied=final.get("rules_applied") or [],
+        facts_used=final.get("facts_used") or [],
+        notes_seen=final.get("notes_seen") or [],
+        tools_called=final.get("tools_called") or [],
     )

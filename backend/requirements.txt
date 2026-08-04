@@ -1,4 +1,15 @@
-google-genai>=1.0.0
+# Orchestration. Every agent in this system is a compiled LangGraph; every tool
+# the models can reach is registered through LangChain's tool interface.
+# Majors are pinned: langgraph 1.x and langchain-core 1.x moved several of the
+# APIs used here (ToolNode, tools_condition, with_structured_output), so an
+# unbounded floor would let a future 2.x break the build silently.
+langgraph>=1.2,<2
+langchain-core>=1.5,<2
+# the Gemini chat model behind every node (free tier, GEMINI_API_KEY)
+langchain-google-genai>=4.3,<5
+# durable graph state: conversations resume after a restart (see graphs/checkpoint.py)
+langgraph-checkpoint-sqlite>=3.1,<4
+
 fastapi>=0.110.0
 uvicorn[standard]>=0.29.0
 pydantic>=2.6.0

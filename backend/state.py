@@ -25,6 +25,27 @@ def _key(p: Problem) -> str:
     return p.url or "fallback"
 
 
+def summary(p: Problem) -> dict:
+    """The problem as the API and the chat meta report it.
+
+    Lives here rather than in main.py because the turn graph needs it too, and
+    a graph node importing the FastAPI module to borrow a helper would be a
+    cycle waiting to happen.
+
+    Every problem the system serves also lands in the relational catalogue on
+    the way past, so it can be queried by rating and tag later.
+    """
+    key = _key(p)
+    memory.upsert_problem(key, p.name, p.rating, p.tags, p.url, p.source,
+                          p.time_limit_ms, p.memory_limit_mb, len(p.tests))
+    return {
+        "key": key,
+        "name": p.name, "statement": p.statement, "statement_html": p.statement_html,
+        "tags": p.tags, "url": p.url, "rating": p.rating, "source": p.source,
+        "time_limit_ms": p.time_limit_ms, "num_sample_tests": len(p.tests),
+    }
+
+
 def _band(sid: str) -> tuple[int, int]:
     """Default difficulty band for the next problem, from what they've solved."""
     solved = memory.solved_ratings(sid)

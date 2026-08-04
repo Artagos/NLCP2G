@@ -46,8 +46,17 @@ def _merge_unique(left: Sequence[Any] | None, right: Sequence[Any] | None) -> li
 class TurnState(TypedDict, total=False):
     """One learner message, from routing to reply.
 
-    `total=False` throughout: nodes return partial updates, and requiring every
-    key on every return would be noise with no safety gained.
+    This is the only state in the system that is checkpointed, and that shapes
+    it. Every field here except `messages` is *per-turn* and is overwritten by
+    the input on each invocation; `messages` is the one thing that accumulates,
+    because it is the conversation and the conversation is what resumes.
+
+    Accumulating fields deliberately do NOT live here. `facts_used`,
+    `notes_seen`, `tools_called` and `violations` belong to the tutor and
+    solution graphs, which are not checkpointed and start clean every turn. Put
+    a reducer-backed list in a checkpointed state and it merges with last turn's
+    values, so the run log would slowly claim the agent had pulled every memory
+    it had ever pulled. They come back through `meta` instead.
     """
 
     # --- who and what -------------------------------------------------------
@@ -69,19 +78,18 @@ class TurnState(TypedDict, total=False):
     # Set when the sandbox run must be handed to a worker rather than executed
     # inline: {"channel": ..., "chat_id": ...}. None on the web path.
     defer: dict | None
+    # What the blind pipeline produced, carried from `build` to whichever node
+    # runs it. Plain fields with no reducer, overwritten by the seed each turn:
+    # a program is a kilobyte or so, which is a fine thing to checkpoint. A
+    # problem *statement* is not, which is why only the key is up there.
+    ready: bool
     cpp_source: str
     approach_summary: str
     critic_status: str
     critic_rounds: int
-    violations: Annotated[list[str], operator.add]
+    violations: list[str]
 
-    # --- what the tutor pulled, for the run log -----------------------------
-    rules_applied: list[str]                        # pushed, so no reducer
-    facts_used: Annotated[list[str], _merge_unique]
-    notes_seen: Annotated[list[int], _merge_unique]
-    tools_called: Annotated[list[str], _merge_unique]
-
-    # --- the tutor's conversation, and the answer ---------------------------
+    # --- the conversation, and the answer -----------------------------------
     messages: Annotated[list[AnyMessage], add_messages]
     reply: str
     verdict: str
@@ -146,9 +154,11 @@ class SolutionState(TypedDict, total=False):
     revision: str               # the critic's fix list, on a rebuild
     rounds: int
 
-    # critic
+    # critic. The Handoff object itself is kept, not flattened: the escalation
+    # message is rendered from it by critic.fix_list, and losing the structure
+    # here would mean re-deriving it from strings.
+    handoff: Any                # critic.Handoff — typed loosely to avoid a cycle
     critic_status: str          # approved | revise | escalate | not_reached
-    critic_result: str          # fix list, or the question to escalate with
     needs_approval: bool
     violations: Annotated[list[str], operator.add]
 

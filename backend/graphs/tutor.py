@@ -1,4 +1,4 @@
-"""The tutor as a graph: a model bound to three tools, cycling until it stops
+"""The tutor as a graph: a model bound to four tools, cycling until it stops
 asking for them.
 
     START -> tutor -> (tools -> tutor)* -> END
@@ -30,9 +30,16 @@ from ..prompts import tutor_system
 from ..tools.tutor_tools import TUTOR_TOOLS
 from .schema import TutorState
 
-# Tool calls per turn before we stop and answer with what we have. Three tools
-# exist; a model that has called more than four times is looping, not working.
-MAX_TOOL_ROUNDS = 4
+# Tool rounds per turn before we stop and answer with what we have.
+#
+# This was 4 when there were three tools. `search_corpus` makes it six, for a
+# reason worth writing down: a retrieval tool is the first one here that is
+# *expected* to be called twice. The first query is the learner's phrasing, and
+# when that comes back off-target the right behaviour is a second, sharper
+# search — not an answer built on the wrong passages. A cap that treated the
+# re-query as looping would have forbidden exactly the behaviour the tool is
+# for. Six still stops a genuine loop well before the learner notices.
+MAX_TOOL_ROUNDS = 6
 
 
 def pushed_block(user_id: str) -> tuple[str, list[str]]:

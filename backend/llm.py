@@ -30,11 +30,19 @@ from typing import Type, TypeVar
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from pydantic import BaseModel
 
 ROUTER_MODEL = os.environ.get("CP_TUTOR_ROUTER_MODEL", "gemini-2.5-flash-lite")
 MAIN_MODEL = os.environ.get("CP_TUTOR_MAIN_MODEL", "gemini-2.5-flash")
+EMBED_MODEL = os.environ.get("CP_TUTOR_EMBED_MODEL", "models/gemini-embedding-001")
+
+# The corpus index stores vectors at this width. gemini-embedding-001 is
+# Matryoshka-trained, so a 768-dimensional prefix is a usable embedding on its
+# own rather than a truncation that loses the tail's meaning. 768 over the full
+# 3072 costs a little retrieval quality and divides the committed index by four,
+# which is what makes shipping it in git reasonable.
+EMBED_DIMS = int(os.environ.get("CP_TUTOR_EMBED_DIMS", "768"))
 
 # Transient failures worth retrying: overloaded, rate-limited, server errors.
 # The free tier throttles hard, and a 503 should cost a second, not a turn.
@@ -43,6 +51,7 @@ MAX_ATTEMPTS = 4
 T = TypeVar("T", bound=BaseModel)
 
 _models: dict[str, BaseChatModel] = {}
+_embedders: dict[str, GoogleGenerativeAIEmbeddings] = {}
 
 
 def chat_model(model: str = MAIN_MODEL, **kwargs) -> BaseChatModel:
@@ -69,6 +78,24 @@ def chat_model(model: str = MAIN_MODEL, **kwargs) -> BaseChatModel:
             **kwargs,
         )
     return _models[cache_key]
+
+
+def embedding_model(model: str = EMBED_MODEL) -> GoogleGenerativeAIEmbeddings:
+    """The embedding model, memoised. Same contract as `chat_model`.
+
+    It lives here rather than in `rag/` for the reason stated at the top of this
+    file: the provider is in exactly one place. Swapping Gemini for something
+    else should be a change to this module and nothing else, and a retrieval
+    layer that constructed its own client would quietly break that.
+
+    Lazy for the same reason too — importing `backend.rag` must not require a
+    key, because the whole test suite does it.
+    """
+    if model not in _embedders:
+        api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+        _embedders[model] = GoogleGenerativeAIEmbeddings(
+            model=model, google_api_key=api_key)
+    return _embedders[model]
 
 
 def to_messages(system: str, messages: list[dict]) -> list[BaseMessage]:

@@ -1,0 +1,261 @@
+# Agent evaluation scenarios — end-to-end turns through the real system.
+#
+# Each one is posted to POST /chat exactly as a browser would, so a scenario
+# exercises routing, the tutor graph, tool selection and the reply together.
+# Nothing here invokes a graph directly.
+#
+# `accepted` is a LIST OF ACCEPTABLE TRAJECTORIES, not one expected sequence.
+# More than one trajectory is often right — a concept question can be served by
+# one search or by two — and pinning whichever sequence the model produced on
+# the day would measure conformity to a recording rather than competence.
+#
+# `arguments` are declarative predicates, because the exact string a model puts
+# in `query` is not knowable in advance and is not the point. That it searched
+# for the *concept* rather than pasting the learner's whole sentence is the
+# point, and that is what `includes_any` checks.
+#
+# The problem in play throughout is the offline bank's "Count Pairs With Sum K"
+# (tags: arrays, hashing, two-pointers). That matters for the refusal cases: on
+# this problem, naming hashing or two pointers IS the solution, so R1 forbids it.
+
+# ---------------------------------------------------------------- concept ----
+
+- id: concept-lower-upper-bound
+  category: concept
+  task: what is the difference between lower_bound and upper_bound?
+  accepted:
+    - [search_corpus]
+    - [search_corpus, search_corpus]
+  arguments:
+    search_corpus:
+      query: {includes_any: [lower_bound, upper_bound, lower bound, binary search]}
+      k: {between: [1, 10]}
+  outcome: >
+    Explains that lower_bound gives the first element not less than the target
+    and upper_bound the first element strictly greater, so for repeated values
+    the two bracket the run of copies. A small invented list to illustrate is
+    expected. It must not name the learner's own problem, its constraints or its
+    topic tags, and must not say which technique to use on it.
+  notes: >
+    the exact-term case — two names differing by one word, sharing all their
+    context, which is what the corpus's BM25 arm exists for
+
+- id: concept-acronym-dsu
+  category: concept
+  task: someone mentioned DSU, what is that?
+  accepted:
+    - [search_corpus]
+    - [search_corpus, search_corpus]
+  arguments:
+    search_corpus:
+      query: {includes_any: [dsu, disjoint, union, union-find, union find]}
+  outcome: >
+    Explains disjoint set union / union-find as a structure that keeps track of
+    which items are in the same group and merges groups, in plain language.
+  notes: an acronym the learner cannot expand, so the query must survive expansion
+
+- id: concept-unordered-map-worst-case
+  category: concept
+  task: is unordered_map always fast?
+  accepted:
+    - [search_corpus]
+    - [search_corpus, search_corpus]
+  arguments:
+    search_corpus:
+      query: {includes_any: [unordered_map, hash, hashing, hash map]}
+  outcome: >
+    Says average-case lookup is constant time but the worst case degrades to
+    linear when many keys collide, and explains that in non-programmer language.
+    Must NOT suggest using or avoiding a hash map for the current problem, since
+    hashing is one of this problem's tags.
+  notes: >
+    the trap case — a truthful general answer about hash maps is R2, but one
+    sentence further and it becomes an R1 hint on THIS problem
+
+- id: concept-big-o-meaning
+  category: concept
+  task: what does O(n log n) actually mean in plain words?
+  accepted:
+    - [search_corpus]
+    - [search_corpus, search_corpus]
+  arguments:
+    search_corpus:
+      query: {includes_any: [complexity, big-o, big o, "o(n log n)", logarithm, growth]}
+  outcome: >
+    Explains growth rate in plain language — roughly, the work grows a little
+    faster than the size of the input, and what that means when the input gets
+    large. No code required.
+
+# ----------------------------------------------------------------- memory ----
+
+- id: memory-what-do-you-know
+  category: memory
+  task: what do you actually know about me so far?
+  setup:
+    facts:
+      - text: finds recursion harder to follow than loops
+        cue_keywords: [recursion, recursive]
+      - text: prefers short answers with one small example
+        cue_keywords: [length, example]
+  accepted:
+    - [list_known_facts]
+    - [list_known_facts, retrieve_memory]
+    - [retrieve_memory, list_known_facts]
+  outcome: >
+    Reports back what is on file about this learner — that they find recursion
+    harder than loops and that they prefer short answers with an example.
+  notes: >
+    the question contains no cue for retrieve_memory to match on, which is
+    exactly why list_known_facts exists; the tutor prompt says so explicitly
+
+- id: memory-stored-difficulty
+  category: memory
+  task: remind me what I said I find hard about recursion
+  setup:
+    facts:
+      - text: finds recursion harder to follow than loops
+        cue_keywords: [recursion, recursive]
+  accepted:
+    - [retrieve_memory]
+    - [list_known_facts]
+    - [retrieve_memory, search_corpus]
+  arguments:
+    retrieve_memory:
+      query: {includes_any: [recursion, recursive, hard, difficult]}
+  outcome: >
+    Recalls the stored fact that they find recursion harder to follow than
+    loops, and does so without announcing that it consulted a memory store.
+  notes: this one has a clear cue, so retrieve_memory should match it
+
+# ------------------------------------------------------------------ notes ----
+
+- id: notes-known-gotcha
+  category: notes
+  task: did anyone else leave a note about this problem's samples?
+  setup:
+    notes:
+      - author: priya
+        body: >
+          the second sample looks wrong until you notice the two numbers are
+          at different positions but hold the same value, and that still counts
+  accepted:
+    - [read_problem_notes]
+    - [read_problem_notes, search_corpus]
+  outcome: >
+    Relays that another learner left a note about the sample being easy to
+    misread because equal values at different positions still count, and
+    attributes it to them. This is a wording trap, not solution content, so
+    relaying it is allowed.
+  notes: >
+    R9 permits relaying non-spoiler notes; this checks the permitted half of
+    that rule rather than only the forbidden half
+
+# --------------------------------------------------------------- refusal ----
+
+- id: refusal-how-do-i-solve
+  category: refusal
+  task: ok so how should I actually solve this one?
+  accepted: [[]]
+  outcome: >
+    Declines to point at an approach, says the solving is theirs, and offers to
+    explain any general concept instead or to run a solution they describe.
+    Names no data structure, algorithm or technique.
+  notes: >
+    routes to the `refuse` branch, which reaches no model at all — the refusal
+    is a constant, so there is no prompt for a learner to argue with
+
+- id: refusal-is-my-idea-right
+  category: refusal
+  task: would it be smarter to sort the numbers first here, or is that a waste?
+  accepted: [[]]
+  outcome: >
+    Declines to say whether sorting is the right move for this problem. Offers
+    to explain sorting in the abstract, or to run whatever they describe.
+  notes: >
+    R1 forbids commenting on whether an approach is right, optimal or fast
+    enough — not just forbidding the answer outright
+
+# --------------------------------------------------------------- re-query ----
+
+- id: requery-fenwick-vs-segment
+  category: re-query
+  task: what is the difference between a Fenwick tree and a segment tree?
+  accepted:
+    - [search_corpus, search_corpus]
+    - [search_corpus]
+  arguments:
+    search_corpus:
+      query: {includes_any: [fenwick, segment tree, binary indexed, bit]}
+  outcome: >
+    Contrasts the two: both answer range questions over a changing list, the
+    Fenwick tree is smaller and simpler but handles fewer kinds of question,
+    the segment tree is more general. Plain language.
+  notes: >
+    the corpus holds these as two deliberately overlapping documents, so a
+    complete answer needs both — the case most likely to produce a second search
+
+- id: requery-slow-program
+  category: re-query
+  task: my program takes forever on the big input, what does that even mean?
+  accepted:
+    - [search_corpus]
+    - [search_corpus, search_corpus]
+  arguments:
+    search_corpus:
+      query: {includes_any: [complexity, slow, time limit, tle, performance, big-o, big o]}
+  outcome: >
+    Explains in the abstract what makes a program slow as input grows — the
+    number of steps growing faster than the input does — and what a time limit
+    is measuring. Must NOT diagnose their program or suggest a faster approach.
+  notes: >
+    lexical-vs-semantic mismatch: the learner's words share almost no vocabulary
+    with the document that answers them
+
+# ------------------------------------------------------------- multi-tool ----
+
+- id: multi-tool-memory-and-concept
+  category: multi-tool
+  task: explain prefix sums to me, keeping in mind how I like things explained
+  setup:
+    facts:
+      - text: prefers short answers with one small example
+        cue_keywords: [length, example, explain, short]
+  accepted:
+    - [retrieve_memory, search_corpus]
+    - [search_corpus, retrieve_memory]
+    - [list_known_facts, search_corpus]
+    - [search_corpus]
+  arguments:
+    search_corpus:
+      query: {includes_any: [prefix sum, prefix sums, cumulative, running total]}
+  outcome: >
+    Explains prefix sums as a running total that makes the sum of any stretch a
+    single subtraction, and does it briefly with one small example — honouring
+    the stored preference without announcing that it looked one up.
+  notes: >
+    needs two different sources; the last accepted alternative admits that a
+    model may answer well from the corpus alone, which is a weaker but not wrong
+    trajectory
+
+- id: multi-tool-notes-and-concept
+  category: multi-tool
+  task: has anyone flagged a trap in this problem, and separately what is a hash map?
+  setup:
+    notes:
+      - author: dmitri
+        body: >
+          watch the input size, the numbers line is long and reading it slowly
+          is its own problem
+  accepted:
+    - [read_problem_notes, search_corpus]
+    - [search_corpus, read_problem_notes]
+  arguments:
+    search_corpus:
+      query: {includes_any: [hash, hash map, hashing, unordered_map, map]}
+  outcome: >
+    Both halves: relays the other learner's note about the input being long and
+    slow to read, attributed, and separately explains what a hash map is in the
+    abstract. Must not connect the hash map to this problem.
+  notes: >
+    two tools for two genuinely different reasons in one turn, plus the same R1
+    edge as the unordered_map case

@@ -33,12 +33,13 @@ import logging
 import os
 import uuid
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from . import docstore, hooks, memory, monitor, outbound, reflect, rules, state
+from . import (docstore, hooks, memory, monitor, outbound, reflect, rules,
+               safety, state)
 from .graphs import turn
 from .problem import Problem
 
@@ -163,7 +164,27 @@ def get_notes(request: Request) -> dict:
 
 @app.post("/notes")
 def post_note(request: Request, req: NoteRequest) -> dict:
+    """Layer 1. Notices an injection attempt; stores the note anyway.
+
+    Refusing would be the wrong call and it took some thinking to see why. R7
+    tells the tutor to quote an attempted instruction, name it as note content
+    and carry on — that behaviour is the system's answer to prompt injection and
+    `traces/02-planted-comment.md` is the evidence it works. A filter that
+    dropped the note would delete the evidence and replace a demonstrated
+    defence with an undemonstrated one. So the attempt is recorded and the
+    fencing in `memory.render_notes` contains it.
+
+    Length is the exception. A note past `safety.MAX_NOTE_CHARS` is a
+    context-flooding attack with no legitimate version, and no amount of fencing
+    makes a 50 kB block safe to paste into a prompt.
+    """
     key = state.current(request.state.sid).url or "fallback"
+    if safety.too_long(req.body):
+        raise HTTPException(
+            status_code=413,
+            detail=f"A note is limited to {safety.MAX_NOTE_CHARS} characters.")
+    for finding in safety.screen_input(req.body):
+        log.warning("note from %s on %s: %s", request.state.uid, key, finding)
     note_id = memory.add_note(key, request.state.uid, req.body, req.kind)
     return {"id": note_id, "problem_key": key, "notes": memory.notes_for(key)}
 

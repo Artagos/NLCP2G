@@ -577,8 +577,93 @@ position to be biased by; the judge is a different model from the generator; and
 prints the difference, which measures self-preference rather than asserting it
 is small.
 
+## 18. Tracing, agent evaluation, and the safety layers
+
+### 18.1 Tracing (`backend/tracing.py`)
+
+One module, soft-imported, no-op unless `CP_TUTOR_TRACING=1`. MLflow writes
+spans to SQLite on the local machine; nothing is sent anywhere. It lives in
+`requirements-eval.txt`, not `backend/requirements.txt`, so the runtime image
+does not carry ~60 packages of measuring tool. The app runs and the whole suite
+passes with MLflow uninstalled.
+
+`mlflow.langchain.autolog()` instruments LangChain and LangGraph wholesale: a
+CHAIN span per graph node, a CHAT_MODEL span per model call carrying
+`mlflow.chat.tokenUsage` and `mlflow.llm.model`, and a TOOL span per `ToolNode`
+execution carrying the arguments. Three gaps it leaves, filled explicitly:
+
+| gap | why autolog cannot see it |
+|---|---|
+| the root span | a turn is three graphs reached through plain function calls, not one Runnable |
+| the retrieval span | dense search is numpy, the lexical arm is `rank_bm25`; neither is a LangChain retriever |
+| `gen_ai.tool.name` | MLflow 3.15.1 sets no GenAI semantic-convention key; the tool name arrives only as the span's name |
+
+The *propagation* problem solved itself. `tutor.answer()` and
+`translator.build_program()` reach their graphs through module functions, so a
+`RunnableConfig` attached at `turn.run` would never reach them — but autolog
+patches at the Runnable level, process-wide, so the nested graphs are traced
+anyway. The planned fallback (a handler registered through
+`langchain_core.tracers.context.register_configure_hook`) was never needed.
+
+`CP_TUTOR_TEMPERATURE` is a call-time seam in `llm.chat_model`, applied only
+when set and only when the caller named no temperature, so behaviour with it
+unset is byte-for-byte what it was.
+
+### 18.2 The agent harness (`eval/agent/`)
+
+Same separation as `eval/` generally: it imports the app, the app never imports
+it. Two phases, deliberately separable — **capture** drives the real FastAPI app
+over `TestClient` and costs live model calls; **score** is a pure function of
+`eval/traces/agent.jsonl` and needs no API key.
+
+`store.TraceView` / `store.Span` are the portable form. `store.slim()` projects
+a trace down to what the metrics read, because a raw export of 39 turns came to
+1.5 GB: MLflow stores every payload twice (`span.inputs` and the
+`mlflow.spanInputs` attribute), and a LangGraph CHAIN span's payload is the
+entire graph state at that superstep — one such span measured 15.6 MB. Slimmed,
+the file is 269 kB and every number recomputes identically.
+
+`trajectory.tool_calls()` reads TOOL spans in start order and takes arguments
+only — never outputs, and never the `state` / `tool_call_id` parameters
+LangGraph injects, since the model did not choose those.
+
+`adapters.py` feeds HW5's judged scorers from a trace. `eval/metrics/judge.py`
+is imported and **not modified**; its diff in this increment is empty. Goal
+completion needed a new rubric, so `scorers.py` calls `judge._ask` with a new
+tag, which is how that module already versions its scorers.
+
+### 18.3 The safety layers (`backend/safety.py`)
+
+| layer | where |
+|---|---|
+| 1 input filtering | `screen_input` at `POST /notes`; flags, does not block |
+| 2 structural separation | `fence` / `neutralise`, used by `render_notes`, `retriever.render`, `tutor_system` and the monitor's evidence packet |
+| 3 output filtering | `uncited_fabrications`, `statement_overlap`, `leaked_identifiers`, `outbound_urls` |
+| 4 capability constraints | `clamp_k`, plus the pre-existing `InjectedState` scoping |
+
+`neutralise` uses targeted per-token replacement rather than escaping all angle
+brackets, because corpus passages are full of `vector<int>` and escaping those
+would mangle the reference material the tutor reads out.
+
+One deliberate omission: `pack_for_llm` is **not** fenced, while `render` is.
+`render` is the agent-facing path where a poisoned passage would reach the
+tutor; `pack_for_llm` feeds only the offline generation harness, and its output
+is part of HW5's answer-cache key, so fencing it would invalidate every cached
+answer and move committed numbers for no security gain.
+
+`eval/safety/detector.py::inspect(trace)` is a pure function of a `TraceView`,
+which is what lets one implementation serve the batch suite over committed
+traces and a live check.
+
 ## 15. Known limitations / next steps
 
+- **The tutor ignores its own instruction to search** on roughly half of concept
+  questions (tool selection 0.538, §18.2). The prompt says to call
+  `search_corpus` before explaining anything; measured, it often does not. The
+  answers are still correct, so this is a grounding problem rather than a
+  correctness one — but the retrieval layer is being paid for and not used.
+- **Exfiltration is the weakest defence category**, 0/2 (§18.3): internal
+  document ids and the problem statement both came back out on request.
 - **Codeforces scraping is blocked** by an anti-bot challenge, so problems come
   from the offline bank in practice. The bank has seven problems; a learner who
   works through all of them will start seeing repeats.

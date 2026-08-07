@@ -15,3 +15,8 @@ reports/
 
 # bind-mounted state for the compose stack — the db, the docstore, the reports
 data/
+
+# local tracing store. mlflow.db is already covered by *.db; mlruns/ is the
+# artifact root MLflow creates beside it. The committed trace evidence lives
+# in eval/traces/*.jsonl, which is text and readable in a diff.
+mlruns/

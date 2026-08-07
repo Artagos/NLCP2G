@@ -29,8 +29,8 @@ from langchain_core.messages import AIMessage, HumanMessage
 
 from langgraph.graph import END, START, StateGraph
 
-from .. import (memory, router, rules, state as session, summarizer, translator,
-                tutor)
+from .. import (memory, router, rules, state as session, summarizer, tracing,
+                translator, tutor)
 from ..prompts import REFUSAL_MESSAGE
 from ..sandbox import run_cpp
 from . import checkpoint
@@ -339,4 +339,17 @@ def run(sid: str, uid: str, message: str, run_id: str,
         # leaves no half-exchange behind
         "messages": [],
     }
-    return graph().invoke(seed, checkpoint.thread(sid))
+
+    # The root of the span tree. It has to be opened here rather than left to
+    # autolog because a turn is not one Runnable: routing, the tutor's ReAct
+    # loop and the solution pipeline are three separate graphs reached through
+    # plain function calls, and without a span wrapping all of them they would
+    # arrive as three unrelated traces with nothing tying them to one turn.
+    with tracing.span("turn", tracing.AGENT) as root:
+        tracing.tag(**tracing.turn_tags(run_id=run_id, sid=sid, uid=uid))
+        root.set_inputs({"message": message, "intent": seed["intent"]})
+        final = graph().invoke(seed, checkpoint.thread(sid))
+        root.set_outputs({"intent": final.get("intent", ""),
+                          "reply": final.get("reply", ""),
+                          "verdict": final.get("verdict", "")})
+        return final

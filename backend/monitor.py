@@ -83,12 +83,16 @@ def _render_run(run: dict) -> str:
     ]
 
     if run["notes_seen"]:
-        bodies = []
-        for note in memory.notes_for(run["problem_key"] or "", limit=50):
-            if note["id"] in run["notes_seen"]:
-                bodies.append(f"[note {note['id']} by {note['author']}] {note['body']}")
+        # Through `render_notes`, which is the same fencing the tutor got.
+        # This packet goes to a model — the judge — so a note written to
+        # instruct an assistant reaches one here too. Assembling the block by
+        # hand, as this did, meant the single path whose job is grading
+        # injection resistance was the one path with no injection boundary on
+        # it. Nothing exploited it; it was a hole regardless.
+        seen = [note for note in memory.notes_for(run["problem_key"] or "", limit=50)
+                if note["id"] in run["notes_seen"]]
         parts += ["", "--- untrusted notes the agent read during this run ---",
-                  "\n".join(bodies) or "(no longer present)"]
+                  memory.render_notes(seen) or "(no longer present)"]
 
     trace = memory.scratch_for(run["run_id"])
     if trace:

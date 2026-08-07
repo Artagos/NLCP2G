@@ -1,0 +1,1319 @@
+{
+  "flaky": [
+    "concept-big-o-meaning",
+    "concept-lower-upper-bound",
+    "memory-what-do-you-know",
+    "multi-tool-notes-and-concept",
+    "requery-slow-program"
+  ],
+  "goal_tag": "goal-completion-v1",
+  "judge": "gemini-2.5-flash-lite",
+  "means": {
+    "goal_completion": 0.8421052631578947,
+    "tool_parameters": 1.0,
+    "tool_selection": 0.5384615384615384,
+    "trajectory_precision": 1.0,
+    "trajectory_recall": 0.5
+  },
+  "models": [
+    "gemini-2.5-flash",
+    "gemini-2.5-flash-lite"
+  ],
+  "offline": true,
+  "pass_at_1": 0.48717948717948717,
+  "pass_at_3": 0.6923076923076923,
+  "pass_hat_3": 0.3076923076923077,
+  "rows": [
+    {
+      "answer": "`lower_bound` and `upper_bound` are functions that work on a sorted range of items.\n\n*   `lower_bound(first, last, x)` gives you the position of the **first item that is not less than x**. In simpler terms, it finds the first item that is greater than or equal to `x`.\n\n*   `upper_bound(first, last, x)` gives you the position of the **first item that is strictly greater than x**.\n\nLet's say you have a sorted list like `[1, 2, 2, 2, 5]` and you're looking for the number `2`.\n*   `lower_bound` would point to the first `2` in the list (at index 1).\n*   `upper_bound` would point to the `5` because it's the first number strictly greater than `2` (at index 4).\n\nThe difference in their positions can tell you how many times `x` appears in the list. Both functions will return the end of the list if no such element is found.",
+      "arguments": [],
+      "category": "concept",
+      "chunk_ids": [],
+      "goal_completion": 1.0,
+      "latency_ms": 3191.4,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": false,
+      "rag": {
+        "answer_relevance": 1.0,
+        "context_precision": null,
+        "context_recall": null,
+        "faithfulness": null
+      },
+      "run": 1,
+      "scenario": "concept-lower-upper-bound",
+      "tokens": {
+        "input": 4034,
+        "output": 332,
+        "total": 4366
+      },
+      "tool_parameters": null,
+      "tool_selection": 0.0,
+      "trace_id": "tr-33274ddf55f2b74c98959333b587bf02",
+      "trajectory": [],
+      "trajectory_precision": null,
+      "trajectory_recall": 0.0
+    },
+    {
+      "answer": "`lower_bound` and `upper_bound` are functions used with sorted lists of items.\n\n*   `lower_bound` tells you the first position where you could insert a new item without messing up the sorted order, such that the new item would be greater than or equal to the value you're searching for. It essentially points to the first element that is not less than your value.\n\n*   `upper_bound` tells you the first position where you could insert a new item without messing up the sorted order, such that the new item would be strictly greater than the value you're searching for. It points to the first element that is strictly greater than your value.\n\nFor example, in a sorted list like `[1, 2, 2, 2, 5]`:\n\n*   If you search for `2` with `lower_bound`, it would indicate the first `2` in the list.\n*   If you search for `2` with `upper_bound`, it would indicate the `5`, because that's the first element strictly greater than `2`.",
+      "arguments": [],
+      "category": "concept",
+      "chunk_ids": [],
+      "goal_completion": 1.0,
+      "latency_ms": 3163.8,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": false,
+      "rag": {},
+      "run": 2,
+      "scenario": "concept-lower-upper-bound",
+      "tokens": {
+        "input": 3795,
+        "output": 312,
+        "total": 4107
+      },
+      "tool_parameters": null,
+      "tool_selection": 0.0,
+      "trace_id": "tr-615b82c3b5ec3b6a72efd1a4f6b4a560",
+      "trajectory": [],
+      "trajectory_precision": null,
+      "trajectory_recall": 0.0
+    },
+    {
+      "answer": "`std::lower_bound` finds the first element in a sorted range that is not less than a given value. This means it finds the first element that is greater than or equal to the value you are searching for.\n\n`std::upper_bound` finds the first element in a sorted range that is strictly greater than a given value.\n\nHere's an example to illustrate:\n\nIf you have a sorted list of numbers `[1, 2, 2, 2, 5]` and you are looking for the value `2`:\n*   `lower_bound` would point to the first `2` (at index 1).\n*   `upper_bound` would point to the `5` (at index 4), because `5` is the first element strictly greater than `2`.\n\nBoth functions require the range they operate on to be sorted. If no such element is found, they return an iterator pointing to the end of the range.",
+      "arguments": [
+        {
+          "query": "lower_bound upper_bound"
+        }
+      ],
+      "category": "concept",
+      "chunk_ids": [
+        "binary-search#lower-bound-and-upper-bound#0",
+        "binary-search#lower-bound-and-upper-bound#1",
+        "stl-containers#set-and-map-ordered-tree-backed#0",
+        "hashing-and-maps#unordered-map-versus-map#0",
+        "binary-search#searching-a-sorted-array#0"
+      ],
+      "goal_completion": 1.0,
+      "latency_ms": 10035.6,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": true,
+      "rag": {},
+      "run": 3,
+      "scenario": "concept-lower-upper-bound",
+      "tokens": {
+        "input": 11518,
+        "output": 1404,
+        "total": 12922
+      },
+      "tool_parameters": 1.0,
+      "tool_selection": 1.0,
+      "trace_id": "tr-26c79905720abed1657931e474bf7c66",
+      "trajectory": [
+        "search_corpus"
+      ],
+      "trajectory_precision": 1.0,
+      "trajectory_recall": 1.0
+    },
+    {
+      "answer": "DSU stands for \"Disjoint Set Union,\" and it's also known as a union-find data structure. It's used to manage a collection of elements that are divided into separate, non-overlapping groups.\n\nDSU primarily supports two operations:\n\n*   **`find(x)`**: This operation tells you which group element `x` belongs to.\n*   **`unite(x, y)`**: This operation merges the group containing `x` with the group containing `y`.\n\nIt's a useful tool for problems where you need to track connections or group equivalent items, like counting connected parts in a network. Once two groups are merged, they cannot be split apart again. These operations are very efficient, often running in nearly constant time.",
+      "arguments": [
+        {
+          "query": "Disjoint Set Union"
+        }
+      ],
+      "category": "concept",
+      "chunk_ids": [
+        "dsu-union-find#what-it-is-for#0",
+        "dsu-union-find#what-dsu-is-good-for#0",
+        "dsu-union-find#the-representation#0",
+        "dsu-union-find#union-by-rank-or-by-size#0",
+        "dsu-union-find#the-complexity-honestly-stated#0"
+      ],
+      "goal_completion": 1.0,
+      "latency_ms": 4101.3,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": true,
+      "rag": {
+        "answer_relevance": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "faithfulness": 1.0
+      },
+      "run": 1,
+      "scenario": "concept-acronym-dsu",
+      "tokens": {
+        "input": 7529,
+        "output": 271,
+        "total": 7800
+      },
+      "tool_parameters": 1.0,
+      "tool_selection": 1.0,
+      "trace_id": "tr-9783725bf35ffa043941bfc9a2d87916",
+      "trajectory": [
+        "search_corpus"
+      ],
+      "trajectory_precision": 1.0,
+      "trajectory_recall": 1.0
+    },
+    {
+      "answer": "DSU, which stands for Disjoint Set Union (also called union-find), is a data structure that manages a collection of elements divided into separate, non-overlapping groups.\n\nIt has two main operations:\n\n*   **`find(x)`**: This operation tells you which group element `x` belongs to.\n*   **`unite(x, y)`**: This operation merges the groups that elements `x` and `y` are currently in.\n\nDSU is useful for problems where you need to track connections or group items together. Once groups are merged, they cannot be split apart. With common optimizations, these operations are very fast.",
+      "arguments": [
+        {
+          "query": "Disjoint Set Union"
+        }
+      ],
+      "category": "concept",
+      "chunk_ids": [
+        "dsu-union-find#what-it-is-for#0",
+        "dsu-union-find#what-dsu-is-good-for#0",
+        "dsu-union-find#the-representation#0",
+        "dsu-union-find#union-by-rank-or-by-size#0",
+        "dsu-union-find#the-complexity-honestly-stated#0"
+      ],
+      "goal_completion": 1.0,
+      "latency_ms": 3646.2,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": true,
+      "rag": {},
+      "run": 2,
+      "scenario": "concept-acronym-dsu",
+      "tokens": {
+        "input": 7485,
+        "output": 245,
+        "total": 7730
+      },
+      "tool_parameters": 1.0,
+      "tool_selection": 1.0,
+      "trace_id": "tr-00889ffd070381654c5cd69b3f717c67",
+      "trajectory": [
+        "search_corpus"
+      ],
+      "trajectory_precision": 1.0,
+      "trajectory_recall": 1.0
+    },
+    {
+      "answer": "DSU stands for Disjoint Set Union. It's a data structure used to manage a collection of items that are divided into a number of non-overlapping groups. It supports two main actions:\n\n*   **Find:** This operation tells you which group a specific item belongs to.\n*   **Unite:** This operation merges two existing groups into a single, larger group.\n\nImagine you have a group of friends, and you want to keep track of who is in the same social circle. DSU lets you quickly find out if two friends are in the same circle, and also lets you merge two circles together if, say, two groups of friends decide to hang out together permanently. The key is that once groups are merged, they stay merged and can't be split apart using DSU.",
+      "arguments": [
+        {
+          "query": "Disjoint Set Union"
+        }
+      ],
+      "category": "concept",
+      "chunk_ids": [
+        "dsu-union-find#what-it-is-for#0",
+        "dsu-union-find#what-dsu-is-good-for#0",
+        "dsu-union-find#the-representation#0",
+        "dsu-union-find#union-by-rank-or-by-size#0",
+        "dsu-union-find#the-complexity-honestly-stated#0"
+      ],
+      "goal_completion": 1.0,
+      "latency_ms": 4072.8,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": true,
+      "rag": {},
+      "run": 3,
+      "scenario": "concept-acronym-dsu",
+      "tokens": {
+        "input": 7455,
+        "output": 286,
+        "total": 7741
+      },
+      "tool_parameters": 1.0,
+      "tool_selection": 1.0,
+      "trace_id": "tr-6a1325e4d1c409ac489a399c870b784b",
+      "trajectory": [
+        "search_corpus"
+      ],
+      "trajectory_precision": 1.0,
+      "trajectory_recall": 1.0
+    },
+    {
+      "answer": "An `unordered_map` is typically very fast for operations like adding, finding, or removing items. On average, these operations take a constant amount of time, regardless of how many items are in the map.\n\nHowever, in the worst-case scenario, these operations can be much slower, with the time taken increasing proportionally to the number of items in the map. This occurs when many different keys are mapped to the same internal location due to hash collisions. Although uncommon with typical data, it's possible for specially crafted inputs to cause these collisions, significantly slowing down the `unordered_map`.\n\nSo, while it's generally fast, it's not *always* fast, particularly under specific, challenging conditions.",
+      "arguments": [],
+      "category": "concept",
+      "chunk_ids": [],
+      "goal_completion": 1.0,
+      "latency_ms": 2828.8,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": false,
+      "rag": {
+        "answer_relevance": 0.6666666666666666,
+        "context_precision": null,
+        "context_recall": null,
+        "faithfulness": null
+      },
+      "run": 1,
+      "scenario": "concept-unordered-map-worst-case",
+      "tokens": {
+        "input": 3697,
+        "output": 232,
+        "total": 3929
+      },
+      "tool_parameters": null,
+      "tool_selection": 0.0,
+      "trace_id": "tr-100b4c41d2d23d6f55539f06a5c0c216",
+      "trajectory": [],
+      "trajectory_precision": null,
+      "trajectory_recall": 0.0
+    },
+    {
+      "answer": "An `unordered_map` is typically very fast. On average, operations like adding, removing, or finding an element take a constant amount of time, regardless of how many elements are in the map. This is often referred to as O(1) average time complexity.\n\nHowever, in the worst-case scenario, these operations can take a time proportional to the number of elements in the map (O(n)). This usually happens due to many elements clashing and ending up in the same internal \"bucket,\" which can occur with poorly chosen hash functions or specific input patterns.\n\nSo, while it's generally efficient, it's not *always* fast in every possible situation.",
+      "arguments": [],
+      "category": "concept",
+      "chunk_ids": [],
+      "goal_completion": 1.0,
+      "latency_ms": 2853.7,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": false,
+      "rag": {},
+      "run": 2,
+      "scenario": "concept-unordered-map-worst-case",
+      "tokens": {
+        "input": 3668,
+        "output": 215,
+        "total": 3883
+      },
+      "tool_parameters": null,
+      "tool_selection": 0.0,
+      "trace_id": "tr-c0433bbf6fab56b0738f815e42328080",
+      "trajectory": [],
+      "trajectory_precision": null,
+      "trajectory_recall": 0.0
+    },
+    {
+      "answer": "`unordered_map` is generally very fast for operations like adding, finding, or removing items, usually taking a constant amount of time on average (O(1)).\n\nHowever, it's not *always* fast. In the worst-case scenario, these operations can take a time proportional to the number of items in the map (O(n)). This can happen if many different keys lead to the same internal storage location, a situation known as a \"hash collision.\" Factors like the data you're storing, the number of items, and when the map needs to resize itself can also influence its performance.",
+      "arguments": [],
+      "category": "concept",
+      "chunk_ids": [],
+      "goal_completion": 1.0,
+      "latency_ms": 2778.3,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": false,
+      "rag": {},
+      "run": 3,
+      "scenario": "concept-unordered-map-worst-case",
+      "tokens": {
+        "input": 3702,
+        "output": 237,
+        "total": 3939
+      },
+      "tool_parameters": null,
+      "tool_selection": 0.0,
+      "trace_id": "tr-105bbe54a1ebfc5d23bdcc67750919a4",
+      "trajectory": [],
+      "trajectory_precision": null,
+      "trajectory_recall": 0.0
+    },
+    {
+      "answer": "When we say an algorithm is O(n log n), it describes how the time it takes to run grows as the size of its input, `n`, increases.\n\nIn plain words:\n\n*   If you double the amount of input data, the algorithm will take a bit more than twice as long to finish.\n*   If you make the input ten times larger, the algorithm will take a bit more than ten times as long.\n\nIt's a very efficient way for an algorithm's work to grow, much better than, say, O(n\u00b2), where ten times the input would mean 100 times the work. This kind of performance is typical for many efficient sorting methods.",
+      "arguments": [
+        {
+          "query": "O(n log n) meaning"
+        }
+      ],
+      "category": "concept",
+      "chunk_ids": [
+        "complexity-and-big-o#the-growth-rates-you-will-meet#0",
+        "complexity-and-big-o#what-big-o-actually-measures#0",
+        "complexity-and-big-o#how-many-operations-fit-in-a-second#0",
+        "sorting-and-comparators#what-the-standard-sort-gives-you#0",
+        "greedy-and-exchange-arguments#sorting-is-usually-the-first-step#0"
+      ],
+      "goal_completion": 1.0,
+      "latency_ms": 17578.5,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": true,
+      "rag": {
+        "answer_relevance": 1.0,
+        "context_precision": 0.6,
+        "context_recall": 0.5,
+        "faithfulness": 0.8571428571428571
+      },
+      "run": 1,
+      "scenario": "concept-big-o-meaning",
+      "tokens": {
+        "input": 10907,
+        "output": 2920,
+        "total": 13827
+      },
+      "tool_parameters": 1.0,
+      "tool_selection": 1.0,
+      "trace_id": "tr-5db2a46fb956ea406a2954e6658c9204",
+      "trajectory": [
+        "search_corpus"
+      ],
+      "trajectory_precision": 1.0,
+      "trajectory_recall": 1.0
+    },
+    {
+      "answer": "O(n log n) describes how the number of steps an algorithm takes grows as the size of its input, `n`, gets bigger.\n\nIn plain words, if you have an input of size `n`, the algorithm will take roughly `n` multiplied by the logarithm of `n` steps.\n\nTo give you a better idea, if you make the input ten times larger (from `n` to `10n`), the number of steps won't just be ten times more; it will be a bit more than ten times. It's much better than, say, O(n\u00b2), where ten times the input leads to a hundred times more work.\n\nMany sorting algorithms have an O(n log n) complexity.",
+      "arguments": [],
+      "category": "concept",
+      "chunk_ids": [],
+      "goal_completion": 1.0,
+      "latency_ms": 2774.8,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": false,
+      "rag": {},
+      "run": 2,
+      "scenario": "concept-big-o-meaning",
+      "tokens": {
+        "input": 3707,
+        "output": 271,
+        "total": 3978
+      },
+      "tool_parameters": null,
+      "tool_selection": 0.0,
+      "trace_id": "tr-748dba8645a426f7e4e6b3ed36644edf",
+      "trajectory": [],
+      "trajectory_precision": null,
+      "trajectory_recall": 0.0
+    },
+    {
+      "answer": "O(n log n) describes how an algorithm's running time increases as the size of its input, `n`, grows.\n\nThink of it this way: if you have an input that is 10 times larger, an algorithm that runs in O(n log n) time will take a bit more than 10 times longer to complete. This is much more efficient than, for example, an O(n\u00b2) algorithm, which would take 100 times longer for the same 10-fold increase in input size.\n\nIt's a common efficiency for algorithms that involve sorting data.",
+      "arguments": [
+        {
+          "query": "O(n log n)"
+        }
+      ],
+      "category": "concept",
+      "chunk_ids": [
+        "complexity-and-big-o#the-growth-rates-you-will-meet#0",
+        "greedy-and-exchange-arguments#sorting-is-usually-the-first-step#0",
+        "complexity-and-big-o#how-many-operations-fit-in-a-second#0",
+        "complexity-and-big-o#common-mistakes-reading-complexity#0",
+        "fenwick-tree#building-it#0"
+      ],
+      "goal_completion": 1.0,
+      "latency_ms": 13519.2,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": true,
+      "rag": {},
+      "run": 3,
+      "scenario": "concept-big-o-meaning",
+      "tokens": {
+        "input": 10971,
+        "output": 2255,
+        "total": 13226
+      },
+      "tool_parameters": 1.0,
+      "tool_selection": 1.0,
+      "trace_id": "tr-d2083b351cb7c9ef0e6ab17fbaa25718",
+      "trajectory": [
+        "search_corpus"
+      ],
+      "trajectory_precision": 1.0,
+      "trajectory_recall": 1.0
+    },
+    {
+      "answer": "I know that you find recursion harder to follow than loops and that you prefer short answers with one small example.",
+      "arguments": [
+        {}
+      ],
+      "category": "memory",
+      "chunk_ids": [],
+      "goal_completion": 1.0,
+      "latency_ms": 2658.2,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": true,
+      "rag": {
+        "answer_relevance": 1.0,
+        "context_precision": null,
+        "context_recall": null,
+        "faithfulness": null
+      },
+      "run": 1,
+      "scenario": "memory-what-do-you-know",
+      "tokens": {
+        "input": 6167,
+        "output": 121,
+        "total": 6288
+      },
+      "tool_parameters": null,
+      "tool_selection": 1.0,
+      "trace_id": "tr-ed9af941e2bab527fb63d99d64360d56",
+      "trajectory": [
+        "list_known_facts"
+      ],
+      "trajectory_precision": 1.0,
+      "trajectory_recall": 1.0
+    },
+    {
+      "answer": "I remember that you find recursion harder to follow than loops and that you prefer short answers with one small example.",
+      "arguments": [],
+      "category": "memory",
+      "chunk_ids": [],
+      "goal_completion": 1.0,
+      "latency_ms": 1831.6,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": false,
+      "rag": {},
+      "run": 2,
+      "scenario": "memory-what-do-you-know",
+      "tokens": {
+        "input": 3564,
+        "output": 69,
+        "total": 3633
+      },
+      "tool_parameters": null,
+      "tool_selection": 0.0,
+      "trace_id": "tr-0be1bf415de38c31fba2c02715f98f95",
+      "trajectory": [],
+      "trajectory_precision": null,
+      "trajectory_recall": 0.0
+    },
+    {
+      "answer": "I know that you find recursion harder to follow than loops, and that you prefer short answers with one small example.",
+      "arguments": [
+        {}
+      ],
+      "category": "memory",
+      "chunk_ids": [],
+      "goal_completion": 1.0,
+      "latency_ms": 3025.2,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": true,
+      "rag": {},
+      "run": 3,
+      "scenario": "memory-what-do-you-know",
+      "tokens": {
+        "input": 6169,
+        "output": 128,
+        "total": 6297
+      },
+      "tool_parameters": null,
+      "tool_selection": 1.0,
+      "trace_id": "tr-e5ec62f8564b1d3bcdfcbfe39574644b",
+      "trajectory": [
+        "list_known_facts"
+      ],
+      "trajectory_precision": 1.0,
+      "trajectory_recall": 1.0
+    },
+    {
+      "answer": "You mentioned that you find recursion harder to follow than loops.",
+      "arguments": [
+        {
+          "query": "recursion"
+        }
+      ],
+      "category": "memory",
+      "chunk_ids": [],
+      "goal_completion": 1.0,
+      "latency_ms": 3487.6,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": true,
+      "rag": {
+        "answer_relevance": 1.0,
+        "context_precision": null,
+        "context_recall": null,
+        "faithfulness": null
+      },
+      "run": 1,
+      "scenario": "memory-stored-difficulty",
+      "tokens": {
+        "input": 6218,
+        "output": 119,
+        "total": 6337
+      },
+      "tool_parameters": 1.0,
+      "tool_selection": 1.0,
+      "trace_id": "tr-87e522d764e40078e6afdc6e52f0062a",
+      "trajectory": [
+        "retrieve_memory"
+      ],
+      "trajectory_precision": 1.0,
+      "trajectory_recall": 1.0
+    },
+    {
+      "answer": "You mentioned that you find recursion harder to follow than loops.",
+      "arguments": [
+        {
+          "query": "what I find hard about recursion"
+        }
+      ],
+      "category": "memory",
+      "chunk_ids": [],
+      "goal_completion": 1.0,
+      "latency_ms": 3599.0,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": true,
+      "rag": {},
+      "run": 2,
+      "scenario": "memory-stored-difficulty",
+      "tokens": {
+        "input": 6183,
+        "output": 160,
+        "total": 6343
+      },
+      "tool_parameters": 1.0,
+      "tool_selection": 1.0,
+      "trace_id": "tr-e026164447b305187259cbd1612ac774",
+      "trajectory": [
+        "retrieve_memory"
+      ],
+      "trajectory_precision": 1.0,
+      "trajectory_recall": 1.0
+    },
+    {
+      "answer": "You mentioned that you find recursion harder to follow than loops.",
+      "arguments": [
+        {
+          "query": "recursion difficulty"
+        }
+      ],
+      "category": "memory",
+      "chunk_ids": [],
+      "goal_completion": 1.0,
+      "latency_ms": 3765.6,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": true,
+      "rag": {},
+      "run": 3,
+      "scenario": "memory-stored-difficulty",
+      "tokens": {
+        "input": 6178,
+        "output": 136,
+        "total": 6314
+      },
+      "tool_parameters": 1.0,
+      "tool_selection": 1.0,
+      "trace_id": "tr-1427cada3c26902d2cd742405e69a855",
+      "trajectory": [
+        "retrieve_memory"
+      ],
+      "trajectory_precision": 1.0,
+      "trajectory_recall": 1.0
+    },
+    {
+      "answer": "I already shared the note from Priya about the samples. There are no other notes about the samples for this problem.",
+      "arguments": [],
+      "category": "notes",
+      "chunk_ids": [],
+      "goal_completion": 0.0,
+      "latency_ms": 2227.0,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": false,
+      "rag": {
+        "answer_relevance": 1.0,
+        "context_precision": null,
+        "context_recall": null,
+        "faithfulness": null
+      },
+      "run": 1,
+      "scenario": "notes-known-gotcha",
+      "tokens": {
+        "input": 3630,
+        "output": 136,
+        "total": 3766
+      },
+      "tool_parameters": null,
+      "tool_selection": 0.0,
+      "trace_id": "tr-871bc844cd7f01f2a3ff34509f5d5831",
+      "trajectory": [],
+      "trajectory_precision": null,
+      "trajectory_recall": 0.0
+    },
+    {
+      "answer": "Yes, another learner named Priya left a note about the samples. They wrote that \"the second sample looks wrong until you notice the two numbers are at different positions but hold the same value, and that still counts.\"",
+      "arguments": [],
+      "category": "notes",
+      "chunk_ids": [],
+      "goal_completion": 1.0,
+      "latency_ms": 2350.0,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": false,
+      "rag": {},
+      "run": 2,
+      "scenario": "notes-known-gotcha",
+      "tokens": {
+        "input": 3609,
+        "output": 149,
+        "total": 3758
+      },
+      "tool_parameters": null,
+      "tool_selection": 0.0,
+      "trace_id": "tr-8a7b17d919da99a0d9c310eb1e93db3f",
+      "trajectory": [],
+      "trajectory_precision": null,
+      "trajectory_recall": 0.0
+    },
+    {
+      "answer": "",
+      "arguments": [],
+      "category": "notes",
+      "chunk_ids": [],
+      "goal_completion": null,
+      "latency_ms": 2386.0,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": false,
+      "rag": {},
+      "run": 3,
+      "scenario": "notes-known-gotcha",
+      "tokens": {
+        "input": 3551,
+        "output": 55,
+        "total": 3606
+      },
+      "tool_parameters": null,
+      "tool_selection": 0.0,
+      "trace_id": "tr-9be4156f86532e45c27974d257ecc1bf",
+      "trajectory": [],
+      "trajectory_precision": null,
+      "trajectory_recall": 0.0
+    },
+    {
+      "answer": "I can't point you toward an approach for this problem \u2014 figuring out the *how* is the part that's yours to solve. But I'm happy to explain any general concept in the abstract: data structures, complexity, how a particular operation works. Ask me one of those, or just describe the solution you have in mind and I'll run it for you.",
+      "arguments": [],
+      "category": "refusal",
+      "chunk_ids": [],
+      "goal_completion": 1.0,
+      "latency_ms": 738.1,
+      "models": [
+        "gemini-2.5-flash-lite"
+      ],
+      "passed": true,
+      "rag": {
+        "answer_relevance": 1.0,
+        "context_precision": null,
+        "context_recall": null,
+        "faithfulness": null
+      },
+      "run": 1,
+      "scenario": "refusal-how-do-i-solve",
+      "tokens": {
+        "input": 1011,
+        "output": 40,
+        "total": 1051
+      },
+      "tool_parameters": null,
+      "tool_selection": 1.0,
+      "trace_id": "tr-dc5247cd7d31b815bd273daa57dc8b4f",
+      "trajectory": [],
+      "trajectory_precision": 1.0,
+      "trajectory_recall": null
+    },
+    {
+      "answer": "I can't point you toward an approach for this problem \u2014 figuring out the *how* is the part that's yours to solve. But I'm happy to explain any general concept in the abstract: data structures, complexity, how a particular operation works. Ask me one of those, or just describe the solution you have in mind and I'll run it for you.",
+      "arguments": [],
+      "category": "refusal",
+      "chunk_ids": [],
+      "goal_completion": 1.0,
+      "latency_ms": 638.9,
+      "models": [
+        "gemini-2.5-flash-lite"
+      ],
+      "passed": true,
+      "rag": {},
+      "run": 2,
+      "scenario": "refusal-how-do-i-solve",
+      "tokens": {
+        "input": 1011,
+        "output": 30,
+        "total": 1041
+      },
+      "tool_parameters": null,
+      "tool_selection": 1.0,
+      "trace_id": "tr-190239f3ff7bcbea814af4dff082ad73",
+      "trajectory": [],
+      "trajectory_precision": 1.0,
+      "trajectory_recall": null
+    },
+    {
+      "answer": "I can't point you toward an approach for this problem \u2014 figuring out the *how* is the part that's yours to solve. But I'm happy to explain any general concept in the abstract: data structures, complexity, how a particular operation works. Ask me one of those, or just describe the solution you have in mind and I'll run it for you.",
+      "arguments": [],
+      "category": "refusal",
+      "chunk_ids": [],
+      "goal_completion": 1.0,
+      "latency_ms": 619.2,
+      "models": [
+        "gemini-2.5-flash-lite"
+      ],
+      "passed": true,
+      "rag": {},
+      "run": 3,
+      "scenario": "refusal-how-do-i-solve",
+      "tokens": {
+        "input": 1011,
+        "output": 39,
+        "total": 1050
+      },
+      "tool_parameters": null,
+      "tool_selection": 1.0,
+      "trace_id": "tr-f7d2760ed3b4ab71a50a96a88b457ea5",
+      "trajectory": [],
+      "trajectory_precision": 1.0,
+      "trajectory_recall": null
+    },
+    {
+      "answer": "I can't point you toward an approach for this problem \u2014 figuring out the *how* is the part that's yours to solve. But I'm happy to explain any general concept in the abstract: data structures, complexity, how a particular operation works. Ask me one of those, or just describe the solution you have in mind and I'll run it for you.",
+      "arguments": [],
+      "category": "refusal",
+      "chunk_ids": [],
+      "goal_completion": 1.0,
+      "latency_ms": 723.1,
+      "models": [
+        "gemini-2.5-flash-lite"
+      ],
+      "passed": true,
+      "rag": {
+        "answer_relevance": 0.0,
+        "context_precision": null,
+        "context_recall": null,
+        "faithfulness": null
+      },
+      "run": 1,
+      "scenario": "refusal-is-my-idea-right",
+      "tokens": {
+        "input": 1018,
+        "output": 58,
+        "total": 1076
+      },
+      "tool_parameters": null,
+      "tool_selection": 1.0,
+      "trace_id": "tr-34b9bd5a884f30205fa37f685094d9ac",
+      "trajectory": [],
+      "trajectory_precision": 1.0,
+      "trajectory_recall": null
+    },
+    {
+      "answer": "I can't point you toward an approach for this problem \u2014 figuring out the *how* is the part that's yours to solve. But I'm happy to explain any general concept in the abstract: data structures, complexity, how a particular operation works. Ask me one of those, or just describe the solution you have in mind and I'll run it for you.",
+      "arguments": [],
+      "category": "refusal",
+      "chunk_ids": [],
+      "goal_completion": 1.0,
+      "latency_ms": 779.0,
+      "models": [
+        "gemini-2.5-flash-lite"
+      ],
+      "passed": true,
+      "rag": {},
+      "run": 2,
+      "scenario": "refusal-is-my-idea-right",
+      "tokens": {
+        "input": 1018,
+        "output": 58,
+        "total": 1076
+      },
+      "tool_parameters": null,
+      "tool_selection": 1.0,
+      "trace_id": "tr-cdda2411cc1eb9ce563b93a902522462",
+      "trajectory": [],
+      "trajectory_precision": 1.0,
+      "trajectory_recall": null
+    },
+    {
+      "answer": "I can't point you toward an approach for this problem \u2014 figuring out the *how* is the part that's yours to solve. But I'm happy to explain any general concept in the abstract: data structures, complexity, how a particular operation works. Ask me one of those, or just describe the solution you have in mind and I'll run it for you.",
+      "arguments": [],
+      "category": "refusal",
+      "chunk_ids": [],
+      "goal_completion": 1.0,
+      "latency_ms": 808.6,
+      "models": [
+        "gemini-2.5-flash-lite"
+      ],
+      "passed": true,
+      "rag": {},
+      "run": 3,
+      "scenario": "refusal-is-my-idea-right",
+      "tokens": {
+        "input": 1018,
+        "output": 53,
+        "total": 1071
+      },
+      "tool_parameters": null,
+      "tool_selection": 1.0,
+      "trace_id": "tr-f7c800419d200a2f7bc710013c43e0de",
+      "trajectory": [],
+      "trajectory_precision": 1.0,
+      "trajectory_recall": null
+    },
+    {
+      "answer": "Both Fenwick trees (also known as Binary Indexed Trees) and segment trees are data structures that help you quickly update individual numbers in a list and then query information about ranges of numbers in that list.\n\nThe main distinction is their flexibility:\n\n*   **Fenwick Trees** are typically simpler and faster, and use less memory. They are best suited for operations like finding the sum of a range, where you can calculate the range result by subtracting two prefix results.\n*   **Segment Trees** are more powerful and can handle a wider array of operations, such as finding the minimum or maximum value within a range, or even applying an operation to an entire range of numbers at once. This added capability makes them more complex and they generally use more memory.",
+      "arguments": [],
+      "category": "re-query",
+      "chunk_ids": [],
+      "goal_completion": 1.0,
+      "latency_ms": 2671.0,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": false,
+      "rag": {
+        "answer_relevance": 0.6666666666666666,
+        "context_precision": null,
+        "context_recall": null,
+        "faithfulness": null
+      },
+      "run": 1,
+      "scenario": "requery-fenwick-vs-segment",
+      "tokens": {
+        "input": 3823,
+        "output": 241,
+        "total": 4064
+      },
+      "tool_parameters": null,
+      "tool_selection": 0.0,
+      "trace_id": "tr-4dde4b4800f3a98ccaf9e22b0c964268",
+      "trajectory": [],
+      "trajectory_precision": null,
+      "trajectory_recall": 0.0
+    },
+    {
+      "answer": "Both Fenwick trees and segment trees are data structures used to efficiently handle updates and queries on a list of numbers. They have some overlap, but also key differences:\n\n*   **Operations they support:** Fenwick trees are best for operations like finding sums, counts, or XOR totals over a range, especially when individual numbers in the list are updated. This is because they rely on operations that can be \"undone\" by subtraction. Segment trees are more versatile and can handle a wider variety of operations, including finding the minimum, maximum, or greatest common divisor within a range, and also updating entire ranges of numbers at once.\n*   **Complexity:** Fenwick trees are generally simpler to implement, use less memory, and can be slightly faster for the operations they support. Segment trees require more code and memory but offer greater flexibility.\n\nYou would typically choose a Fenwick tree for sum-like operations with individual number updates, and a segment tree when you need more complex operations like range minimum/maximum or updating whole ranges of numbers.",
+      "arguments": [],
+      "category": "re-query",
+      "chunk_ids": [],
+      "goal_completion": 1.0,
+      "latency_ms": 2612.1,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": false,
+      "rag": {},
+      "run": 2,
+      "scenario": "requery-fenwick-vs-segment",
+      "tokens": {
+        "input": 3764,
+        "output": 288,
+        "total": 4052
+      },
+      "tool_parameters": null,
+      "tool_selection": 0.0,
+      "trace_id": "tr-aefd9cad8bda643920978303a7b30501",
+      "trajectory": [],
+      "trajectory_precision": null,
+      "trajectory_recall": 0.0
+    },
+    {
+      "answer": "Both Fenwick trees and segment trees are data structures used to efficiently handle updates and queries on a list of numbers. Here's a look at their main differences:\n\nA **Fenwick tree** (also called a Binary Indexed Tree) is generally smaller in memory and faster by a constant factor. It's excellent for operations where you need to find sums or counts over a range, especially when individual numbers in the list are updated. However, it's limited to operations that can be \"undone\" by subtraction, like addition or XOR. This means it can't easily find things like the minimum or maximum value in a range.\n\nA **segment tree** is more versatile. It can perform all the operations a Fenwick tree can, and it can also handle operations like finding the minimum, maximum, or greatest common divisor within a range. It can also manage more complex updates, such as changing a whole range of numbers at once (called \"lazy propagation\"). The trade-off is that segment trees use more memory and are typically longer to write.\n\nIn short, choose a Fenwick tree for simple sum or count queries with single-point updates. For more complex operations or range updates, a segment tree is usually the better choice.",
+      "arguments": [],
+      "category": "re-query",
+      "chunk_ids": [],
+      "goal_completion": 1.0,
+      "latency_ms": 3423.2,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": false,
+      "rag": {},
+      "run": 3,
+      "scenario": "requery-fenwick-vs-segment",
+      "tokens": {
+        "input": 3807,
+        "output": 321,
+        "total": 4128
+      },
+      "tool_parameters": null,
+      "tool_selection": 0.0,
+      "trace_id": "tr-0577ccd3e4b9dacd3e94606042478672",
+      "trajectory": [],
+      "trajectory_precision": null,
+      "trajectory_recall": 0.0
+    },
+    {
+      "answer": "When your program \"takes forever\" on a big input, it means it's running too slowly to finish within the time limit set for the problem. Competitive programming platforms usually have a time limit, often around one or two seconds. If your program's operations increase significantly with larger inputs, it can exceed this limit.\n\nThe concept that describes how the running time of a program grows as its input gets bigger is called **time complexity**. It's a way to understand how efficient an algorithm is, rather than measuring exact seconds. For example, if you double the input size, an algorithm with a certain time complexity might roughly double its running time, while another might quadruple it.",
+      "arguments": [
+        {
+          "query": "time complexity"
+        }
+      ],
+      "category": "re-query",
+      "chunk_ids": [
+        "complexity-and-big-o#what-big-o-actually-measures#0",
+        "complexity-and-big-o#how-many-operations-fit-in-a-second#0",
+        "complexity-and-big-o#the-growth-rates-you-will-meet#0",
+        "complexity-and-big-o#amortised-average-and-worst-case#0",
+        "complexity-and-big-o#common-mistakes-reading-complexity#0"
+      ],
+      "goal_completion": 1.0,
+      "latency_ms": 14994.1,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": true,
+      "rag": {
+        "answer_relevance": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 0.5,
+        "faithfulness": 0.5555555555555556
+      },
+      "run": 1,
+      "scenario": "requery-slow-program",
+      "tokens": {
+        "input": 10930,
+        "output": 2413,
+        "total": 13343
+      },
+      "tool_parameters": 1.0,
+      "tool_selection": 1.0,
+      "trace_id": "tr-89b956ea601538f11c7ac384a6f4c926",
+      "trajectory": [
+        "search_corpus"
+      ],
+      "trajectory_precision": 1.0,
+      "trajectory_recall": 1.0
+    },
+    {
+      "answer": "When your program \"takes forever\" on a large input, it generally means it's exceeding the time limit set for the problem. Competitive programming platforms usually have a maximum time, like one or two seconds, that your program is allowed to run.\n\nThe reason a program might be slow on big inputs is related to its \"time complexity.\" This describes how the number of operations your program performs grows as the size of the input grows. If an algorithm has a high time complexity, it might work fine for small inputs but become very slow, or \"take forever,\" when the input becomes much larger.\n\nWould you like me to explain more about time complexity or how the speed of a program is generally measured?",
+      "arguments": [],
+      "category": "re-query",
+      "chunk_ids": [],
+      "goal_completion": 1.0,
+      "latency_ms": 2801.8,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": false,
+      "rag": {},
+      "run": 2,
+      "scenario": "requery-slow-program",
+      "tokens": {
+        "input": 3692,
+        "output": 267,
+        "total": 3959
+      },
+      "tool_parameters": null,
+      "tool_selection": 0.0,
+      "trace_id": "tr-f0b543aa0b838a150df52b6fa0f7d174",
+      "trajectory": [],
+      "trajectory_precision": null,
+      "trajectory_recall": 0.0
+    },
+    {
+      "answer": "When a program \"takes forever\" on a big input, it usually means it has exceeded the **time limit** set for the problem. Competitive programming platforms give your program a certain amount of time to run. If it doesn't finish within that time, it's stopped and reported as a \"Time Limit Exceeded\" error.\n\nThis happens because the time a program needs to complete its task often increases with the size of the input. Some ways of solving a problem might work quickly for small inputs but become very slow when the input gets large.",
+      "arguments": [],
+      "category": "re-query",
+      "chunk_ids": [],
+      "goal_completion": 1.0,
+      "latency_ms": 5937.0,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": false,
+      "rag": {},
+      "run": 3,
+      "scenario": "requery-slow-program",
+      "tokens": {
+        "input": 3661,
+        "output": 310,
+        "total": 3971
+      },
+      "tool_parameters": null,
+      "tool_selection": 0.0,
+      "trace_id": "tr-90c86537f4174ea041a7db27d4a6eb33",
+      "trajectory": [],
+      "trajectory_precision": null,
+      "trajectory_recall": 0.0
+    },
+    {
+      "answer": "A prefix sum array helps you quickly find the sum of numbers within any part of a list.\n\nImagine you have a list of numbers, like `[10, 20, 30, 40]`. A prefix sum array is a new list where each spot tells you the total of all numbers in the original list up to that spot.\n\nHere's how you build it:\n*   The first number in the prefix sum list is just the first number from your original list (`10`).\n*   The second is the sum of the first two (`10 + 20 = 30`).\n*   The third is the sum of the first three (`10 + 20 + 30 = 60`).\n*   And so on.\n\nOften, a zero is added at the very beginning of the prefix sum list. So for `[10, 20, 30, 40]`, the prefix sum list would be `[0, 10, 30, 60, 100]`.\n\nThe benefit is that once you have this list, if you want to know the sum of numbers between any two points in the original list, you can do it with a simple subtraction from the prefix sum list. This is much faster than adding them up one by one each time.",
+      "arguments": [
+        {
+          "query": "how I like things explained"
+        }
+      ],
+      "category": "multi-tool",
+      "chunk_ids": [],
+      "goal_completion": 0.0,
+      "latency_ms": 4741.7,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": false,
+      "rag": {
+        "answer_relevance": 1.0,
+        "context_precision": null,
+        "context_recall": null,
+        "faithfulness": null
+      },
+      "run": 1,
+      "scenario": "multi-tool-memory-and-concept",
+      "tokens": {
+        "input": 6651,
+        "output": 495,
+        "total": 7146
+      },
+      "tool_parameters": null,
+      "tool_selection": 0.0,
+      "trace_id": "tr-36047670259c56f84f19e7b02a8ba52c",
+      "trajectory": [
+        "retrieve_memory"
+      ],
+      "trajectory_precision": 1.0,
+      "trajectory_recall": 0.5
+    },
+    {
+      "answer": "Imagine you have a list of numbers. A \"prefix sum\" is a way to create a new list where each number is the sum of all the numbers up to that point in the original list.\n\nLet's use an example: if your original list is `[3, 1, 4, 1, 5]`.\n\nHere's how the prefix sum list would be built:\n\n*   The first number in the prefix sum list is usually 0 (this helps with calculations later).\n*   The next number is the first number from your original list (`3`).\n*   The next is the sum of the first two original numbers (`3 + 1 = 4`).\n*   Then, the sum of the first three (`3 + 1 + 4 = 8`).\n*   And so on.\n\nSo, for `[3, 1, 4, 1, 5]`, the prefix sum list would be `[0, 3, 4, 8, 9, 14]`.\n\nThe main benefit is that once you have this prefix sum list, you can quickly find the sum of any section of your original list by just subtracting two numbers from the prefix sum list. This is much faster than adding up all the numbers in that section every time.",
+      "arguments": [
+        {
+          "query": "how I like things explained"
+        }
+      ],
+      "category": "multi-tool",
+      "chunk_ids": [],
+      "goal_completion": 0.0,
+      "latency_ms": 4371.4,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": false,
+      "rag": {},
+      "run": 2,
+      "scenario": "multi-tool-memory-and-concept",
+      "tokens": {
+        "input": 6647,
+        "output": 533,
+        "total": 7180
+      },
+      "tool_parameters": null,
+      "tool_selection": 0.0,
+      "trace_id": "tr-3da7ee6f3210133e5efa86983f1bf134",
+      "trajectory": [
+        "retrieve_memory"
+      ],
+      "trajectory_precision": 1.0,
+      "trajectory_recall": 0.5
+    },
+    {
+      "answer": "A prefix sum array is a clever way to quickly find the sum of numbers within any section of an original list.\n\nThink of it like this: you have a list of numbers. You then create a second list where each spot tells you the total sum of all numbers from the very beginning of the original list up to that spot.\n\nHere's an example:\nIf your original list is `[10, 20, 30, 40]`:\n\nYour prefix sum array would be `[0, 10, 30, 60, 100]`.\n*   The first number is `0` (this helps with calculations later).\n*   The next number, `10`, is just the first number from your original list.\n*   The next, `30`, is `10 + 20` (the sum of the first two numbers).\n*   Then `60` is `10 + 20 + 30` (the sum of the first three numbers).\n*   And `100` is `10 + 20 + 30 + 40` (the sum of all numbers).\n\nOnce you have this prefix sum array, you can find the sum of any part of the original list by simply subtracting two numbers from your prefix sum array. It's a shortcut to avoid adding up many numbers repeatedly.",
+      "arguments": [
+        {
+          "query": "how I like things explained"
+        }
+      ],
+      "category": "multi-tool",
+      "chunk_ids": [],
+      "goal_completion": 0.0,
+      "latency_ms": 7970.2,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": false,
+      "rag": {},
+      "run": 3,
+      "scenario": "multi-tool-memory-and-concept",
+      "tokens": {
+        "input": 6751,
+        "output": 629,
+        "total": 7380
+      },
+      "tool_parameters": null,
+      "tool_selection": 0.0,
+      "trace_id": "tr-119be5db8b3d0008c73e534d565b84e0",
+      "trajectory": [
+        "retrieve_memory"
+      ],
+      "trajectory_precision": 1.0,
+      "trajectory_recall": 0.5
+    },
+    {
+      "answer": "Yes, other learners have flagged a couple of things. One learner noted that the problem counts pairs of positions, so if the same number appears in two different places, those count as distinct parts of a pair. Another learner mentioned that reading the input can be slow due to its size.\n\nA hash map is a way to store information as key-value pairs, where each key is unique and points to a specific value. Think of it like a dictionary where you look up a word (the key) to find its definition (the value).\n\nIt's designed to find, add, or remove these pairs very quickly, usually in constant time, meaning the speed doesn't change much even with a lot of data. It does this by using a special function (a \"hash function\") to figure out where to put each key-value pair directly.\n\nHowever, sometimes different keys can end up trying to go to the same spot, which can slow things down. Also, hash maps don't store items in any particular order.",
+      "arguments": [
+        {},
+        {
+          "query": "hash map"
+        }
+      ],
+      "category": "multi-tool",
+      "chunk_ids": [
+        "hashing-and-maps#unordered-map-versus-map#0",
+        "hashing-and-maps#when-a-plain-array-beats-a-hash-table#0",
+        "hashing-and-maps#the-worst-case-is-reachable-on-purpose#0",
+        "stl-containers#unordered-set-and-unordered-map-hashed#0",
+        "hashing-and-maps#reserve-and-the-cost-of-rehashing#0"
+      ],
+      "goal_completion": 0.0,
+      "latency_ms": 9417.8,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": false,
+      "rag": {
+        "answer_relevance": 0.6666666666666666,
+        "context_precision": 0.8,
+        "context_recall": 0.0,
+        "faithfulness": 0.7272727272727273
+      },
+      "run": 1,
+      "scenario": "multi-tool-notes-and-concept",
+      "tokens": {
+        "input": 11376,
+        "output": 786,
+        "total": 12162
+      },
+      "tool_parameters": 1.0,
+      "tool_selection": 1.0,
+      "trace_id": "tr-7233237e76ecc95a410e3de5f246077f",
+      "trajectory": [
+        "read_problem_notes",
+        "search_corpus"
+      ],
+      "trajectory_precision": 1.0,
+      "trajectory_recall": 1.0
+    },
+    {
+      "answer": "Other learners have mentioned a couple of things about this problem:\n\n*   One learner, Priya, noted that \"the second sample looks wrong until you notice the two numbers are at different positions but hold the same value, and that still counts.\"\n*   Another learner, Dmitri, advised to \"watch the input size, the numbers line is long and reading it slowly is its own problem.\"\n\nRegarding your second question, a hash map is a way to store information where each piece of data has a unique label, called a \"key,\" and an associated \"value.\" You can think of it like a dictionary: you use a word (the key) to quickly find its definition (the value).\n\nThe key idea is that it uses a special function, called a \"hash function,\" to figure out where to store each item. This allows it to find, add, or remove items very quickly, typically in a constant amount of time on average, no matter how many items are in the map. However, the items in a hash map are not stored in any particular order.",
+      "arguments": [
+        {},
+        {
+          "query": "hash map"
+        }
+      ],
+      "category": "multi-tool",
+      "chunk_ids": [
+        "hashing-and-maps#unordered-map-versus-map#0",
+        "hashing-and-maps#when-a-plain-array-beats-a-hash-table#0",
+        "hashing-and-maps#the-worst-case-is-reachable-on-purpose#0",
+        "stl-containers#unordered-set-and-unordered-map-hashed#0",
+        "hashing-and-maps#reserve-and-the-cost-of-rehashing#0"
+      ],
+      "goal_completion": 1.0,
+      "latency_ms": 9188.0,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": true,
+      "rag": {},
+      "run": 2,
+      "scenario": "multi-tool-notes-and-concept",
+      "tokens": {
+        "input": 11257,
+        "output": 687,
+        "total": 11944
+      },
+      "tool_parameters": 1.0,
+      "tool_selection": 1.0,
+      "trace_id": "tr-97952d98254f8edce426f0393a8292a2",
+      "trajectory": [
+        "read_problem_notes",
+        "search_corpus"
+      ],
+      "trajectory_precision": 1.0,
+      "trajectory_recall": 1.0
+    },
+    {
+      "answer": "Yes, other learners have written notes about this problem.\n\nOne learner, Priya, noted that \"the second sample looks wrong until you notice the two numbers are at different positions but hold the same value, and that still counts.\"\n\nAnother learner, Dmitri, mentioned to \"watch the input size, the numbers line is long and reading it slowly is its own problem.\"\n\n***\n\nA hash map is a data structure that stores information as pairs, where each pair has a \"key\" and a \"value.\" You use the key to quickly find its associated value. Think of it like a dictionary where each word is a key, and its definition is the value.\n\nThe main advantage of a hash map is that it's typically very fast for finding, adding, or removing items, almost like finding something instantly regardless of how many items are stored. This speed comes from how it organizes data using a process called \"hashing.\"\n\nHowever, there are a couple of things to know:\n*   Items in a hash map are not stored in any particular order.\n*   While usually very fast, in some specific and rare cases, or if designed to be so, operations can become much slower.",
+      "arguments": [
+        {},
+        {
+          "query": "hash map"
+        }
+      ],
+      "category": "multi-tool",
+      "chunk_ids": [
+        "hashing-and-maps#unordered-map-versus-map#0",
+        "hashing-and-maps#when-a-plain-array-beats-a-hash-table#0",
+        "hashing-and-maps#the-worst-case-is-reachable-on-purpose#0",
+        "stl-containers#unordered-set-and-unordered-map-hashed#0",
+        "hashing-and-maps#reserve-and-the-cost-of-rehashing#0"
+      ],
+      "goal_completion": 0.0,
+      "latency_ms": 7001.1,
+      "models": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash"
+      ],
+      "passed": false,
+      "rag": {},
+      "run": 3,
+      "scenario": "multi-tool-notes-and-concept",
+      "tokens": {
+        "input": 11540,
+        "output": 864,
+        "total": 12404
+      },
+      "tool_parameters": 1.0,
+      "tool_selection": 1.0,
+      "trace_id": "tr-7204f25263916c37982fccbe102c6d7f",
+      "trajectory": [
+        "read_problem_notes",
+        "search_corpus"
+      ],
+      "trajectory_precision": 1.0,
+      "trajectory_recall": 1.0
+    }
+  ],
+  "runs": 3,
+  "temperature": 0.7,
+  "undefined": {
+    "goal_completion": 1,
+    "tool_parameters": 26,
+    "tool_selection": 0,
+    "trajectory_precision": 15,
+    "trajectory_recall": 6
+  }
+}

@@ -1,0 +1,395 @@
+# The evaluation set: 24 cases over 8 failure categories.
+#
+# Questions a learner using this tutor would actually type — several are
+# paraphrased from real messages in the run log — rather than questions
+# generated from the corpus. That direction matters. A set written by reading
+# the documents and asking "what does this paragraph answer" produces queries
+# that share the document's vocabulary, and a set like that scores well on any
+# retriever and tells you nothing.
+#
+# `golden_context` is content anchors, {doc, heading}, never chunk ids. Ids embed
+# the chunker's parameters, so every re-chunk would invalidate the whole file;
+# anchors survive it. `eval/anchors.py` resolves them at load time and fails
+# loudly on an anchor matching nothing, because an anchor that silently resolves
+# to the empty set scores as a retrieval failure and looks exactly like one.
+#
+# Out-of-corpus cases have NO golden_context, deliberately. On those the ranking
+# metrics are undefined rather than zero — see eval/metrics/rank.py — and what is
+# being tested is whether the answerer declines instead of inventing something.
+
+# ---------------------------------------------------------------- exact-term
+# A specific identifier or literal. The dense retriever tends to land on the
+# right topic and the wrong section; BM25 has the rare token and pins it.
+
+- id: exact-lower-upper-bound
+  category: exact-term
+  query: what is the difference between lower_bound and upper_bound
+  golden_context:
+    - {doc: binary-search, heading: lower_bound and upper_bound}
+  golden_answer: >
+    lower_bound returns the first element that is not less than x, i.e. the first
+    element >= x. upper_bound returns the first element strictly greater than x.
+    For a sorted array containing several copies of x, lower_bound points at the
+    first copy and upper_bound points just past the last, so the distance between
+    them is the number of copies. Both return the end iterator when no such
+    element exists, and neither on its own tells you whether x is present.
+  notes: the two names differ by one word and share all their context
+
+- id: exact-modulus-1e9-7
+  category: exact-term
+  query: why does everyone use 1e9+7 as the modulus
+  golden_context:
+    - {doc: modular-arithmetic, heading: Why answers are asked modulo a prime}
+  golden_answer: >
+    It is prime, so every non-zero value has a multiplicative inverse and
+    division works. And it is just under 2^30, so the product of two values below
+    it stays under 2^60 and fits in a signed 64-bit integer with room to spare.
+    Answers are asked modulo something because counting problems otherwise
+    produce numbers with thousands of digits.
+  notes: a numeric literal a word tokenizer would split into 1e9 and 7
+
+- id: exact-sync-with-stdio
+  category: exact-term
+  query: what does ios::sync_with_stdio(false) actually do
+  golden_context:
+    - {doc: io-and-runtime-errors, heading: Fast input and output}
+  golden_answer: >
+    It stops the C++ streams mirroring the C stdio buffers, which is what makes
+    cin and cout slow on large input. It is usually paired with
+    cin.tie(nullptr), which stops cout being flushed before every read. Both must
+    come before any reading, and afterwards you must not mix cin with scanf in
+    the same program.
+  notes: a namespace-qualified identifier, which naive tokenizing splits at "::"
+
+# ------------------------------------------------------------------- acronym
+# The expansion appears in the corpus; the acronym may appear only once. Dense
+# embeddings handle well-known acronyms and stumble on domain ones.
+
+- id: acronym-dsu
+  category: acronym
+  query: what does DSU stand for and what is it for
+  golden_context:
+    - {doc: dsu-union-find, heading: What it is for}
+  golden_answer: >
+    DSU stands for disjoint set union, also called union-find. It maintains a
+    collection of elements split into groups and supports two operations: find,
+    which says which group an element is in, and unite, which merges two groups.
+    Both are effectively constant time with path compression and union by rank.
+    It cannot split a group — merges are one-way.
+  notes: three names for one structure; the query uses the least common
+
+- id: acronym-bit
+  category: acronym
+  query: what is a BIT
+  golden_context:
+    - {doc: fenwick-tree, heading: What problem it solves}
+  golden_answer: >
+    A BIT is a binary indexed tree, better known as a Fenwick tree. It keeps an
+    array under two interleaved operations — adding to one position, and asking
+    for the total up to a position — with both costing O(log n). That is the
+    compromise between a plain array, which updates in O(1) but sums in O(n), and
+    a prefix-sum array, which does the reverse.
+  notes: >
+    a three-letter acronym that is also an ordinary English word and a data type;
+    the dense retriever has no way to know which sense is meant
+
+- id: acronym-tle-vs-mle
+  category: acronym
+  query: what is the difference between TLE and MLE
+  golden_context:
+    - {doc: io-and-runtime-errors, heading: The verdicts and what they usually mean}
+  golden_answer: >
+    TLE is time limit exceeded — the program was too slow, usually because the
+    complexity is too high or a constant factor is out of control. MLE is memory
+    limit exceeded — it used too much memory, usually an oversized array, a
+    container that grew, or recursion too deep. Note that a stack overflow is
+    memory exhaustion but is normally reported as RE, a runtime error.
+  notes: two acronyms in one question, both defined only in a table row
+
+# ---------------------------------------------------------------- paraphrase
+# The learner's words and the document's words barely overlap. BM25 has almost
+# nothing to match on; this is where the dense arm has to carry the query.
+
+- id: paraphrase-too-slow
+  category: paraphrase
+  query: my program works but the judge says it took too long, what now
+  golden_context:
+    - {doc: debugging-tle-wa, heading: Finding the slow part}
+    - {doc: debugging-tle-wa, heading: Diagnose before you edit}
+  golden_answer: >
+    First work out whether the algorithm or the constant factor is at fault:
+    compute the operation count from the complexity and the constraints. If an
+    O(n^2) algorithm faces n = 2e5 that is 4e10 operations and no micro-optimisation
+    will save it — the algorithm has to change. If the complexity looks fine,
+    suspect the constant factor: node-based containers where an array would do,
+    endl flushing in a printing loop, missing sync_with_stdio, containers passed
+    by value, or an unordered_map being hit by anti-hash tests.
+  notes: >
+    the target sections never use the words "took too long"; they say TLE,
+    complexity, and constant factor
+
+- id: paraphrase-estimate-speed
+  category: paraphrase
+  query: how can I tell if my idea will be fast enough before I write it
+  golden_context:
+    - {doc: complexity-and-big-o, heading: How many operations fit in a second}
+  golden_answer: >
+    Use the constraint to work backwards. A judge machine runs on the order of
+    1e8 simple operations per second, so with a two-second limit: n up to 5000
+    permits O(n^2), n up to 1e6 permits O(n log n), and n up to 1e8 needs O(n).
+    It is a rule of thumb rather than a law — constant factors can make an
+    O(n log n) solution built from std::map lose to a tight O(n^2) array scan at
+    moderate n.
+  notes: asks about a table it shares no vocabulary with
+
+- id: paraphrase-negative-result
+  category: paraphrase
+  query: my answer comes out negative when it should not
+  golden_context:
+    - {doc: modular-arithmetic, heading: Subtraction and the negative remainder}
+  golden_answer: >
+    In C++ the % operator takes the sign of the dividend, so (-3) % 7 is -3 and
+    not 4 — unlike the mathematical convention and unlike Python. Any subtraction
+    done modulo m therefore needs correcting by adding m back before the final
+    remainder: ((a - b) % MOD + MOD) % MOD. It is a common bug precisely because
+    it only shows up when the subtraction happens to go negative, which the
+    sample input often does not trigger.
+  notes: a symptom, not a topic; the answer is in a section about the % operator
+
+# ------------------------------------------------------------- near-duplicate
+# Two documents cover overlapping ground and both mention the other by name.
+# Retrieval that fetches the topic rather than the answer lands on the wrong one.
+
+- id: dup-fenwick-or-segment
+  category: near-duplicate
+  query: when is a Fenwick tree enough and when do I actually need a segment tree
+  golden_context:
+    - {doc: fenwick-tree, heading: Fenwick versus segment tree}
+    - {doc: segment-tree, heading: Segment tree versus Fenwick tree}
+  golden_answer: >
+    A Fenwick tree relies on subtraction — a range is one prefix minus another —
+    so it handles sums, counts and XOR under point updates, in about ten lines
+    and with a small constant. Minimum has no inverse, so a Fenwick tree cannot
+    do range minimum at all. Reach for a segment tree the moment you need min,
+    max, gcd, or an update applied across a whole range, which lazy propagation
+    supports and a Fenwick tree does not.
+  notes: >
+    two documents, each with a section named after the comparison, each naming
+    the other; the correct answer is that either is acceptable
+
+- id: dup-map-or-unordered-map
+  category: near-duplicate
+  query: should I use map or unordered_map
+  golden_context:
+    - {doc: hashing-and-maps, heading: unordered_map versus map}
+    - {doc: stl-containers, heading: A decision table}
+  golden_answer: >
+    unordered_map is a hash table: average O(1) find, insert and erase, no
+    ordering, and a worst case of O(n) per operation that adversarial input can
+    trigger on purpose. map is a balanced tree: O(log n) guaranteed, sorted
+    iteration, and lower_bound / upper_bound for predecessor and successor
+    queries. If you never need order, prefer unordered_map. If you need ordered
+    iteration or range queries, map is structurally necessary, not merely
+    tidier. If the keys are integers in a small range, a plain array beats both.
+  notes: the same comparison is made in two documents from different angles
+
+- id: dup-bfs-for-cheapest
+  category: near-duplicate
+  query: can I use BFS to find the cheapest route
+  golden_context:
+    - {doc: graph-traversal-bfs-dfs, heading: Choosing between them}
+    - {doc: shortest-paths, heading: Picking the right algorithm}
+  golden_answer: >
+    Only if every edge costs the same. BFS finds the path with the fewest edges,
+    which is the cheapest path only when all edges have equal weight. With
+    weights of 0 and 1, use 0-1 BFS with a deque; with general non-negative
+    weights, Dijkstra; with negative weights, Bellman-Ford. Using BFS on weighted
+    edges produces a wrong answer that never looks wrong.
+  notes: both documents answer it, from the BFS side and the shortest-path side
+
+# ----------------------------------------------------------------- multi-hop
+# No single chunk is sufficient. Tests recall at depth rather than precision@1.
+
+- id: multihop-recursive-crash
+  category: multi-hop
+  query: why would my recursive graph search crash on a big input
+  golden_context:
+    - {doc: recursion-and-backtracking, heading: 'The call stack, and how it runs out'}
+    - {doc: graph-traversal-bfs-dfs, heading: Depth-first search}
+  golden_answer: >
+    Stack depth. Each pending call keeps its locals and return address on the
+    call stack, which is typically 1-8 MB and runs out somewhere between 1e4 and
+    1e5 frames. A depth-first search over a path-shaped graph with 1e5 vertices
+    hits that reliably. It is a crash rather than a slowdown, and judges report
+    it as a runtime error rather than as a memory limit. The fix is an explicit
+    stack, which moves the frames to the heap.
+  notes: the cause is in one document and the situation that triggers it in another
+
+- id: multihop-changing-range-sums
+  category: multi-hop
+  query: how do I answer range sum questions when the array keeps changing
+  golden_context:
+    - {doc: arrays-and-prefix-sums, heading: When prefix sums do not apply}
+    - {doc: fenwick-tree, heading: What problem it solves}
+  golden_answer: >
+    A prefix sum array is built once and is only correct for the array as it was
+    at that moment; a single update invalidates every entry after it and costs
+    O(n) to repair. When updates and queries are interleaved you want a Fenwick
+    tree or a segment tree instead, which do both in O(log n).
+  notes: needs the limitation from one document and the replacement from another
+
+- id: multihop-passes-sample-fails-later
+  category: multi-hop
+  query: it passes the sample but fails on a later test, what should I check
+  golden_context:
+    - {doc: debugging-tle-wa, heading: Edge cases worth checking every time}
+    - {doc: io-and-runtime-errors, heading: Integer overflow}
+  golden_answer: >
+    A wrong answer on a later test is usually an unhandled edge case or an
+    overflow rather than a broken idea. Check n = 1 and empty input, all elements
+    equal, the maximum and minimum permitted values, already-sorted and
+    reverse-sorted input, and duplicates where you assumed distinct values. Then
+    check every accumulator's type: int holds only about 2.1e9, and a prefix sum
+    or a product of two indices exceeds it easily. Stress testing against a brute
+    force on small random inputs finds most of the rest.
+  notes: two documents, one about edge cases and one about the arithmetic
+
+# ------------------------------------------------------------------ negation
+# "when NOT to". The words retrieve the topic; the answer is the section about
+# its limits, which is usually not the section the topic words point at.
+
+- id: negation-sliding-window
+  category: negation
+  query: when should I not use a sliding window
+  golden_context:
+    - {doc: two-pointers-and-sliding-window, heading: When two pointers is wrong}
+  golden_answer: >
+    When the property is not monotone in the window — a sliding window needs that
+    once a window is invalid, every extension of it stays invalid. Also when you
+    are summing values that can be negative, since extending the window can then
+    decrease the sum and the monotonicity is gone. And it does not apply if you
+    had to sort first but the question is about contiguous ranges of the original
+    array, or if either pointer would ever need to move backwards.
+  notes: >
+    the topic words appear in six sections; only the last one answers the
+    negated question
+
+- id: negation-greedy-fails
+  category: negation
+  query: when is a greedy approach the wrong choice
+  golden_context:
+    - {doc: greedy-and-exchange-arguments, heading: When greedy fails}
+  golden_answer: >
+    When a locally best choice forecloses something better later. 0/1 knapsack is
+    the standard example: the item with the best value per weight can occupy
+    space two other items would have used more profitably, and once it is in
+    there is no way back. Coin change with a non-canonical system is another —
+    with coins 1, 3, 4 and a target of 6, greedy takes 4+1+1 while the optimum is
+    3+3. If you cannot build an exchange argument, look for a small lopsided
+    counterexample; if that fails too, use dynamic programming.
+  notes: the document is mostly about when greedy works
+
+- id: negation-dijkstra
+  category: negation
+  query: when does Dijkstra not work
+  golden_context:
+    - {doc: shortest-paths, heading: Why Dijkstra needs non-negative weights}
+  golden_answer: >
+    With negative edge weights. Dijkstra finalises a vertex as soon as it is the
+    closest unfinalised one and never revisits it, which is only sound if
+    extending a path can never decrease its length. A single negative edge breaks
+    that: a longer-looking route might drop below the finalised distance later,
+    and Dijkstra will not notice. Use Bellman-Ford, which also detects negative
+    cycles.
+  notes: the negated form of the question the document's main section answers
+
+# ----------------------------------------------------------------- ambiguous
+# Underspecified. Several sections are defensible; the question is whether the
+# top results are coherent rather than scattered across unrelated documents.
+
+- id: ambiguous-how-trees-work
+  category: ambiguous
+  query: how do trees work
+  golden_context:
+    - {doc: trees-and-lca, heading: What makes a tree special}
+  golden_answer: >
+    A tree is a connected graph with n vertices and exactly n-1 edges, so it has
+    no cycles and there is exactly one simple path between any two vertices —
+    which is what makes so many problems tractable on trees and hard on general
+    graphs. Rooting a tree gives every vertex a unique parent and turns questions
+    about paths into questions about ancestry.
+  notes: >
+    could mean the graph structure, a binary search tree, or a segment tree;
+    three documents contain "tree" in their title
+
+- id: ambiguous-fastest-sort
+  category: ambiguous
+  query: what is the fastest way to sort
+  golden_context:
+    - {doc: sorting-and-comparators, heading: What the standard sort gives you}
+    - {doc: sorting-and-comparators, heading: Counting sort and when O(n log n) is not the floor}
+  golden_answer: >
+    std::sort is O(n log n) and is the right default — it uses introsort, so the
+    O(n^2) worst case of plain quicksort does not occur. If you only need the k
+    largest, nth_element and partial_sort do less work. And the n log n bound
+    only applies to comparison sorts: when the values are integers in a small
+    known range, counting sort is O(n + range), which wins when the range is
+    comparable to n and loses badly when it is huge.
+  notes: >
+    "fastest" depends on unstated assumptions about the data
+
+- id: ambiguous-memory-usage
+  category: ambiguous
+  query: how much memory will this use
+  golden_context:
+    - {doc: complexity-and-big-o, heading: Space complexity counts too}
+  golden_answer: >
+    The same big-O notation applies to memory. An n x n table is O(n^2) space,
+    which at n = 10000 is 1e8 cells — hundreds of megabytes, past most limits,
+    even when the time complexity is fine. Recursion also costs space that is
+    easy to forget: each pending call keeps its locals and return address on the
+    stack, so a recursion n levels deep is O(n) space and a deep enough one
+    overflows the stack rather than merely running slowly.
+  notes: no subject; "this" refers to something the corpus cannot see
+
+# ------------------------------------------------------------- out-of-corpus
+# No golden_context, on purpose. Ranking metrics are undefined on these and they
+# are excluded from the averages; what is measured is whether the answer
+# declines rather than inventing something.
+
+- id: ooc-solve-my-problem
+  category: out-of-corpus
+  query: how should I solve the problem I am working on right now
+  golden_context: []
+  golden_answer: >
+    Decline. The reference notes describe general concepts and contain nothing
+    about any specific problem, so there is nothing here that answers this. It is
+    also the one thing the tutor must never answer: operating rule R1 forbids
+    revealing how to solve the learner's current problem, including naming the
+    technique that would work.
+  notes: >
+    doubles as an R1 regression test — adding a corpus must not make the tutor
+    answerable here
+
+- id: ooc-specific-contest-problem
+  category: out-of-corpus
+  query: what was Codeforces round 900 problem D about
+  golden_context: []
+  golden_answer: >
+    Decline. The notes contain no problem statements, editorials or contest
+    archives — only general concept reference material — so this cannot be
+    answered from them.
+  notes: plausibly in-domain and definitely not in the corpus
+
+- id: ooc-language-not-covered
+  category: out-of-corpus
+  query: how do I read input quickly in Python
+  golden_context: []
+  golden_answer: >
+    Decline, or say what is missing. The notes cover C++ only — the fast input
+    section is about ios::sync_with_stdio and cin, which are C++ constructs — so
+    there is nothing here about Python's input handling.
+  notes: >
+    the nastiest of the three: the corpus has a section on exactly this topic
+    for a different language, so retrieval WILL return confident, wrong-language
+    passages and the answerer has to notice

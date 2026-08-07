@@ -21,11 +21,13 @@ lives:
 
   pull — `tools/tutor_tools.py`, fetched mid-run only when the request calls for
          it: `retrieve_memory` (cue-matched facts), `list_known_facts` (all of
-         them, for "what do you know about me?") and `read_problem_notes`
-         (what other learners wrote, arriving fenced as untrusted).
+         them, for "what do you know about me?"), `read_problem_notes` (what
+         other learners wrote, arriving fenced as untrusted) and `search_corpus`
+         (the shared concept notes, hybrid-retrieved and reranked).
 
-Everything the run touched — rule ids, fact ids, note ids, tool names — comes
-back in the Answer so it can be written to the run log for the monitor.
+Everything the run touched — rule ids, fact ids, note ids, corpus chunk ids,
+tool names — comes back in the Answer so it can be written to the run log for
+the monitor.
 """
 from __future__ import annotations
 
@@ -41,6 +43,7 @@ class Answer(BaseModel):
     rules_applied: list[str] = []   # rule ids pushed into this run
     facts_used: list[str] = []      # doc ids the agent pulled
     notes_seen: list[int] = []      # note ids the agent pulled
+    chunks_used: list[str] = []     # corpus chunk ids the agent retrieved
     tools_called: list[str] = []
 
 
@@ -57,5 +60,6 @@ def answer(problem: Problem, message: str, history: list[dict] | None = None,
         rules_applied=final.get("rules_applied") or [],
         facts_used=final.get("facts_used") or [],
         notes_seen=final.get("notes_seen") or [],
+        chunks_used=final.get("chunks_used") or [],
         tools_called=final.get("tools_called") or [],
     )

@@ -1,0 +1,630 @@
+{
+  "cases": {
+    "answerable": 21,
+    "empty_golden": 3,
+    "total": 24
+  },
+  "corpus": {
+    "chunks": 152,
+    "documents": 21
+  },
+  "parameters": {
+    "dense_n": 30,
+    "lexical_n": 30,
+    "rerank_depth": 20,
+    "rrf_k": 60
+  },
+  "per_case": {
+    "acronym-bit": {
+      "category": "acronym",
+      "golden": [
+        "fenwick-tree#what-problem-it-solves#0"
+      ],
+      "retrieved": [
+        "fenwick-tree#what-problem-it-solves#0",
+        "fenwick-tree#the-structure#0",
+        "fenwick-tree#what-it-is-used-for#0",
+        "fenwick-tree#fenwick-versus-segment-tree#0",
+        "fenwick-tree#range-update-point-query#0"
+      ],
+      "scores": {
+        "hit_rate": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "precision": 0.2,
+        "recall": 1.0
+      }
+    },
+    "acronym-dsu": {
+      "category": "acronym",
+      "golden": [
+        "dsu-union-find#what-it-is-for#0"
+      ],
+      "retrieved": [
+        "dsu-union-find#what-it-is-for#0",
+        "dsu-union-find#what-dsu-is-good-for#0",
+        "dsu-union-find#the-representation#0",
+        "dsu-union-find#path-compression#0",
+        "dsu-union-find#the-complexity-honestly-stated#0"
+      ],
+      "scores": {
+        "hit_rate": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "precision": 0.2,
+        "recall": 1.0
+      }
+    },
+    "acronym-tle-vs-mle": {
+      "category": "acronym",
+      "golden": [
+        "io-and-runtime-errors#the-verdicts-and-what-they-usually-mean#0"
+      ],
+      "retrieved": [
+        "io-and-runtime-errors#the-verdicts-and-what-they-usually-mean#0",
+        "debugging-tle-wa#diagnose-before-you-edit#0",
+        "io-and-runtime-errors#fast-input-and-output#0",
+        "binary-search#lower-bound-and-upper-bound#0",
+        "debugging-tle-wa#stress-testing-the-reliable-technique#0"
+      ],
+      "scores": {
+        "hit_rate": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "precision": 0.2,
+        "recall": 1.0
+      }
+    },
+    "ambiguous-fastest-sort": {
+      "category": "ambiguous",
+      "golden": [
+        "sorting-and-comparators#counting-sort-and-when-o-n-log-n-is-not-the-floor#0",
+        "sorting-and-comparators#what-the-standard-sort-gives-you#0"
+      ],
+      "retrieved": [
+        "sorting-and-comparators#counting-sort-and-when-o-n-log-n-is-not-the-floor#0",
+        "sorting-and-comparators#what-the-standard-sort-gives-you#0",
+        "hashing-and-maps#when-a-plain-array-beats-a-hash-table#0",
+        "stl-containers#the-container-adaptors#0",
+        "complexity-and-big-o#how-many-operations-fit-in-a-second#0"
+      ],
+      "scores": {
+        "hit_rate": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "precision": 0.4,
+        "recall": 1.0
+      }
+    },
+    "ambiguous-how-trees-work": {
+      "category": "ambiguous",
+      "golden": [
+        "trees-and-lca#what-makes-a-tree-special#0"
+      ],
+      "retrieved": [
+        "trees-and-lca#what-makes-a-tree-special#0",
+        "trees-and-lca#rooting-depth-and-subtree-sizes#0",
+        "trees-and-lca#common-tree-patterns#0",
+        "trees-and-lca#lowest-common-ancestor#0",
+        "dsu-union-find#union-by-rank-or-by-size#0"
+      ],
+      "scores": {
+        "hit_rate": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "precision": 0.2,
+        "recall": 1.0
+      }
+    },
+    "ambiguous-memory-usage": {
+      "category": "ambiguous",
+      "golden": [
+        "complexity-and-big-o#space-complexity-counts-too#0"
+      ],
+      "retrieved": [
+        "recursion-and-backtracking#the-call-stack-and-how-it-runs-out#0",
+        "dynamic-programming-patterns#reducing-the-memory#0",
+        "graph-traversal-bfs-dfs#representing-a-graph#0",
+        "trees-and-lca#binary-lifting#2",
+        "complexity-and-big-o#space-complexity-counts-too#0"
+      ],
+      "scores": {
+        "hit_rate": 1.0,
+        "mrr": 0.2,
+        "ndcg": 0.38685280723454163,
+        "precision": 0.2,
+        "recall": 1.0
+      }
+    },
+    "dup-bfs-for-cheapest": {
+      "category": "near-duplicate",
+      "golden": [
+        "graph-traversal-bfs-dfs#choosing-between-them#0",
+        "shortest-paths#picking-the-right-algorithm#0"
+      ],
+      "retrieved": [
+        "graph-traversal-bfs-dfs#choosing-between-them#0",
+        "graph-traversal-bfs-dfs#mistakes-worth-knowing#0",
+        "shortest-paths#picking-the-right-algorithm#0",
+        "graph-traversal-bfs-dfs#breadth-first-search#0",
+        "shortest-paths#0-1-bfs#0"
+      ],
+      "scores": {
+        "hit_rate": 1.0,
+        "mrr": 1.0,
+        "ndcg": 0.9197207891481876,
+        "precision": 0.4,
+        "recall": 1.0
+      }
+    },
+    "dup-fenwick-or-segment": {
+      "category": "near-duplicate",
+      "golden": [
+        "fenwick-tree#fenwick-versus-segment-tree#0",
+        "segment-tree#segment-tree-versus-fenwick-tree#0"
+      ],
+      "retrieved": [
+        "fenwick-tree#fenwick-versus-segment-tree#0",
+        "segment-tree#segment-tree-versus-fenwick-tree#0",
+        "segment-tree#what-problem-it-solves#0",
+        "fenwick-tree#range-update-point-query#0",
+        "arrays-and-prefix-sums#when-prefix-sums-do-not-apply#0"
+      ],
+      "scores": {
+        "hit_rate": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "precision": 0.4,
+        "recall": 1.0
+      }
+    },
+    "dup-map-or-unordered-map": {
+      "category": "near-duplicate",
+      "golden": [
+        "hashing-and-maps#unordered-map-versus-map#0",
+        "stl-containers#a-decision-table#0"
+      ],
+      "retrieved": [
+        "hashing-and-maps#unordered-map-versus-map#0",
+        "stl-containers#a-decision-table#0",
+        "stl-containers#unordered-set-and-unordered-map-hashed#0",
+        "stl-containers#set-and-map-ordered-tree-backed#0",
+        "hashing-and-maps#what-hashing-buys-and-what-it-costs#0"
+      ],
+      "scores": {
+        "hit_rate": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "precision": 0.4,
+        "recall": 1.0
+      }
+    },
+    "exact-lower-upper-bound": {
+      "category": "exact-term",
+      "golden": [
+        "binary-search#lower-bound-and-upper-bound#0",
+        "binary-search#lower-bound-and-upper-bound#1"
+      ],
+      "retrieved": [
+        "binary-search#lower-bound-and-upper-bound#0",
+        "binary-search#lower-bound-and-upper-bound#1",
+        "stl-containers#set-and-map-ordered-tree-backed#0",
+        "hashing-and-maps#unordered-map-versus-map#0",
+        "binary-search#searching-a-sorted-array#0"
+      ],
+      "scores": {
+        "hit_rate": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "precision": 0.4,
+        "recall": 1.0
+      }
+    },
+    "exact-modulus-1e9-7": {
+      "category": "exact-term",
+      "golden": [
+        "modular-arithmetic#why-answers-are-asked-modulo-a-prime#0"
+      ],
+      "retrieved": [
+        "modular-arithmetic#why-answers-are-asked-modulo-a-prime#0",
+        "modular-arithmetic#multiplication-and-overflow#0",
+        "modular-arithmetic#modular-inverse-and-division#0",
+        "strings-and-pattern-matching#polynomial-hashing#0",
+        "modular-arithmetic#mistakes-worth-knowing#0"
+      ],
+      "scores": {
+        "hit_rate": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "precision": 0.2,
+        "recall": 1.0
+      }
+    },
+    "exact-sync-with-stdio": {
+      "category": "exact-term",
+      "golden": [
+        "io-and-runtime-errors#fast-input-and-output#0"
+      ],
+      "retrieved": [
+        "io-and-runtime-errors#fast-input-and-output#0",
+        "debugging-tle-wa#finding-the-slow-part#0",
+        "io-and-runtime-errors#output-formatting#0",
+        "sorting-and-comparators#what-the-standard-sort-gives-you#0",
+        "io-and-runtime-errors#reading-the-constraints-before-writing-anything#0"
+      ],
+      "scores": {
+        "hit_rate": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "precision": 0.2,
+        "recall": 1.0
+      }
+    },
+    "multihop-changing-range-sums": {
+      "category": "multi-hop",
+      "golden": [
+        "arrays-and-prefix-sums#when-prefix-sums-do-not-apply#0",
+        "fenwick-tree#what-problem-it-solves#0"
+      ],
+      "retrieved": [
+        "fenwick-tree#what-problem-it-solves#0",
+        "segment-tree#what-problem-it-solves#0",
+        "fenwick-tree#fenwick-versus-segment-tree#0",
+        "segment-tree#the-structure#1",
+        "fenwick-tree#range-update-point-query#0"
+      ],
+      "scores": {
+        "hit_rate": 1.0,
+        "mrr": 1.0,
+        "ndcg": 0.6131471927654584,
+        "precision": 0.2,
+        "recall": 0.5
+      }
+    },
+    "multihop-passes-sample-fails-later": {
+      "category": "multi-hop",
+      "golden": [
+        "debugging-tle-wa#edge-cases-worth-checking-every-time#0",
+        "io-and-runtime-errors#integer-overflow#0"
+      ],
+      "retrieved": [
+        "debugging-tle-wa#diagnose-before-you-edit#0",
+        "debugging-tle-wa#when-it-works-locally-and-fails-on-the-judge#0",
+        "debugging-tle-wa#edge-cases-worth-checking-every-time#0",
+        "debugging-tle-wa#reading-your-own-code-for-the-usual-suspects#0",
+        "debugging-tle-wa#stress-testing-the-reliable-technique#0"
+      ],
+      "scores": {
+        "hit_rate": 1.0,
+        "mrr": 0.3333333333333333,
+        "ndcg": 0.3065735963827292,
+        "precision": 0.2,
+        "recall": 0.5
+      }
+    },
+    "multihop-recursive-crash": {
+      "category": "multi-hop",
+      "golden": [
+        "graph-traversal-bfs-dfs#depth-first-search#0",
+        "recursion-and-backtracking#the-call-stack-and-how-it-runs-out#0"
+      ],
+      "retrieved": [
+        "graph-traversal-bfs-dfs#depth-first-search#0",
+        "recursion-and-backtracking#the-call-stack-and-how-it-runs-out#0",
+        "io-and-runtime-errors#the-verdicts-and-what-they-usually-mean#0",
+        "trees-and-lca#mistakes-worth-knowing#0",
+        "complexity-and-big-o#space-complexity-counts-too#0"
+      ],
+      "scores": {
+        "hit_rate": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "precision": 0.4,
+        "recall": 1.0
+      }
+    },
+    "negation-dijkstra": {
+      "category": "negation",
+      "golden": [
+        "shortest-paths#why-dijkstra-needs-non-negative-weights#0"
+      ],
+      "retrieved": [
+        "shortest-paths#why-dijkstra-needs-non-negative-weights#0",
+        "graph-traversal-bfs-dfs#choosing-between-them#0",
+        "shortest-paths#picking-the-right-algorithm#0",
+        "shortest-paths#bellman-ford-and-negative-cycles#0",
+        "shortest-paths#dijkstra-s-algorithm#0"
+      ],
+      "scores": {
+        "hit_rate": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "precision": 0.2,
+        "recall": 1.0
+      }
+    },
+    "negation-greedy-fails": {
+      "category": "negation",
+      "golden": [
+        "greedy-and-exchange-arguments#when-greedy-fails#0"
+      ],
+      "retrieved": [
+        "greedy-and-exchange-arguments#when-greedy-fails#0",
+        "greedy-and-exchange-arguments#the-two-properties-you-need#0",
+        "shortest-paths#why-dijkstra-needs-non-negative-weights#0",
+        "greedy-and-exchange-arguments#mistakes-worth-knowing#0",
+        "greedy-and-exchange-arguments#what-makes-a-greedy-algorithm#0"
+      ],
+      "scores": {
+        "hit_rate": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "precision": 0.2,
+        "recall": 1.0
+      }
+    },
+    "negation-sliding-window": {
+      "category": "negation",
+      "golden": [
+        "two-pointers-and-sliding-window#when-two-pointers-is-wrong#0"
+      ],
+      "retrieved": [
+        "two-pointers-and-sliding-window#when-two-pointers-is-wrong#0",
+        "two-pointers-and-sliding-window#fixed-size-windows#0",
+        "two-pointers-and-sliding-window#variable-size-windows#0",
+        "stacks-queues-deques#monotonic-deque-and-sliding-window-extremes#0",
+        "two-pointers-and-sliding-window#the-shape-of-a-two-pointer-scan#0"
+      ],
+      "scores": {
+        "hit_rate": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "precision": 0.2,
+        "recall": 1.0
+      }
+    },
+    "ooc-language-not-covered": {
+      "category": "out-of-corpus",
+      "golden": [],
+      "retrieved": [
+        "io-and-runtime-errors#fast-input-and-output#0",
+        "debugging-tle-wa#finding-the-slow-part#0",
+        "io-and-runtime-errors#reading-the-constraints-before-writing-anything#0",
+        "complexity-and-big-o#how-many-operations-fit-in-a-second#0",
+        "complexity-and-big-o#what-big-o-actually-measures#0"
+      ],
+      "scores": {
+        "hit_rate": null,
+        "mrr": null,
+        "ndcg": null,
+        "precision": null,
+        "recall": null
+      }
+    },
+    "ooc-solve-my-problem": {
+      "category": "out-of-corpus",
+      "golden": [],
+      "retrieved": [
+        "io-and-runtime-errors#reading-the-constraints-before-writing-anything#0",
+        "dynamic-programming-patterns#when-dynamic-programming-applies#0",
+        "debugging-tle-wa#diagnose-before-you-edit#0",
+        "debugging-tle-wa#edge-cases-worth-checking-every-time#0",
+        "greedy-and-exchange-arguments#what-makes-a-greedy-algorithm#0"
+      ],
+      "scores": {
+        "hit_rate": null,
+        "mrr": null,
+        "ndcg": null,
+        "precision": null,
+        "recall": null
+      }
+    },
+    "ooc-specific-contest-problem": {
+      "category": "out-of-corpus",
+      "golden": [],
+      "retrieved": [
+        "shortest-paths#dijkstra-s-algorithm#0",
+        "trees-and-lca#what-makes-a-tree-special#0",
+        "dsu-union-find#what-dsu-is-good-for#0",
+        "dsu-union-find#what-it-is-for#0",
+        "segment-tree#what-problem-it-solves#0"
+      ],
+      "scores": {
+        "hit_rate": null,
+        "mrr": null,
+        "ndcg": null,
+        "precision": null,
+        "recall": null
+      }
+    },
+    "paraphrase-estimate-speed": {
+      "category": "paraphrase",
+      "golden": [
+        "complexity-and-big-o#how-many-operations-fit-in-a-second#0"
+      ],
+      "retrieved": [
+        "io-and-runtime-errors#reading-the-constraints-before-writing-anything#0",
+        "complexity-and-big-o#how-many-operations-fit-in-a-second#0",
+        "debugging-tle-wa#finding-the-slow-part#0",
+        "complexity-and-big-o#what-big-o-actually-measures#0",
+        "complexity-and-big-o#common-mistakes-reading-complexity#0"
+      ],
+      "scores": {
+        "hit_rate": 1.0,
+        "mrr": 0.5,
+        "ndcg": 0.6309297535714575,
+        "precision": 0.2,
+        "recall": 1.0
+      }
+    },
+    "paraphrase-negative-result": {
+      "category": "paraphrase",
+      "golden": [
+        "modular-arithmetic#subtraction-and-the-negative-remainder#0"
+      ],
+      "retrieved": [
+        "modular-arithmetic#subtraction-and-the-negative-remainder#0",
+        "modular-arithmetic#mistakes-worth-knowing#0",
+        "debugging-tle-wa#reading-your-own-code-for-the-usual-suspects#0",
+        "io-and-runtime-errors#integer-overflow#0",
+        "modular-arithmetic#the-rules-that-hold#0"
+      ],
+      "scores": {
+        "hit_rate": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "precision": 0.2,
+        "recall": 1.0
+      }
+    },
+    "paraphrase-too-slow": {
+      "category": "paraphrase",
+      "golden": [
+        "debugging-tle-wa#diagnose-before-you-edit#0",
+        "debugging-tle-wa#finding-the-slow-part#0"
+      ],
+      "retrieved": [
+        "io-and-runtime-errors#the-verdicts-and-what-they-usually-mean#0",
+        "debugging-tle-wa#diagnose-before-you-edit#0",
+        "debugging-tle-wa#finding-the-slow-part#0",
+        "io-and-runtime-errors#fast-input-and-output#0",
+        "complexity-and-big-o#how-many-operations-fit-in-a-second#0"
+      ],
+      "scores": {
+        "hit_rate": 1.0,
+        "mrr": 0.5,
+        "ndcg": 0.6934264036172708,
+        "precision": 0.4,
+        "recall": 1.0
+      }
+    }
+  },
+  "precision_ceiling": {
+    "k=10": 0.14285714285714285,
+    "k=3": 0.47619047619047616,
+    "k=5": 0.2857142857142857
+  },
+  "results": {
+    "by_category": {
+      "acronym": {
+        "hit_rate": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "precision": 0.20000000000000004,
+        "recall": 1.0
+      },
+      "ambiguous": {
+        "hit_rate": 1.0,
+        "mrr": 0.7333333333333334,
+        "ndcg": 0.7956176024115139,
+        "precision": 0.26666666666666666,
+        "recall": 1.0
+      },
+      "exact-term": {
+        "hit_rate": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "precision": 0.26666666666666666,
+        "recall": 1.0
+      },
+      "multi-hop": {
+        "hit_rate": 1.0,
+        "mrr": 0.7777777777777778,
+        "ndcg": 0.6399069297160626,
+        "precision": 0.26666666666666666,
+        "recall": 0.6666666666666666
+      },
+      "near-duplicate": {
+        "hit_rate": 1.0,
+        "mrr": 1.0,
+        "ndcg": 0.9732402630493958,
+        "precision": 0.4000000000000001,
+        "recall": 1.0
+      },
+      "negation": {
+        "hit_rate": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "precision": 0.20000000000000004,
+        "recall": 1.0
+      },
+      "paraphrase": {
+        "hit_rate": 1.0,
+        "mrr": 0.6666666666666666,
+        "ndcg": 0.7747853857295762,
+        "precision": 0.26666666666666666,
+        "recall": 1.0
+      }
+    },
+    "no rerank": {
+      "k=10": {
+        "means": {
+          "hit_rate": 0.8571428571428571,
+          "mrr": 0.7666666666666667,
+          "ndcg": 0.7637349384208075,
+          "precision": 0.11904761904761904,
+          "recall": 0.8571428571428571
+        },
+        "scored": 21,
+        "undefined": 3
+      },
+      "k=3": {
+        "means": {
+          "hit_rate": 0.8095238095238095,
+          "mrr": 0.7619047619047619,
+          "ndcg": 0.729885498617629,
+          "precision": 0.3492063492063492,
+          "recall": 0.7619047619047619
+        },
+        "scored": 21,
+        "undefined": 3
+      },
+      "k=5": {
+        "means": {
+          "hit_rate": 0.8095238095238095,
+          "mrr": 0.7619047619047619,
+          "ndcg": 0.7411806277971192,
+          "precision": 0.21904761904761907,
+          "recall": 0.7857142857142857
+        },
+        "scored": 21,
+        "undefined": 3
+      }
+    },
+    "reranked": {
+      "k=10": {
+        "means": {
+          "hit_rate": 1.0,
+          "mrr": 0.8825396825396826,
+          "ndcg": 0.8925750926827102,
+          "precision": 0.1380952380952381,
+          "recall": 0.9761904761904762
+        },
+        "scored": 21,
+        "undefined": 3
+      },
+      "k=3": {
+        "means": {
+          "hit_rate": 0.9523809523809523,
+          "mrr": 0.8730158730158729,
+          "ndcg": 0.8649427493088145,
+          "precision": 0.42857142857142855,
+          "recall": 0.9047619047619048
+        },
+        "scored": 21,
+        "undefined": 3
+      },
+      "k=5": {
+        "means": {
+          "hit_rate": 1.0,
+          "mrr": 0.8825396825396826,
+          "ndcg": 0.8833643115580783,
+          "precision": 0.2666666666666667,
+          "recall": 0.9523809523809523
+        },
+        "scored": 21,
+        "undefined": 3
+      }
+    }
+  }
+}

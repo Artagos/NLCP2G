@@ -42,8 +42,10 @@ GRAPHS = [
      "The one cycle in the system. `revise` carries the critic's fix list back "
      "to the executor, at most twice; three of the four exits run nothing."),
     ("The tutor", tutor.BUILDER,
-     "A ReAct loop over three retrieval tools. The model decides whether to "
-     "call them; it never decides whose memory to look in."),
+     "A ReAct loop over four retrieval tools — three over this learner's own "
+     "history, one over the shared concept corpus. The model decides whether to "
+     "call them, and can re-query the corpus when the first search misses; it "
+     "never decides whose memory to look in."),
     ("The operator subagent", admin.BUILDER,
      "The same loop shape, eleven privileged tools, and an authorisation check "
      "that happens before the graph is ever constructed."),

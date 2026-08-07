@@ -5,9 +5,16 @@ documents are attached to every single run before the model sees the question,
 because a rule that waits to be asked for is a rule that does not apply. That
 happens in `graphs/tutor.py`, not here.
 
-These three are pulled: fetched mid-run, only when the request calls for it,
+These four are pulled: fetched mid-run, only when the request calls for it,
 because a learner accumulates far more facts than belong in any one context and
 the request is what decides which of them are relevant.
+
+Three of them read this learner's own history. The fourth, `search_corpus`,
+reads the shared concept corpus — and it is the one that makes the pull/push
+distinction earn its keep. Retrieval here is not a pipeline stage that runs
+before every message; the model calls it when it judges that a question needs
+grounding, and it can call it again with a better query when the first result
+was not what it wanted.
 
 Each tool reads the learner and the current problem straight out of graph state
 (`InjectedState`) rather than taking them as arguments. That is deliberate. If
@@ -30,6 +37,12 @@ from langgraph.prebuilt import InjectedState
 from langgraph.types import Command
 
 from .. import docstore, memory
+from ..rag import retriever
+
+# How many passages one search returns. Five chunks is roughly 3.5 kB of
+# context — enough to answer from, and small enough that a model asking a second
+# refined question is cheaper than one asking for twenty passages up front.
+SEARCH_K = 5
 
 
 def _answer(tool_call_id: str, name: str, text: str, **updates) -> Command:
@@ -105,4 +118,45 @@ def read_problem_notes(
                    notes_seen=[n["id"] for n in notes])
 
 
-TUTOR_TOOLS = [retrieve_memory, list_known_facts, read_problem_notes]
+@tool
+def search_corpus(
+    query: str,
+    tool_call_id: Annotated[str, InjectedToolCallId],
+    k: int = SEARCH_K,
+) -> Command:
+    """Search the reference notes for an explanation of a GENERAL computer
+    science or C++ concept — data structures, algorithms, complexity, language
+    behaviour, common failure modes. Call this before explaining any concept, so
+    the explanation is grounded in the notes rather than recalled.
+
+    Pass the concept you need, not the learner's whole sentence: "difference
+    between lower_bound and upper_bound" retrieves better than "hey can you
+    remind me what the thing with the bounds does". If what comes back is not
+    what you needed, call again with different words — a second, sharper query
+    is normal and cheap.
+
+    The notes describe concepts in the abstract. They contain nothing about any
+    specific problem, so this cannot be used to work out how to solve the one
+    the learner is on, and you must not try to apply what it returns to their
+    problem.
+    """
+    # Unlike the other three, this one takes no `state`: the corpus is shared,
+    # so there is nothing to scope to a learner and nothing to get wrong. The
+    # scoping argument that makes `user_id` injected does not apply here.
+    try:
+        results = retriever.search(query, k=max(1, min(int(k), 10)))
+    except FileNotFoundError:
+        # No index built. Degrade to "I have no notes" rather than losing the
+        # turn — the tutor can still answer, just without grounding.
+        return _answer(tool_call_id, "search_corpus",
+                       "The reference notes are unavailable.")
+    if not results:
+        return _answer(tool_call_id, "search_corpus",
+                       "Nothing in the reference notes matches that. Try "
+                       "different words, or answer without them.")
+    return _answer(tool_call_id, "search_corpus", retriever.render(results),
+                   chunks_used=[r.chunk_id for r in results])
+
+
+TUTOR_TOOLS = [retrieve_memory, list_known_facts, read_problem_notes,
+               search_corpus]

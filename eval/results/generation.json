@@ -1,0 +1,519 @@
+{
+  "generator": "gemini-2.5-flash",
+  "judge": "gemini-2.5-flash-lite",
+  "judge_swap": {
+    "cases": [
+      "acronym-dsu",
+      "ambiguous-how-trees-work",
+      "dup-fenwick-or-segment",
+      "exact-lower-upper-bound",
+      "multihop-recursive-crash",
+      "negation-sliding-window",
+      "ooc-solve-my-problem",
+      "paraphrase-too-slow"
+    ],
+    "judge": "gemini-2.5-flash",
+    "scores": {
+      "acronym-dsu": {
+        "answer_relevance": 1.0,
+        "context_precision": 0.8,
+        "context_recall": 1.0,
+        "faithfulness": 1.0
+      },
+      "ambiguous-how-trees-work": {
+        "answer_relevance": 1.0,
+        "context_precision": 0.2,
+        "context_recall": 1.0,
+        "faithfulness": 1.0
+      },
+      "dup-fenwick-or-segment": {
+        "answer_relevance": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "faithfulness": 1.0
+      },
+      "exact-lower-upper-bound": {
+        "answer_relevance": 1.0,
+        "context_precision": 0.2,
+        "context_recall": 1.0,
+        "faithfulness": 1.0
+      },
+      "multihop-recursive-crash": {
+        "answer_relevance": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "faithfulness": 1.0
+      },
+      "negation-sliding-window": {
+        "answer_relevance": 1.0,
+        "context_precision": 0.4,
+        "context_recall": 1.0,
+        "faithfulness": 1.0
+      },
+      "ooc-solve-my-problem": {
+        "answer_relevance": 0.3333333333333333,
+        "context_precision": 0.8,
+        "context_recall": 0.5,
+        "faithfulness": 0.9230769230769231
+      },
+      "paraphrase-too-slow": {
+        "answer_relevance": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "faithfulness": 0.9375
+      }
+    }
+  },
+  "judge_temperature": 0.0,
+  "k": 5,
+  "per_case": {
+    "acronym-bit": {
+      "answer": "A BIT, also known as a Fenwick tree or binary indexed tree, is a data structure that maintains an array. It efficiently handles two types of interleaved operations: adding a value to a single position (point update) and calculating the total sum of all values up to a certain position (prefix query), both in O(log n) time. It achieves this by storing data in a single array, where each position `i` is responsible for a block of entries ending at `i`, with the block's length determined by the lowest set bit of `i`.",
+      "answer_relevance": 1.0,
+      "category": "acronym",
+      "chunk_ids": [
+        "fenwick-tree#what-problem-it-solves#0",
+        "fenwick-tree#the-structure#0",
+        "fenwick-tree#what-it-is-used-for#0",
+        "fenwick-tree#fenwick-versus-segment-tree#0",
+        "fenwick-tree#range-update-point-query#0"
+      ],
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "faithfulness": 1.0
+    },
+    "acronym-dsu": {
+      "answer": "DSU stands for Disjoint Set Union. It maintains a collection of elements partitioned into groups. The structure supports two main operations: `find(x)` to determine which group an element `x` is in, and `unite(x, y)` to merge the groups containing elements `x` and `y`. This allows it to answer connectivity questions under a series of merges, useful for problems involving components, grouping, or determining if two things are related.",
+      "answer_relevance": 1.0,
+      "category": "acronym",
+      "chunk_ids": [
+        "dsu-union-find#what-it-is-for#0",
+        "dsu-union-find#what-dsu-is-good-for#0",
+        "dsu-union-find#the-representation#0",
+        "dsu-union-find#path-compression#0",
+        "dsu-union-find#the-complexity-honestly-stated#0"
+      ],
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "faithfulness": 1.0
+    },
+    "acronym-tle-vs-mle": {
+      "answer": "TLE (Time Limit Exceeded) typically occurs when the program's computational complexity is too high or it has a large constant factor, causing it to take too long to run. MLE (Memory Limit Exceeded) usually happens when the program tries to use too much memory, such as when an array is too big, recursion is too deep, or containers grow excessively.",
+      "answer_relevance": 1.0,
+      "category": "acronym",
+      "chunk_ids": [
+        "io-and-runtime-errors#the-verdicts-and-what-they-usually-mean#0",
+        "debugging-tle-wa#diagnose-before-you-edit#0",
+        "io-and-runtime-errors#fast-input-and-output#0",
+        "binary-search#lower-bound-and-upper-bound#0",
+        "debugging-tle-wa#stress-testing-the-reliable-technique#0"
+      ],
+      "context_precision": 0.2,
+      "context_recall": 1.0,
+      "faithfulness": 1.0
+    },
+    "ambiguous-fastest-sort": {
+      "answer": "The fastest way to sort depends on the characteristics of the data. If the values are integers within a small, known range, counting sort can achieve O(n + MAXV) time, which beats the O(n log n) bound that applies to comparison sorts. For general sorting, `std::sort` operates in O(n log n) time.",
+      "answer_relevance": 0.6666666666666666,
+      "category": "ambiguous",
+      "chunk_ids": [
+        "sorting-and-comparators#counting-sort-and-when-o-n-log-n-is-not-the-floor#0",
+        "sorting-and-comparators#what-the-standard-sort-gives-you#0",
+        "hashing-and-maps#when-a-plain-array-beats-a-hash-table#0",
+        "stl-containers#the-container-adaptors#0",
+        "complexity-and-big-o#how-many-operations-fit-in-a-second#0"
+      ],
+      "context_precision": 0.4,
+      "context_recall": 0.8461538461538461,
+      "faithfulness": 1.0
+    },
+    "ambiguous-how-trees-work": {
+      "answer": "A tree is a connected graph with 'n' vertices and exactly 'n-1' edges, which means it contains no cycles. Between any two vertices in a tree, there is exactly one simple path.\n\nBy choosing one vertex as the root, every other vertex is assigned a unique parent, which helps in answering questions about ancestry. A depth-first search (DFS) can be used to determine the parent, depth, and size of each subtree within a rooted tree.\n\nCommon operations on trees include computing an answer for each vertex based on its children's answers (Tree DP), finding the longest path (diameter), and identifying the lowest common ancestor (LCA) of two vertices, which is their deepest shared ancestor. The LCA is useful for calculating distances between vertices.",
+      "answer_relevance": 0.3333333333333333,
+      "category": "ambiguous",
+      "chunk_ids": [
+        "trees-and-lca#what-makes-a-tree-special#0",
+        "trees-and-lca#rooting-depth-and-subtree-sizes#0",
+        "trees-and-lca#common-tree-patterns#0",
+        "trees-and-lca#lowest-common-ancestor#0",
+        "dsu-union-find#union-by-rank-or-by-size#0"
+      ],
+      "context_precision": 0.0,
+      "context_recall": 1.0,
+      "faithfulness": 1.0
+    },
+    "ambiguous-memory-usage": {
+      "answer": "The passages do not cover how much memory \"this\" will use, as \"this\" is not defined. However, they do provide examples of memory usage for various structures and algorithms:\n\n*   Recursion depth `d` costs O(d) memory, with the call stack typically 1 MB to 8 MB.\n*   An adjacency list for a graph uses O(n + m) space, where `n` is the number of vertices and `m` is the number of edges.\n*   An adjacency matrix uses O(n\u00b2) space.\n*   An `n \u00d7 n` table uses O(n\u00b2) space, which can be hundreds of megabytes for `n = 10,000`.\n*   A binary lifting table uses O(n log n) memory.\n*   Dynamic programming tables can sometimes be optimized from O(nW) to O(W) memory.",
+      "answer_relevance": 1.0,
+      "category": "ambiguous",
+      "chunk_ids": [
+        "recursion-and-backtracking#the-call-stack-and-how-it-runs-out#0",
+        "dynamic-programming-patterns#reducing-the-memory#0",
+        "graph-traversal-bfs-dfs#representing-a-graph#0",
+        "trees-and-lca#binary-lifting#2",
+        "complexity-and-big-o#space-complexity-counts-too#0"
+      ],
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "faithfulness": 1.0
+    },
+    "dup-bfs-for-cheapest": {
+      "answer": "Breadth-first search (BFS) finds the path with the fewest connections (edges). This path is only the cheapest route if all connections have the same cost.\n\nIf all connections have a weight of 1, BFS can find the shortest path. For situations where connections have weights of either 0 or 1, a specialized version called 0-1 BFS can be used.\n\nHowever, for connections with general positive costs, BFS is not the correct choice. It will find the path with the fewest connections, which is not necessarily the one with the lowest total cost.",
+      "answer_relevance": 0.6666666666666666,
+      "category": "near-duplicate",
+      "chunk_ids": [
+        "graph-traversal-bfs-dfs#choosing-between-them#0",
+        "graph-traversal-bfs-dfs#mistakes-worth-knowing#0",
+        "shortest-paths#picking-the-right-algorithm#0",
+        "graph-traversal-bfs-dfs#breadth-first-search#0",
+        "shortest-paths#0-1-bfs#0"
+      ],
+      "context_precision": 0.8,
+      "context_recall": 0.8571428571428571,
+      "faithfulness": 1.0
+    },
+    "dup-fenwick-or-segment": {
+      "answer": "A Fenwick tree is sufficient for operations that can be undone by subtraction, such as sums, counts, or XOR, especially when updates are made to single points. It is also a good choice if you need range updates but only point queries, or if you prioritize smaller memory usage, a faster constant factor, and fewer lines of code.\n\nA segment tree is needed when operations like range minimum, maximum, or greatest common divisor are required, as these do not have an inverse. It is also necessary for range assignment or range add operations. For situations requiring both range updates and range queries, a segment tree with lazy propagation is generally a clearer choice than using multiple Fenwick trees.",
+      "answer_relevance": 1.0,
+      "category": "near-duplicate",
+      "chunk_ids": [
+        "fenwick-tree#fenwick-versus-segment-tree#0",
+        "segment-tree#segment-tree-versus-fenwick-tree#0",
+        "segment-tree#what-problem-it-solves#0",
+        "fenwick-tree#range-update-point-query#0",
+        "arrays-and-prefix-sums#when-prefix-sums-do-not-apply#0"
+      ],
+      "context_precision": 1.0,
+      "context_recall": 0.9230769230769231,
+      "faithfulness": 0.8888888888888888
+    },
+    "dup-map-or-unordered-map": {
+      "answer": "You should use `unordered_map` if you do not need the elements to be in any particular order. It typically offers faster average performance for operations like inserting, finding, and erasing elements, with an average time complexity of O(1).\n\nChoose `map` if you require elements to be sorted by key, need sorted iteration, or need to perform range queries or find a predecessor/successor element. Operations in `map` are guaranteed to be O(log n).",
+      "answer_relevance": 1.0,
+      "category": "near-duplicate",
+      "chunk_ids": [
+        "hashing-and-maps#unordered-map-versus-map#0",
+        "stl-containers#a-decision-table#0",
+        "stl-containers#unordered-set-and-unordered-map-hashed#0",
+        "stl-containers#set-and-map-ordered-tree-backed#0",
+        "hashing-and-maps#what-hashing-buys-and-what-it-costs#0"
+      ],
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "faithfulness": 1.0
+    },
+    "exact-lower-upper-bound": {
+      "answer": "`lower_bound` finds the first element that is not less than a given value, meaning it finds the first element greater than or equal to the value. `upper_bound` finds the first element that is strictly greater than the given value.\n\nFor example, in a list `[1, 2, 2, 2, 5]` searching for `2`, `lower_bound` would point to the first `2` (at index 1), while `upper_bound` would point to `5` (at index 4), which is the first element strictly greater than `2`.",
+      "answer_relevance": 1.0,
+      "category": "exact-term",
+      "chunk_ids": [
+        "binary-search#lower-bound-and-upper-bound#0",
+        "binary-search#lower-bound-and-upper-bound#1",
+        "stl-containers#set-and-map-ordered-tree-backed#0",
+        "hashing-and-maps#unordered-map-versus-map#0",
+        "binary-search#searching-a-sorted-array#0"
+      ],
+      "context_precision": 0.6,
+      "context_recall": 1.0,
+      "faithfulness": 1.0
+    },
+    "exact-modulus-1e9-7": {
+      "answer": "The modulus `1e9+7` is commonly used because it is a prime number, which allows division to work correctly since every non-zero value has a multiplicative inverse. Additionally, it is just under 2\u00b3\u2070, meaning that the product of two values below it will be less than 2\u2076\u2070, fitting within a signed 64-bit integer.",
+      "answer_relevance": 1.0,
+      "category": "exact-term",
+      "chunk_ids": [
+        "modular-arithmetic#why-answers-are-asked-modulo-a-prime#0",
+        "modular-arithmetic#multiplication-and-overflow#0",
+        "modular-arithmetic#modular-inverse-and-division#0",
+        "strings-and-pattern-matching#polynomial-hashing#0",
+        "modular-arithmetic#mistakes-worth-knowing#0"
+      ],
+      "context_precision": 0.2,
+      "context_recall": 1.0,
+      "faithfulness": 1.0
+    },
+    "exact-sync-with-stdio": {
+      "answer": "`ios::sync_with_stdio(false)` stops `cin` and `cout` from mirroring the buffers used by C standard input/output functions like `scanf` and `printf`. This can speed up input and output operations, especially when dealing with a large number of values.",
+      "answer_relevance": 1.0,
+      "category": "exact-term",
+      "chunk_ids": [
+        "io-and-runtime-errors#fast-input-and-output#0",
+        "debugging-tle-wa#finding-the-slow-part#0",
+        "io-and-runtime-errors#output-formatting#0",
+        "sorting-and-comparators#what-the-standard-sort-gives-you#0",
+        "io-and-runtime-errors#reading-the-constraints-before-writing-anything#0"
+      ],
+      "context_precision": 0.4,
+      "context_recall": 0.8333333333333334,
+      "faithfulness": 1.0
+    },
+    "multihop-changing-range-sums": {
+      "answer": "You can answer range sum questions on a changing array using either a Fenwick tree or a segment tree.\n\nA Fenwick tree maintains an array under point updates (adding a value to one position) and prefix queries (total of everything up to a position). Both operations cost a logarithmic amount of time relative to the array's size. A range sum for `[l, r]` can be found by subtracting the prefix total up to `l-1` from the prefix total up to `r`.\n\nA segment tree also maintains an array under interleaved updates and range queries, with both operations costing a logarithmic amount of time. It can handle sums, among other associative combining operations.",
+      "answer_relevance": 1.0,
+      "category": "multi-hop",
+      "chunk_ids": [
+        "fenwick-tree#what-problem-it-solves#0",
+        "segment-tree#what-problem-it-solves#0",
+        "fenwick-tree#fenwick-versus-segment-tree#0",
+        "segment-tree#the-structure#1",
+        "fenwick-tree#range-update-point-query#0"
+      ],
+      "context_precision": 0.8,
+      "context_recall": 0.8,
+      "faithfulness": 1.0
+    },
+    "multihop-passes-sample-fails-later": {
+      "answer": "If your program passes the sample but fails on a later test, it typically indicates an unhandled edge case or an overflow.\n\nYou should check for common edge cases such as `n = 1` or empty inputs, all elements being equal, maximum or minimum values, already sorted or reverse sorted inputs, and duplicates. Additionally, review your code for issues like incorrect loop bounds, off-by-one index errors, accumulator types that may overflow, and ensure that any global state is reset between multiple test cases.",
+      "answer_relevance": 1.0,
+      "category": "multi-hop",
+      "chunk_ids": [
+        "debugging-tle-wa#diagnose-before-you-edit#0",
+        "debugging-tle-wa#when-it-works-locally-and-fails-on-the-judge#0",
+        "debugging-tle-wa#edge-cases-worth-checking-every-time#0",
+        "debugging-tle-wa#reading-your-own-code-for-the-usual-suspects#0",
+        "debugging-tle-wa#stress-testing-the-reliable-technique#0"
+      ],
+      "context_precision": 1.0,
+      "context_recall": 0.7857142857142857,
+      "faithfulness": 1.0
+    },
+    "multihop-recursive-crash": {
+      "answer": "A recursive graph search can crash on a large input because each pending recursive call consumes memory on the call stack. If the recursion depth becomes too great, such as 10\u2075 nested calls on a path graph, it can exceed the default stack size. This causes a stack overflow, which is a form of memory exhaustion that results in a crash, typically reported as a runtime error.",
+      "answer_relevance": 1.0,
+      "category": "multi-hop",
+      "chunk_ids": [
+        "graph-traversal-bfs-dfs#depth-first-search#0",
+        "recursion-and-backtracking#the-call-stack-and-how-it-runs-out#0",
+        "io-and-runtime-errors#the-verdicts-and-what-they-usually-mean#0",
+        "trees-and-lca#mistakes-worth-knowing#0",
+        "complexity-and-big-o#space-complexity-counts-too#0"
+      ],
+      "context_precision": 1.0,
+      "context_recall": 0.75,
+      "faithfulness": 1.0
+    },
+    "negation-dijkstra": {
+      "answer": "Dijkstra's algorithm does not work correctly when there are negative edge weights in the graph. If a graph contains even a single negative edge, Dijkstra's algorithm may return an incorrect shortest path without indicating any problem. This is because the algorithm assumes that extending a path will never decrease its length, an assumption that is violated by negative weights.",
+      "answer_relevance": 1.0,
+      "category": "negation",
+      "chunk_ids": [
+        "shortest-paths#why-dijkstra-needs-non-negative-weights#0",
+        "graph-traversal-bfs-dfs#choosing-between-them#0",
+        "shortest-paths#picking-the-right-algorithm#0",
+        "shortest-paths#bellman-ford-and-negative-cycles#0",
+        "shortest-paths#dijkstra-s-algorithm#0"
+      ],
+      "context_precision": 0.8,
+      "context_recall": 1.0,
+      "faithfulness": 1.0
+    },
+    "negation-greedy-fails": {
+      "answer": "A greedy approach is the wrong choice when a locally optimal decision prevents finding a better overall solution later, such as in the 0/1 knapsack problem. This happens if the \"greedy choice property\" does not hold, meaning the initial greedy choice prevents the ability to achieve an optimal final solution.\n\nFurthermore, a greedy algorithm may be incorrect if it fails on small, lopsided examples or if specific structures are needed to reveal its flaws, which random tests often miss. Other issues that can make a greedy approach wrong include sorting data on an incorrect key, assuming that an algorithm working forwards will also work backwards, or mishandling ties when several choices appear equally good. When a greedy algorithm is incorrect, dynamic programming is a fallback option that considers alternatives the greedy approach discards.",
+      "answer_relevance": 1.0,
+      "category": "negation",
+      "chunk_ids": [
+        "greedy-and-exchange-arguments#when-greedy-fails#0",
+        "greedy-and-exchange-arguments#the-two-properties-you-need#0",
+        "shortest-paths#why-dijkstra-needs-non-negative-weights#0",
+        "greedy-and-exchange-arguments#mistakes-worth-knowing#0",
+        "greedy-and-exchange-arguments#what-makes-a-greedy-algorithm#0"
+      ],
+      "context_precision": 0.8,
+      "context_recall": 0.5555555555555556,
+      "faithfulness": 1.0
+    },
+    "negation-sliding-window": {
+      "answer": "Do not use a sliding window if the property being checked is not monotone, meaning that if a window is invalid, every larger window containing it must also be invalid.\n\nSpecifically, avoid this technique if:\n*   Shrinking the window could turn a failing window into another failing one before it becomes valid, as the \"shrink until valid\" step might skip the correct answer.\n*   Elements can be negative when summing to find a shortest subarray with a sum at least S, because extending the window could decrease the sum, breaking monotonicity.\n*   The problem asks about contiguous ranges of the original array and you have sorted the array, as sorting destroys the original element positions.\n*   The algorithm requires either pointer to move backwards, as this invalidates the linear time complexity and the approach.",
+      "answer_relevance": 1.0,
+      "category": "negation",
+      "chunk_ids": [
+        "two-pointers-and-sliding-window#when-two-pointers-is-wrong#0",
+        "two-pointers-and-sliding-window#fixed-size-windows#0",
+        "two-pointers-and-sliding-window#variable-size-windows#0",
+        "stacks-queues-deques#monotonic-deque-and-sliding-window-extremes#0",
+        "two-pointers-and-sliding-window#the-shape-of-a-two-pointer-scan#0"
+      ],
+      "context_precision": 0.2,
+      "context_recall": 1.0,
+      "faithfulness": 0.7142857142857143
+    },
+    "ooc-language-not-covered": {
+      "answer": "The passages do not cover how to read input quickly in Python. They discuss techniques for C++ input/output, such as disabling synchronization between C++ streams and C stdio, and avoiding `endl` in loops.",
+      "answer_relevance": 1.0,
+      "category": "out-of-corpus",
+      "chunk_ids": [
+        "io-and-runtime-errors#fast-input-and-output#0",
+        "debugging-tle-wa#finding-the-slow-part#0",
+        "io-and-runtime-errors#reading-the-constraints-before-writing-anything#0",
+        "complexity-and-big-o#how-many-operations-fit-in-a-second#0",
+        "complexity-and-big-o#what-big-o-actually-measures#0"
+      ],
+      "context_precision": 0.0,
+      "context_recall": 1.0,
+      "faithfulness": 1.0
+    },
+    "ooc-solve-my-problem": {
+      "answer": "Before writing any code, you should read the problem's constraints. This helps you determine the allowed computational complexity and the necessary size for storing numbers. Specifically, consider the largest possible input size (`n`) to understand the permitted complexity, and the largest value any calculated number might reach to ensure it fits in the available memory.\n\nIf the problem involves finding the best answer from smaller parts, and those smaller parts recur, dynamic programming might be a suitable approach. The steps for dynamic programming are: define what a subproblem represents, write how a subproblem's answer is derived from smaller ones, establish the starting conditions (base cases), and choose an order for solving subproblems so that all dependencies are met first.",
+      "answer_relevance": 0.6666666666666666,
+      "category": "out-of-corpus",
+      "chunk_ids": [
+        "io-and-runtime-errors#reading-the-constraints-before-writing-anything#0",
+        "dynamic-programming-patterns#when-dynamic-programming-applies#0",
+        "debugging-tle-wa#diagnose-before-you-edit#0",
+        "debugging-tle-wa#edge-cases-worth-checking-every-time#0",
+        "greedy-and-exchange-arguments#what-makes-a-greedy-algorithm#0"
+      ],
+      "context_precision": 0.0,
+      "context_recall": null,
+      "faithfulness": 1.0
+    },
+    "ooc-specific-contest-problem": {
+      "answer": "The passages do not cover what Codeforces round 900 problem D was about.",
+      "answer_relevance": 1.0,
+      "category": "out-of-corpus",
+      "chunk_ids": [
+        "shortest-paths#dijkstra-s-algorithm#0",
+        "trees-and-lca#what-makes-a-tree-special#0",
+        "dsu-union-find#what-dsu-is-good-for#0",
+        "dsu-union-find#what-it-is-for#0",
+        "segment-tree#what-problem-it-solves#0"
+      ],
+      "context_precision": 0.0,
+      "context_recall": null,
+      "faithfulness": null
+    },
+    "paraphrase-estimate-speed": {
+      "answer": "Before writing any code, you can determine if your idea will be fast enough by first reading the problem's constraints to find the largest possible input size, `n`. Using this `n`, you can then refer to a rule of thumb that indicates what level of computational complexity is probably required to meet typical time limits, such as a two-second limit. For instance, if `n` is up to 5,000, an O(n\u00b2) algorithm is usually needed, while an `n` of 10\u2078 would likely require an O(n) algorithm. This helps you assess if your proposed algorithm's complexity aligns with what is permitted. However, it's important to remember that this is a guideline, and constant factors can sometimes make an algorithm with a theoretically better complexity slower than one with a worse complexity for moderate input sizes.",
+      "answer_relevance": 1.0,
+      "category": "paraphrase",
+      "chunk_ids": [
+        "io-and-runtime-errors#reading-the-constraints-before-writing-anything#0",
+        "complexity-and-big-o#how-many-operations-fit-in-a-second#0",
+        "debugging-tle-wa#finding-the-slow-part#0",
+        "complexity-and-big-o#what-big-o-actually-measures#0",
+        "complexity-and-big-o#common-mistakes-reading-complexity#0"
+      ],
+      "context_precision": 0.8,
+      "context_recall": 1.0,
+      "faithfulness": 0.8571428571428571
+    },
+    "paraphrase-negative-result": {
+      "answer": "In C++, the `%` operator can produce a negative result if the number being divided is negative. This differs from mathematical convention and can lead to unexpected negative answers, particularly when performing subtraction in modular arithmetic.\n\nTo correct this, you can add the modulus (`MOD`) to the result of `(a - b) % MOD` before taking the modulus again. This ensures that any negative intermediate result is pushed back into the positive range before the final remainder is calculated, making the final answer positive.",
+      "answer_relevance": 0.6666666666666666,
+      "category": "paraphrase",
+      "chunk_ids": [
+        "modular-arithmetic#subtraction-and-the-negative-remainder#0",
+        "modular-arithmetic#mistakes-worth-knowing#0",
+        "debugging-tle-wa#reading-your-own-code-for-the-usual-suspects#0",
+        "io-and-runtime-errors#integer-overflow#0",
+        "modular-arithmetic#the-rules-that-hold#0"
+      ],
+      "context_precision": 0.8,
+      "context_recall": 1.0,
+      "faithfulness": 1.0
+    },
+    "paraphrase-too-slow": {
+      "answer": "A \"time limit exceeded\" verdict means your program is either too slow due to its fundamental approach, or because it has a large constant factor slowing it down.\n\nFirst, calculate the expected number of operations based on your algorithm's complexity and the problem's constraints. If this count is too high, your algorithm likely needs to be changed entirely; a modern judge machine typically performs around 10\u2078 simple operations per second.\n\nIf your algorithm's complexity seems appropriate, the issue might be a large constant factor. Common causes include using `std::map` or `std::set` where an array or sorted vector would be faster, flushing streams repeatedly with `endl` in a printing loop, or not disabling synchronization between C++ streams and C stdio with `ios::sync_with_stdio(false)` for large inputs. Allocating memory inside a loop or passing containers by value into functions called in a loop can also contribute. You can use a timer to find the slow parts of your code.",
+      "answer_relevance": 1.0,
+      "category": "paraphrase",
+      "chunk_ids": [
+        "io-and-runtime-errors#the-verdicts-and-what-they-usually-mean#0",
+        "debugging-tle-wa#diagnose-before-you-edit#0",
+        "debugging-tle-wa#finding-the-slow-part#0",
+        "io-and-runtime-errors#fast-input-and-output#0",
+        "complexity-and-big-o#how-many-operations-fit-in-a-second#0"
+      ],
+      "context_precision": 1.0,
+      "context_recall": 1.0,
+      "faithfulness": 1.0
+    }
+  },
+  "results": {
+    "by_category": {
+      "acronym": {
+        "answer_relevance": 1.0,
+        "context_precision": 0.7333333333333334,
+        "context_recall": 1.0,
+        "faithfulness": 1.0
+      },
+      "ambiguous": {
+        "answer_relevance": 0.6666666666666666,
+        "context_precision": 0.4666666666666666,
+        "context_recall": 0.9487179487179488,
+        "faithfulness": 1.0
+      },
+      "exact-term": {
+        "answer_relevance": 1.0,
+        "context_precision": 0.39999999999999997,
+        "context_recall": 0.9444444444444445,
+        "faithfulness": 1.0
+      },
+      "multi-hop": {
+        "answer_relevance": 1.0,
+        "context_precision": 0.9333333333333332,
+        "context_recall": 0.7785714285714286,
+        "faithfulness": 1.0
+      },
+      "near-duplicate": {
+        "answer_relevance": 0.8888888888888888,
+        "context_precision": 0.9333333333333332,
+        "context_recall": 0.9267399267399267,
+        "faithfulness": 0.9629629629629629
+      },
+      "negation": {
+        "answer_relevance": 1.0,
+        "context_precision": 0.6,
+        "context_recall": 0.8518518518518517,
+        "faithfulness": 0.9047619047619048
+      },
+      "out-of-corpus": {
+        "answer_relevance": 0.8888888888888888,
+        "context_precision": 0.0,
+        "context_recall": 1.0,
+        "faithfulness": 1.0
+      },
+      "paraphrase": {
+        "answer_relevance": 0.8888888888888888,
+        "context_precision": 0.8666666666666667,
+        "context_recall": 1.0,
+        "faithfulness": 0.9523809523809524
+      }
+    },
+    "no rerank": {
+      "answer_relevance": {
+        "mean": 0.875,
+        "undefined": 0
+      },
+      "context_precision": {
+        "mean": 0.5166666666666667,
+        "undefined": 0
+      },
+      "context_recall": {
+        "mean": 0.8052031302031303,
+        "undefined": 2
+      },
+      "faithfulness": {
+        "mean": 0.9757703081232493,
+        "undefined": 1
+      }
+    },
+    "reranked": {
+      "answer_relevance": {
+        "mean": 0.9166666666666666,
+        "undefined": 0
+      },
+      "context_precision": {
+        "mean": 0.6166666666666667,
+        "undefined": 0
+      },
+      "context_recall": {
+        "mean": 0.9250444000444001,
+        "undefined": 2
+      },
+      "faithfulness": {
+        "mean": 0.976535541752933,
+        "undefined": 1
+      }
+    }
+  }
+}

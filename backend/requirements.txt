@@ -17,6 +17,15 @@ python-dotenv>=1.0.0
 cloudscraper>=1.2.71
 beautifulsoup4>=4.12.0
 
+# Retrieval over the concept corpus (backend/rag/). Three small dependencies
+# rather than a vector database: at a few hundred chunks an exact dot product in
+# numpy beats an approximate index, and putting an approximation underneath an
+# evaluation of retrieval quality would measure the wrong thing.
+numpy>=1.26
+rank_bm25>=0.2.2
+# the eval set is hand-authored and has to stay readable to be worth anything
+pyyaml>=6.0
+
 # development / evidence generation
 pytest>=8.0.0
 httpx>=0.27.0

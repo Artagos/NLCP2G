@@ -487,6 +487,96 @@ python -m scripts.demo_traces    # regenerate traces/ against the live model
 
 ---
 
+## 16. Retrieval over the concept corpus
+
+`search_corpus` is a LangChain tool bound to the tutor's model. It is not a
+pipeline stage: nothing in the routing calls it, and retrieval happens only when
+the model judges that a question needs grounding.
+
+**Scope is set by the operating rules.** The corpus is 21 markdown documents of
+general CS and C++ reference — exactly the R2 material — and contains no problem
+editorials, because R1 forbids the tutor to use them and material that does not
+exist is a stronger guarantee than an instruction not to read it.
+
+**Chunking** (`rag/chunker.py`) splits on `##` headings, since reference
+documentation is already divided by its author into readable units. Sections
+over 1200 characters split into ~800-character windows with 150 of overlap, at
+block boundaries only — never inside a code fence or a table. 21 documents
+become 152 chunks, median 711 characters. Each chunk carries its heading path in
+its text, which is the only context it has once separated from its document.
+
+**Hybrid retrieval** (`rag/retriever.py`): 30 dense + 30 lexical, fused with RRF
+at k=60, rerank the top 20, return top k.
+
+| stage | module | choice, and why |
+|---|---|---|
+| dense | `dense.py` | `gemini-embedding-001` at 768 dims, exact cosine in numpy. At 152 chunks brute force is exact and sub-millisecond; an ANN index would put an approximation under an evaluation of retrieval quality. |
+| lexical | `lexical.py` | BM25 (`rank_bm25`) with a tokenizer that emits `lower_bound` **and** `lower`+`bound`, keeps `std::sort` and `1e9+7` whole. k1/b left at defaults — tuning them on the eval set would be fitting the retriever to its test. |
+| fusion | `fusion.py` | RRF, k=60 (Cormack et al. 2009). Ranks only: the two score scales are incomparable, and normalising them makes fusion depend on each list's score distribution. |
+| rerank | `rerank.py` | One batched `gemini-2.5-flash` call. Candidates shown in a deterministically shuffled order, so the reranker is not partly a restatement of the fusion it exists to check. |
+
+**`pack_for_llm` is a separate function from `search`, deliberately.** Packing
+reorders results so the strongest sit at the edges of the context, where models
+attend best — and that destroys rank information which MRR and nDCG read. Feed
+packed order to the metrics and those two silently degrade while hit rate,
+precision and recall do not move, so the mistake looks like a retrieval
+regression rather than a bug. `tests/test_eval_metrics.py` pins the difference.
+
+**Everything is cached by content hash and committed** — corpus vectors, query
+embeddings, rerank verdicts, generated answers, judge verdicts. The evaluation
+therefore reproduces with no API key, which `--check-reproducible` verifies by
+re-running and diffing.
+
+**State.** `chunks_used` is a `_merge_unique` accumulator on `TutorState` (never
+on the checkpointed `TurnState`, per the rule in `graphs/schema.py`), carried
+through `Answer` into the turn's `meta`. It is deliberately *not* a column on the
+`runs` table: those are fixed columns, adding one needs a migration for every
+existing database, and nothing yet needs to query on it.
+
+**`MAX_TOOL_ROUNDS` went 4 -> 6.** `search_corpus` is the first tool here that is
+*expected* to be called twice — when the first query comes back off-target the
+right move is a sharper second search, and a cap sized for "three tools, more
+than four calls is looping" would have forbidden exactly the behaviour the tool
+exists for.
+
+## 17. Evaluating it (`eval/`)
+
+Outside `backend/`, and nothing in the application imports it. It calls
+`retriever.search` — the same function the tool calls — rather than
+reimplementing retrieval, so what it measures is the code that runs.
+
+**Two families, in this order.** `metrics/rank.py` is arithmetic over a golden
+set: hit rate@k, precision@k, recall@k, MRR, nDCG@k, hand-written because no
+library ships all five (DeepEval's `ContextualPrecision`/`ContextualRecall` are
+judged metrics measuring something else). They cost nothing and reproduce
+exactly, so a retrieval bug is caught before any judged metric is paid for.
+`metrics/judge.py` is four LLM-as-judge scorers on the `llm.chat_model` seam.
+
+**Hand-rolled rather than DeepEval or Ragas**, for three reasons: the scorers go
+through the one seam the whole test suite already stubs, so
+`tests/test_judge_scorers.py` drives them offline; caching is ours, so a re-run
+is free and byte-identical; and no new dependency tree lands on Python 3.14.
+
+**The eval set** (`dataset/cases.yaml`) is 24 cases over 8 categories, with
+golden context stored as `{doc, heading}` anchors resolved to chunk ids at load
+time — ids embed the chunker's parameters, so storing them would invalidate the
+set on every re-chunk. An anchor matching nothing raises rather than resolving
+to the empty set, which would otherwise score as a total retrieval failure and
+be indistinguishable from one.
+
+**Undefined is not zero.** The three out-of-corpus cases have an empty golden
+set on purpose; every ranking metric is undefined on them, they are excluded
+from the averages, and their count is reported separately. Scoring them zero
+would punish the set for containing honest unanswerable questions.
+
+**Judge bias** is handled in the design, not in a caveat: faithfulness scores
+the *fraction* of atomic claims supported, so padding an answer lowers it;
+context precision judges each passage in its own call, so there is no list
+position to be biased by; the judge is a different model from the generator; and
+`--judge-swap` re-judges a stratified subset with the generator's own model and
+prints the difference, which measures self-preference rather than asserting it
+is small.
+
 ## 15. Known limitations / next steps
 
 - **Codeforces scraping is blocked** by an anti-bot challenge, so problems come

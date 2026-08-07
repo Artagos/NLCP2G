@@ -121,8 +121,8 @@ def _switch(state: TurnState) -> dict:
 
 
 def _tutor(state: TurnState) -> dict:
-    """The only agent holding retrieval tools, so anything needing memory or
-    another learner's notes has to arrive here."""
+    """The only agent holding retrieval tools, so anything needing memory, the
+    concept corpus, or another learner's notes has to arrive here."""
     sid = state["sid"]
     problem = session.current(sid)
     answer = tutor.answer(problem, state["message"], _history(state),
@@ -133,6 +133,13 @@ def _tutor(state: TurnState) -> dict:
         "meta": {"reason": state.get("reason", ""),
                  "rules_applied": answer.rules_applied,
                  "facts_used": answer.facts_used, "notes_seen": answer.notes_seen,
+                 # Corpus provenance rides in `meta` rather than in the `runs`
+                 # table. Those are fixed columns, and adding one needs a
+                 # migration for every existing database — while what the chunk
+                 # ids are wanted for is the response and the traces, not the
+                 # monitor's rule-adherence grading. The column can wait until
+                 # something actually needs to query on it.
+                 "chunks_used": answer.chunks_used,
                  "tools_called": answer.tools_called},
     }
 

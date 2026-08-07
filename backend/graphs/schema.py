@@ -120,6 +120,11 @@ class TutorState(TypedDict, total=False):
     rules_applied: list[str]
     facts_used: Annotated[list[str], _merge_unique]
     notes_seen: Annotated[list[int], _merge_unique]
+    # Corpus chunks the model pulled in, in the order retrieval ranked them.
+    # Deduplicated like the others, which earns its keep here: a refined second
+    # search usually overlaps the first, and the audit trail should say which
+    # passages were read rather than how many times each was fetched.
+    chunks_used: Annotated[list[str], _merge_unique]
     tools_called: Annotated[list[str], _merge_unique]
     reply: str
 

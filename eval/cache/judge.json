@@ -1,0 +1,3200 @@
+{
+ "01028b6f41d3ebac1686938d3636ce2f1c6abf38b4983c0327875ea697a44c1b": {
+  "claims": [
+   "The passages do not contain a general method for solving any problem an individual might be working on.",
+   "The passages describe specific algorithmic approaches like greedy algorithms.",
+   "The passages describe specific algorithmic approaches like dynamic programming.",
+   "The passages describe a technique for debugging."
+  ]
+ },
+ "01659a60a536d79bd8ed6b2f6becc01872277d1c67a16ba46abcd2c3d0ff0de0": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "018383cf40bb7eb2be82448db726315ce64ba90644cdb4b99d3914482e7b32b7": {
+  "supported": [
+   true,
+   true
+  ]
+ },
+ "023e797fd9c17ecbf30c37b0ab184b4c47b72276b354eae90e9f03c4ac8f65e4": {
+  "score": 3
+ },
+ "027c29aced1ff04ee8b5cfd9c78ddd2c4abe1e955c175a727965aec7d99d1000": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "028642c3037b738af3bc4fc959612012e8dc02bb6c376e4c8d1c360752ce462a": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "030c527832871f7707decb7cad1bad4a5bab587c3a2da61f6663ab8388699f9c": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   false
+  ]
+ },
+ "030f3ffea595782ff2eaa0f1c5a516a6f2176ffda20935b0879d86762d45ab07": {
+  "claims": [
+   "1e9+7 is commonly used as a modulus",
+   "1e9+7 helps manage very large numbers that can result from counting problems",
+   "Using 1e9+7 as a modulus avoids the need for big integers",
+   "1e9+7 is a prime number",
+   "1e9+7 being a prime number ensures that every non-zero value has a multiplicative inverse",
+   "The multiplicative inverse allows division to work correctly",
+   "1e9+7 is just under 2^30",
+   "Two values smaller than 1e9+7 can be multiplied together and still fit within a signed 64-bit integer"
+  ]
+ },
+ "034097fbddf32dcd187807fe100b802447f37792ae06f57ff5f31f065e7e661f": {
+  "score": 3
+ },
+ "035a59b026d77c21bc424dc56482f50f366b6696ea1a5f1a887808944607184d": {
+  "useful": false
+ },
+ "0365944a7a5ce1d9f0c0a06129fbacba793c52851d061d052cd97b4ec5c84de6": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   false
+  ]
+ },
+ "0400f0b1c8ff4d7a5e526d3091a4c060e895fa7685e95bcfbcd591fa6289c026": {
+  "useful": true
+ },
+ "049a814698381aeccff2d66b030206704580bbe347b832860d18a15da2006698": {
+  "score": 3
+ },
+ "052fa68fb24cb97ff2bb121916efa63b1e09d86b9b10dd0faebd6bfeb33c8dad": {
+  "useful": false
+ },
+ "05702cde96a61e30167f6d5c1b86851cad4bb5a1d92572b706c5bfb3d59d50da": {
+  "useful": false
+ },
+ "05b6b34c00a7b1d1bcf8afe8e8520690c53fa4e2516711286b50242a9e598bd2": {
+  "useful": false
+ },
+ "06a4325743d0d7b8fc4a8c67e2cbbc9cc68b5976318f6f36e89c0dd7739b5d33": {
+  "supported": [
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "07502e37d483e9b07476bee456d300dd0804db9dfcb7f39210b5a04a9a376bde": {
+  "useful": false
+ },
+ "07701af705a62bb3678bec89612d27f305a4107f811f795ac30c1048093b2a27": {
+  "score": 3
+ },
+ "0857b71b30e3f3fc4e29b0c20521a83c35435effb286c9153b0c45d1003d8721": {
+  "useful": false
+ },
+ "08649bcaea5225a1ff4ecabb14b3885d84ce8952c80a957d54f322cb775eb2fd": {
+  "useful": false
+ },
+ "08da6e1fd0af0c3d56e98f5f8a5414f2cbaa2bf4de4f3549b1616b4fcbc8e72c": {
+  "useful": true
+ },
+ "0942725320634fdd6ac91944a6fc421326e408851eb0d122b8cb3b45198884ff": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "095c6713d3c7f5f91416846b9f39befc201fe2f4430044dadf673cc776108760": {
+  "useful": false
+ },
+ "09ee04a50a51db80fe46fd20b7449f8b6f2410e1876da5d4a211487aa2462ca1": {
+  "useful": false
+ },
+ "0a2c32fb77539f7d235acd6a3ddf27304fd24dda4bedd67d449d7b8a4b7de261": {
+  "useful": true
+ },
+ "0bb2e256acea59da5d76e214869a4248f64901c4d5aaf177ef02818942ff2ea8": {
+  "abstained": false
+ },
+ "0bde52b1c0a71a6316b4e295cf161bbc3e6cb8c4594b416bb30ac408d38b1645": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   false,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "0c7a4b8606f8c05a04fe35fec441d385a20ade48f023c4a7157d6e843381a0f9": {
+  "useful": false
+ },
+ "0cab9490ae91cceac9e213b60534822da716631a9f84a152e0b84340ab51a7a5": {
+  "useful": true
+ },
+ "0cad6fa9fddd8d9f7925baa16f9b3ea865de47a4165d014f265479362b9ed4e6": {
+  "useful": true
+ },
+ "0d4d18fc76a72ed871d7f45a31cc5b0a844dcabaa11c7f8111774a9192269137": {
+  "claims": [
+   "An O(n^2) algorithm facing n = 2e5 results in 4e10 operations.",
+   "If an algorithm's complexity is too high, the algorithm must change.",
+   "If an algorithm's complexity appears acceptable, suspect the constant factor.",
+   "Node-based containers can be a source of a large constant factor when an array would suffice.",
+   "Using endl for flushing within a printing loop can increase the constant factor.",
+   "Not disabling sync_with_stdio can increase the constant factor.",
+   "Passing containers by value can increase the constant factor.",
+   "An unordered_map being hit by anti-hash tests can increase the constant factor."
+  ]
+ },
+ "0d6f520253a9cb0b767101c20738e059d05d63e199f1e6da2f2fee07c7a0a158": {
+  "useful": false
+ },
+ "0e3d059ff82fca7913470c0ba96ef71db287087f9976c5e462df64905da37154": {
+  "useful": true
+ },
+ "0ef986f9b8e8fe5b8c9495a1d029b6a790661d2f99dcf63dab708c4bce8bdcb6": {
+  "claims": [
+   "TLE is time limit exceeded.",
+   "TLE is usually caused by high complexity or an out-of-control constant factor.",
+   "MLE is memory limit exceeded.",
+   "MLE is usually caused by an oversized array, a container that grew, or recursion that was too deep.",
+   "A stack overflow is memory exhaustion.",
+   "A stack overflow is normally reported as RE (runtime error)."
+  ]
+ },
+ "0f47561c11276d4349b150e3df26d9a6c23bbf64737eaefa5b080c7d00386587": {
+  "score": 1
+ },
+ "0fc2923887f054b0bad12e2fa4b58d3fc6b74c7bb3ca72b6bc965e224bb6e78b": {
+  "useful": true
+ },
+ "0fd0fe543b9667ed39953b3cb7337393f77744595890626dd2e7105d8621b9cc": {
+  "useful": false
+ },
+ "0fdcc2112f2d03319fa59a182f95863cb1a8fe1dfe86cfe6120481b854f3f5f8": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "100ec8bb715db36ff32fd45b8cb1b5c7b5cec3e312d7c5ed6c9b483070b2e669": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   false
+  ]
+ },
+ "112ff68871b49bfcc4865803e32a1810510c58f5eb45d92e99c93450edc949d7": {
+  "score": 3
+ },
+ "12b3c323ac373bbb57a6a6a1bc985fdaf319db1f19753d687ac9d8728887853c": {
+  "useful": false
+ },
+ "12d80530aea4b378b5444dd44bd162a2c4a927dc9dd92d027fbd80041581990a": {
+  "useful": true
+ },
+ "1313b9cefd3fd307a1268e62a5e4f0b663a9c5c5b81d815549e44f94e1bc1ea2": {
+  "score": 3
+ },
+ "13aa128c0f9147da8270e5f875c62299ffea9ca9a3e374d996d824600efa555c": {
+  "score": 3
+ },
+ "13b6b60f2af8068de3faadf4cd2dedd2ffb02f3f7bcef8b4cbfef7e0f88e755a": {
+  "supported": [
+   true,
+   true,
+   true,
+   false,
+   false,
+   false
+  ]
+ },
+ "13bc03807877463b99268c785e2e718ce864e05049831e2ad623b8af89204964": {
+  "useful": false
+ },
+ "1415f0fb662379aa44d1fc98006208eade8e591092285596cb9151dcdc59ea5d": {
+  "useful": true
+ },
+ "14acd08dee6851afbf69d9574caa8cfced0c9788ac16371056fe28a759005307": {
+  "score": 3
+ },
+ "151245ca1c344ee0b859c03d0081c555cf9c62e8bbb9ccb816ae4d891bc95cac": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   false,
+   true,
+   false
+  ]
+ },
+ "15181e0e85e39394350fc98a14cd82c5da3e2f3e34f459fc3bfe62925925ef4b": {
+  "score": 3
+ },
+ "152f6e526be42970098197f1b4b60bc683c71297e33f81b29035629c23d621aa": {
+  "claims": [
+   "One should read a problem's constraints before writing any code.",
+   "Reading a problem's constraints helps determine the allowed computational complexity.",
+   "Reading a problem's constraints helps determine the necessary size for storing numbers.",
+   "One should consider the largest possible input size (`n`) to understand the permitted complexity.",
+   "One should consider the largest value any calculated number might reach.",
+   "Considering the largest value any calculated number might reach ensures it fits in the available memory.",
+   "Dynamic programming might be a suitable approach if a problem involves finding the best answer from smaller parts and those smaller parts recur.",
+   "A step for dynamic programming is to define what a subproblem represents.",
+   "A step for dynamic programming is to write how a subproblem's answer is derived from smaller ones.",
+   "A step for dynamic programming is to establish the starting conditions.",
+   "Starting conditions are also known as base cases in dynamic programming.",
+   "A step for dynamic programming is to choose an order for solving subproblems.",
+   "The chosen order for solving subproblems must ensure that all dependencies are met first."
+  ]
+ },
+ "15b4b26614670ee6b7943791d0c0b8c367c80b053ac568789f13b83d99f4482c": {
+  "useful": true
+ },
+ "1625bbff815c3d904a6ec7872d480b57f1e75caeb2eaa1f1f88ba4cad4b03488": {
+  "useful": true
+ },
+ "16716f734605ef2bfad82d61733d3e97c68aa4dbe7595cfd95dc541e4ca601f1": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "16906747c34c7bb61d9b8cb8ea1277a2814fb50ca64bf8a38753573fb18a58af": {
+  "score": 3
+ },
+ "170e08be7b84e0c1ec9050124bc2401d9eb1f44a8f5344c4431e8903b7027b93": {
+  "useful": true
+ },
+ "18b6a2aee3f5b8b31ce2e8e51e75e03ffcef60f7f09114a35514a19c466f0e74": {
+  "score": 2
+ },
+ "18cfa70f94f7398a51bb386eb921ac13e0174e190dd07a225334cb573e9a09f2": {
+  "useful": true
+ },
+ "1901931d4cb556af050ab347728c6e0613f74daeb0192fc815b9bb32f4790ccd": {
+  "useful": false
+ },
+ "1b23b8d811f809f4efc5932a3ca01ad333a07a32b02798e0d5c02b23bffa4f83": {
+  "claims": [
+   "The largest possible input size, n, can be determined by reading the problem's constraints.",
+   "A rule of thumb can be used with n to determine the required computational complexity for typical time limits.",
+   "A two-second time limit is a typical time limit.",
+   "If n is up to 5,000, an O(n²) algorithm is usually needed.",
+   "If n is 10⁸, an O(n) algorithm is likely required.",
+   "Assessing if a proposed algorithm's complexity aligns with permitted complexity helps determine if an idea will be fast enough.",
+   "Constant factors can sometimes make an algorithm with a theoretically better complexity slower than one with a worse complexity for moderate input sizes."
+  ]
+ },
+ "1b84045f426d1a1341b2c1d09beea9cff8b324585fbd37b8168f3c024b16fc7d": {
+  "score": 3
+ },
+ "1b9428e97c0830af7e7a650cee89990d90c291345380e24f41382627ffb4872b": {
+  "claims": [
+   "DSU stands for Disjoint Set Union.",
+   "Disjoint Set Union maintains a collection of elements partitioned into groups.",
+   "Disjoint Set Union supports the `find(x)` operation to determine which group an element `x` is in.",
+   "Disjoint Set Union supports the `unite(x, y)` operation to merge the groups containing elements `x` and `y`.",
+   "Disjoint Set Union allows answering connectivity questions under a series of merges.",
+   "Disjoint Set Union is useful for problems involving components.",
+   "Disjoint Set Union is useful for problems involving grouping.",
+   "Disjoint Set Union is useful for problems involving determining if two things are related."
+  ]
+ },
+ "1bda6feaf36672a23418d0e5bdb68371f585c7e57d79b4c35e563244fe2d922e": {
+  "useful": true
+ },
+ "1c6f05a43d9d4b4c8e89500694ef750e2d7162df24e694bf6e662c93d66f58a9": {
+  "abstained": true
+ },
+ "1d3e77a011f01bfe2214d1e683bfcd835a8aac3198dd3abc4662fb91863387af": {
+  "useful": false
+ },
+ "1ff898faa1bfbc9de2b8f0cc65b4991517db34f5170804df9091de32aebcfba5": {
+  "supported": [
+   true,
+   true
+  ]
+ },
+ "2090522f96e36744b2730a3f89436066514596c30aabbb0ddedc11ec8d4a11f4": {
+  "claims": [
+   "The problem's constraints indicate the largest possible value for n.",
+   "The largest possible value for n indicates the allowed complexity of a solution."
+  ]
+ },
+ "216f580ef36a44d2567d9243b451777f8af47f5c922e4cf58fc6ee84ed0c6eb2": {
+  "claims": [
+   "A sliding window requires that if a window is invalid, every extension of it remains invalid.",
+   "The property is not monotone when summing values that can be negative.",
+   "Extending a window can decrease the sum if the values being summed can be negative.",
+   "The property does not apply if sorting is required first and the question concerns contiguous ranges of the original array.",
+   "The property does not apply if either pointer needs to move backwards."
+  ]
+ },
+ "220a510c3427eab0cacb76836dfaa5277ba5d319b42f6acea16c4f9342891341": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   false,
+   false,
+   true,
+   true
+  ]
+ },
+ "23f2e87d53e59ec595680c78086f798a4b1390869497289111d035e058b8837f": {
+  "claims": [
+   "In C++, the % operator takes the sign of the dividend.",
+   "In C++, (-3) % 7 is -3.",
+   "In C++, (-3) % 7 is not 4.",
+   "The % operator in C++ differs from the mathematical convention for the modulo operation.",
+   "The % operator in C++ differs from Python's modulo operation.",
+   "Any subtraction done modulo m in C++ needs correcting by adding m back before the final remainder.",
+   "The formula for correcting negative modulo results in C++ is ((a - b) % MOD + MOD) % MOD.",
+   "The modulo bug in C++ shows up only when the subtraction happens to go negative.",
+   "The sample input often does not trigger the modulo bug in C++."
+  ]
+ },
+ "24001c75f2fa08093bf4ceff08c40b4695a5f1c2de8a9df38207fd3e127881f1": {
+  "useful": true
+ },
+ "2428f98981a3a0a1decb88c1ece656b162f4f8b9c9d8dcb6416dca8264c0ab00": {
+  "claims": [
+   "lower_bound returns an iterator to the first element that is not less than a given value x.",
+   "The first element that is not less than a given value x is the first element greater than or equal to x.",
+   "upper_bound returns an iterator to the first element that is strictly greater than x.",
+   "In a collection like [1, 2, 2, 2, 5] and searching for x = 2, lower_bound would point to the first 2 (at index 1).",
+   "In a collection like [1, 2, 2, 2, 5] and searching for x = 2, upper_bound would point to the 5 (at index 4)."
+  ]
+ },
+ "2478ca52f9f26be6f1d5065ae3ddcc83e19a292043a6c98b4284aa9cf2aef184": {
+  "useful": true
+ },
+ "25cae8e6c871a4a25a967d4c2f1c5af8385359bf94510dc63e99919ac1ddd180": {
+  "useful": false
+ },
+ "2724c6a61fed8755cb75fc9662654ec42422973e6ca7ecf149757ccbe6de3790": {
+  "useful": false
+ },
+ "278e3c6bc2918516f1d49f99dbf50f6b1d1ff3a187c41e1f0ab1b31399044b5d": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "28d6d6e326c5e7adff4614cf796eca1e0f5bc427b679838b7a31559163b32f45": {
+  "score": 3
+ },
+ "28f001920c26fbccce8773627d8e2a0dde14bc3c2e9bf25c1bc086023fb730d9": {
+  "useful": true
+ },
+ "29a9c704c8b87fc0283aac399c6fcef2e0bce2edca10417d9746d85c02213b20": {
+  "useful": false
+ },
+ "2a210338a18775c3d5f2e4912e03b2e568adef138b7e6c9390bfa936c4435f65": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "2a7794071d5025247ab4b539c294edfef788928040022784d6fdb6bf459b820d": {
+  "claims": [
+   "A greedy approach is the wrong choice when a locally optimal decision prevents finding a better overall solution later.",
+   "The 0/1 knapsack problem is an example where a greedy approach is the wrong choice.",
+   "A greedy choice property not holding means the initial greedy choice prevents the ability to achieve an optimal final solution.",
+   "A greedy algorithm may be incorrect if it fails on small, lopsided examples.",
+   "Specific structures are needed to reveal the flaws of a greedy algorithm, which random tests often miss.",
+   "Sorting data on an incorrect key can make a greedy approach wrong.",
+   "Assuming that an algorithm working forwards will also work backwards can make a greedy approach wrong.",
+   "Mishandling ties when several choices appear equally good can make a greedy approach wrong.",
+   "Dynamic programming is a fallback option when a greedy algorithm is incorrect.",
+   "Dynamic programming considers alternatives that the greedy approach discards."
+  ]
+ },
+ "2ad291088b517b59470667c8ae01cb8ef9956464e8b51829d5301aa21e0ff5ea": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   false,
+   false,
+   true
+  ]
+ },
+ "2b016c85b5ef46adb5c5b6578cd4eed18ea3176e505fc46c8af29af97ce666b6": {
+  "useful": true
+ },
+ "2b61f512a50014197f838585c50cc6d096ddff1801bb7a767fecea61f4fce597": {
+  "useful": true
+ },
+ "2be6202d07b08dd0c7c868cd05534ffd22d98194604ddd2b6a750a5633fa568e": {
+  "useful": false
+ },
+ "2cba28fe2e31afc0151d0fb515f39ede28e73ebcb925d485ccf9b19547a340bb": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "2df6c3f413b3cac63c089f712976aaf94910a8a00ab92ceacd0cf5835b01e6d2": {
+  "useful": true
+ },
+ "2e1f0bb1ca641e515f2d602b612bb09871e85f8edfe28dd2f7a882eed8ecc06a": {
+  "claims": [
+   "A sliding window requires that once a window is invalid, every extension of it stays invalid.",
+   "Monotonicity is lost when summing values that can be negative, as extending the window can decrease the sum.",
+   "The sliding window technique does not apply if sorting is required first.",
+   "The sliding window technique does not apply if either pointer would ever need to move backwards."
+  ]
+ },
+ "2e4e2a80bb9caa08416ea2aa645193224e8959088bb331fd50e40d4eafa06a7e": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   false
+  ]
+ },
+ "2e9b18c6396f0a118704b294c7f832f4680be695cf4cfebb967c36f2dea3bc07": {
+  "score": 2
+ },
+ "2ee7bf878c913267cec4cba56c1c12e75b32e193af7521adcf2f43d25e0bcf5f": {
+  "useful": false
+ },
+ "2feb036b7ac7a88f332b947603376033aa390c05c564041fdd01265870eab7d8": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "303f5a0ba2ecd15a586dd4b64b3218ec208b37954a99b3457dfd28c0f58e0add": {
+  "supported": [
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "30ab7d8206a8c63be451a3dd5af268174d15d692a85caffe525fad21ef93ab7c": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   false,
+   false,
+   false,
+   true,
+   false
+  ]
+ },
+ "3184c75b6761e887653ff9077bd2cad2533874a7f2a1ee633d08272bfe03b413": {
+  "claims": [
+   "`lower_bound` finds the first element that is not less than a given value.",
+   "`lower_bound` finds the first element greater than or equal to the value.",
+   "`upper_bound` finds the first element that is strictly greater than the given value.",
+   "In the list `[1, 2, 2, 2, 5]`, `lower_bound` for the value `2` points to the first `2`.",
+   "In the list `[1, 2, 2, 2, 5]`, `upper_bound` for the value `2` points to `5`.",
+   "In the list `[1, 2, 2, 2, 5]`, `5` is the first element strictly greater than `2`."
+  ]
+ },
+ "33335f4934382708fbf49d703f6a09990255f0615a02a1b5a21c2afd6cb1e29c": {
+  "supported": [
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "33c312c1d297402c860c52ab257631eca1603d861e052d3342c62e532408103b": {
+  "useful": true
+ },
+ "33c37e14255ab32da5c1bedfeaec6a84f909ea0224cc4ad0782de6f83a4f3015": {
+  "useful": false
+ },
+ "345c1d6069ed1b406a7b14bb9fbe191505270ab8439344b1aec8f699d245b9e5": {
+  "useful": true
+ },
+ "3573bb48b1f636f3b8e750e489069969a8d7ddcfb3c561d3b9fdc4eaea9e6050": {
+  "claims": [
+   "Reading problem constraints helps determine allowed computational complexity.",
+   "Reading problem constraints helps determine the necessary size for storing numbers.",
+   "The largest possible input size (n) should be considered to understand permitted complexity.",
+   "The largest value any calculated number might reach should be considered to ensure it fits in available memory.",
+   "If a problem involves finding the best answer from smaller parts, and those smaller parts recur, dynamic programming might be a suitable approach.",
+   "The steps for dynamic programming include defining what a subproblem represents.",
+   "The steps for dynamic programming include writing how a subproblem's answer is derived from smaller ones.",
+   "The steps for dynamic programming include establishing the starting conditions (base cases).",
+   "The steps for dynamic programming include choosing an order for solving subproblems so that all dependencies are met first."
+  ]
+ },
+ "3582136cafc1ed18142cad88098334c6fe26b3a2361388bf9675800e1118cab5": {
+  "useful": true
+ },
+ "35c0aee7bb4093cc4cf17a44d44b3596c07e8cc0165f289e36ccf613e38b92f3": {
+  "useful": false
+ },
+ "35da84af3c2acac310c0ab50cc5713016daf4476373f60434e9e60779956b94a": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "3738fda4925919434bb33b13f864d158169b6580a5aee5b02cbb720bd5bed5f5": {
+  "claims": [
+   "A BIT is a binary indexed tree.",
+   "A BIT is also known as a Fenwick tree.",
+   "A BIT keeps an array under two interleaved operations: adding to one position and asking for the total up to a position.",
+   "Both operations (adding to one position and asking for the total up to a position) cost O(log n).",
+   "A plain array updates in O(1).",
+   "A plain array sums in O(n).",
+   "A prefix-sum array updates in O(n).",
+   "A prefix-sum array sums in O(1)."
+  ]
+ },
+ "37895710bd648cc0adbc18e6d95b6686edc9310880d25c811102eb58ee3c7c86": {
+  "useful": false
+ },
+ "37cccfcfa25f352a790ab54308df0044206e6881add8d19d26ddc68b2579fd9e": {
+  "useful": true
+ },
+ "384b3280bd9b47bad92d9813f8180f54073747590d99da2e7cc3cbd489d33f66": {
+  "useful": true
+ },
+ "388373e4a3ba7cbe77c329b0246d858dadce81e45267c098e735419b6b6d9ee5": {
+  "claims": [
+   "lower_bound returns the first element that is not less than x.",
+   "lower_bound returns the first element that is greater than or equal to x.",
+   "upper_bound returns the first element strictly greater than x.",
+   "For a sorted array containing several copies of x, lower_bound points at the first copy.",
+   "For a sorted array containing several copies of x, upper_bound points just past the last copy.",
+   "For a sorted array containing several copies of x, the distance between the iterators returned by lower_bound and upper_bound is the number of copies.",
+   "lower_bound returns the end iterator when no element that is not less than x exists.",
+   "upper_bound returns the end iterator when no element strictly greater than x exists.",
+   "lower_bound on its own does not tell you whether x is present.",
+   "upper_bound on its own does not tell you whether x is present."
+  ]
+ },
+ "391f12d09c5c149b678e3c095c39aa3d9d5072e5d97e682dd31b65989afcc0af": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "3942dc57eac604746b3d295054bd8e14ac94735a156ba9f2ffa87dcd5601af35": {
+  "supported": [
+   true,
+   true,
+   true
+  ]
+ },
+ "3980f45844ddf0e07505794c5c8d06760aff8dcf53b9687661692b6b707639e9": {
+  "useful": false
+ },
+ "39aaddb7980af2211537dbc191a0cf350a7ba182b4bfa483c98fcae073ed7d0a": {
+  "useful": true
+ },
+ "3a16960d2dcfb27492520e9fd1805d80fea77dd280750702421825a948abb38a": {
+  "useful": false
+ },
+ "3a976edc7ebe892bcb19080fbb51e3fb381b3023db31320034c0a230972b2497": {
+  "claims": [
+   "Breadth-first search (BFS) finds the path with the fewest connections (edges).",
+   "The path with the fewest connections is only the cheapest route if all connections have the same cost.",
+   "If all connections have a weight of 1, BFS can find the shortest path.",
+   "A specialized version called 0-1 BFS can be used for situations where connections have weights of either 0 or 1.",
+   "BFS is not the correct choice for connections with general positive costs.",
+   "BFS finds the path with the fewest connections, which is not necessarily the one with the lowest total cost for connections with general positive costs."
+  ]
+ },
+ "3b157ab206f5f90193479cf0efdc3b68efeb617ab22c56ecd7490aabc8ce045c": {
+  "useful": true
+ },
+ "3ba2825c859ca417a9621a73be525b84c538a8ae4e88d7842b945b0cca6a4266": {
+  "useful": true
+ },
+ "3bf481de0210ec2c8e1edcb561bad3c6414d8c86a3730d772a564885baa7f4e2": {
+  "useful": true
+ },
+ "3cd77b1af916f4714ab7e1389e865ad851ce03cbb7a29dc31f6feadb213fa547": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "3d974686731b13007550a337b7ef9ee82d09b8bff0622958d5291ad363d00259": {
+  "score": 2
+ },
+ "3de8812a06b2b8f10f57d4316eb6207585fff569963a729ab250baab4ca944c6": {
+  "useful": true
+ },
+ "3e204e409e9ad42d8079e106f4b1a269089206991c8d1dbb415668bf084720e3": {
+  "useful": true
+ },
+ "3e3ba4f00de3f1671994a3bc4a4c48f32a2ddc39b2033ea9fc52664538fd5a36": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   false,
+   false,
+   false,
+   true
+  ]
+ },
+ "3e59a29e6c6589c2756177f3ceece92c8f71a61b3eb5982d58123f956c487a08": {
+  "claims": [
+   "A recursive graph search can crash on a large input because each pending recursive call consumes memory on the call stack.",
+   "If the recursion depth becomes too great, it can exceed the default stack size.",
+   "A recursion depth of 10⁵ nested calls on a path graph can exceed the default stack size.",
+   "Exceeding the default stack size causes a stack overflow.",
+   "A stack overflow is a form of memory exhaustion.",
+   "A stack overflow results in a crash.",
+   "A stack overflow is typically reported as a runtime error."
+  ]
+ },
+ "3f1a13184f8f0d1ba1129f2212df9b636d1afdefa4de51a06b0ae963e4133de9": {
+  "score": 2
+ },
+ "3f585b592c72996519b4512f69c9388e4e52a800cbcec6610a3019414ee1848c": {
+  "claims": [
+   "The standard `std::sort` method sorts a range in O(n log n) time.",
+   "For integers within a small known range, a counting sort can be faster than `std::sort`.",
+   "Counting sort operates in O(n + MAXV) time, where MAXV is the maximum value in the range.",
+   "Counting sort involves counting occurrences of each value.",
+   "Counting sort involves reading the counted occurrences back out.",
+   "Radix sort generalizes the idea of counting sort for larger ranges."
+  ]
+ },
+ "3f5c4e536d940931903b0daa2be5ff449e008d74b8a20d7045eb44ac2e55d45d": {
+  "claims": [
+   "A tree is a connected graph with 'n' vertices and exactly 'n-1' edges.",
+   "A tree contains no cycles.",
+   "Between any two vertices in a tree, there is exactly one simple path.",
+   "By choosing one vertex as the root, every other vertex is assigned a unique parent.",
+   "A depth-first search (DFS) can be used to determine the parent of each vertex in a rooted tree.",
+   "A depth-first search (DFS) can be used to determine the depth of each vertex in a rooted tree.",
+   "A depth-first search (DFS) can be used to determine the size of each subtree within a rooted tree.",
+   "Common operations on trees include computing an answer for each vertex based on its children's answers.",
+   "Common operations on trees include finding the longest path (diameter).",
+   "Common operations on trees include identifying the lowest common ancestor (LCA) of two vertices.",
+   "The LCA of two vertices is their deepest shared ancestor.",
+   "The LCA is useful for calculating distances between vertices."
+  ]
+ },
+ "3f63e538b476f65810e7dd9adf2ff5fe8cd357d95d0b02cd33c00853a1f7a7df": {
+  "useful": false
+ },
+ "3fab6a617ea6dd2451e42d58b1bac9ef4d8c474e9065b35af4e6948e4fd89fb9": {
+  "score": 3
+ },
+ "3fc24054f7851894304ab4fe3e09ac3c001f7ff1a41a4a178549f25866674f00": {
+  "claims": []
+ },
+ "3fcd2b892ddaf3f859c33ecf7f4b96fbea08e63006bb72955022c073644f3cb6": {
+  "claims": [
+   "Memory usage depends on the specific approach.",
+   "Recursion depth d costs O(d) memory.",
+   "Recursion memory is stored on the call stack.",
+   "The call stack is typically between 1 MB and 8 MB.",
+   "For dynamic programming, memory might be O(nW).",
+   "Dynamic programming memory can often be reduced to O(W) if calculations for dp[i] depend only on dp[i - 1]."
+  ]
+ },
+ "4029a8f5b8588c5c0cc1f5a89041afe1c125afda38f3900a5eeee6f155619463": {
+  "useful": true
+ },
+ "4061b387a262021ff4f64cd522322006d390e023caa98a29d86d8db1963552bf": {
+  "useful": false
+ },
+ "408a74bca6ad3119852561b5d6c68921801e49764c2812a78b4028dc8d437668": {
+  "useful": false
+ },
+ "40a031198300a7e86d4ae3639a22ff734cdb00eeedcd3d89229a53ee85222f0d": {
+  "score": 3
+ },
+ "40edf283b96933e2ecee1af88850eb7f4efded32e20c58555a15ad8cdb2d2b64": {
+  "useful": false
+ },
+ "415085c606e78cf46fa19ebc54460476ce4857ceeea2fb60bc18f1997f0f264d": {
+  "claims": [
+   "The `lower_bound` function finds the first element that is greater than or equal to a given value.",
+   "The `upper_bound` function finds the first element that is strictly greater than a given value.",
+   "In the list `[1, 2, 2, 2, 5]` when searching for the value `2`, `lower_bound` points to the first occurrence of `2`.",
+   "The first occurrence of `2` in the list `[1, 2, 2, 2, 5]` is at index 1.",
+   "In the list `[1, 2, 2, 2, 5]` when searching for the value `2`, `upper_bound` points to the element `5`.",
+   "The element `5` in the list `[1, 2, 2, 2, 5]` is at index 4.",
+   "The element `5` is the first element strictly greater than `2` in the list `[1, 2, 2, 2, 5]`."
+  ]
+ },
+ "4161e303742ac3f917a7096df8612c38c31e97cb1a012aba961fd964ef2a36e9": {
+  "claims": [
+   "lower_bound returns the first element that is not less than x.",
+   "lower_bound returns the first element greater than or equal to x.",
+   "upper_bound returns the first element strictly greater than x.",
+   "For a sorted array containing several copies of x, lower_bound points at the first copy of x.",
+   "For a sorted array containing several copies of x, upper_bound points just past the last copy of x.",
+   "For a sorted array containing several copies of x, the distance between lower_bound and upper_bound is the number of copies of x.",
+   "lower_bound returns the end iterator when no such element exists.",
+   "upper_bound returns the end iterator when no such element exists.",
+   "lower_bound on its own does not tell you whether x is present.",
+   "upper_bound on its own does not tell you whether x is present."
+  ]
+ },
+ "41bcf02257058bdb9f34e0e4cfe984818c97c9dfa8f4a13ef099f53b93461d2c": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "422b45acc0df2b493d036edf4bad5b09e7ef4cfbfb52d3b933b2316981748b01": {
+  "claims": [
+   "std::sort has a time complexity of O(n log n).",
+   "std::sort is the right default sorting algorithm.",
+   "std::sort uses introsort.",
+   "Plain quicksort has a worst-case time complexity of O(n^2).",
+   "The O(n^2) worst case of plain quicksort does not occur with std::sort.",
+   "nth_element can be used to find the k largest elements.",
+   "partial_sort can be used to find the k largest elements.",
+   "nth_element does less work than std::sort when only the k largest elements are needed.",
+   "partial_sort does less work than std::sort when only the k largest elements are needed.",
+   "The O(n log n) time complexity bound applies to comparison sorts.",
+   "Counting sort has a time complexity of O(n + range) when the values are integers in a small known range.",
+   "Counting sort is faster than comparison sorts when the range is comparable to n.",
+   "Counting sort is significantly slower than comparison sorts when the range is huge."
+  ]
+ },
+ "43c4728f838c368447986a16e4533d8e93973b249991bba00ae65f4c3908903e": {
+  "useful": true
+ },
+ "43d221c9c72cc50673892080b18a2be74bcd190215c8833b2bdcc91230bca6fa": {
+  "score": 3
+ },
+ "43d84abb0839c68075b841226938f07e4f9aecf88f7b59fd39a7c15c2b23383f": {
+  "useful": false
+ },
+ "43e7669fe53233deaa050ee7c7eaf87ddbdb699e27f066f02d9b272d1d3de269": {
+  "useful": true
+ },
+ "443e761856102039a1b38813eee20d14da613214f4cb691fdf48ffd9e45523a9": {
+  "claims": [
+   "The same big-O notation applies to memory.",
+   "An n x n table is O(n^2) space.",
+   "At n = 10000, an n x n table is 1e8 cells.",
+   "At n = 10000, an n x n table is hundreds of megabytes.",
+   "Hundreds of megabytes is past most limits.",
+   "Recursion costs space that is easy to forget.",
+   "Each pending call keeps its locals on the stack.",
+   "Each pending call keeps its return address on the stack.",
+   "A recursion n levels deep is O(n) space.",
+   "A deep enough recursion overflows the stack."
+  ]
+ },
+ "445c3ccd68cebd14edb23d188ba57d0e48079b737481bcc004945bc458d654b4": {
+  "useful": true
+ },
+ "45546c91dbd6cb08bdfdaac61b727f1a586fdf9d3156b44d10853558d0c5e0f9": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "45f98c4e0e845003afec5efe1579665d42ca6626e095ce00c8ca391172c1e48c": {
+  "claims": [
+   "A tree is a connected graph with n vertices and exactly n-1 edges.",
+   "A tree has no cycles.",
+   "There is exactly one simple path between any two vertices in a tree.",
+   "Rooting a tree gives every vertex a unique parent."
+  ]
+ },
+ "466ee2a2ac31521dd9354ed26a3e19a34c6ceb5190a0d7ff77c4dd5d0379bcdd": {
+  "useful": true
+ },
+ "480b6f5e21ab4a6d72e703ea274c6775552267bab1752226f4aee92aeced6607": {
+  "supported": [
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "487201ff83cfddaa9d36a3b97c1e43ae29eaef5a1aaeef2ed505c1f1c0b30f03": {
+  "useful": false
+ },
+ "495a52dc320ec4306f535bed212c35795c2883914ffb600e4cb3207d3146c506": {
+  "useful": true
+ },
+ "4b6f0c73eda941bcf940b9b84cab9ec6141fb7ba30b96fab789e39380f0dac35": {
+  "useful": true
+ },
+ "4be2b04d41b4899eb2e5147c3404a4f54c49eb5096b2679773850e6f342e7d1e": {
+  "useful": true
+ },
+ "4c5e648f1d76ca7ebe6f1e55932a82e2a01ead7d6765b8ec9505b31a86bd8756": {
+  "useful": false
+ },
+ "4df5bb7d55c34ba845a3bb5021a9ccebcc06d8472fa29f5f48a7fcd8282c8317": {
+  "score": 3
+ },
+ "4edb285bb61edb158b0e601a42842fb9069984635973a68a4e1fee8710b3f2f8": {
+  "useful": true
+ },
+ "4ededc276899f4317a1cc418982c4df4ce6cd00351fe922f08de35064b746c0c": {
+  "useful": false
+ },
+ "4f4b5e8a2eaa25291ee56975cf2227cb3e60a10f98579b566a6fe6a9b0869b32": {
+  "score": 3
+ },
+ "4f72b1b302652c7916889afd434a5703fd9cdfbfde69a2eb4c92fd79ddab8b97": {
+  "claims": [
+   "When a program passes sample tests but fails on a later test, it usually indicates an unhandled edge case or an overflow.",
+   "If a problem involves multiple test cases in a single run, not resetting all global state between cases is a common issue.",
+   "Stale state from a previous test case can cause the program to fail on subsequent test cases.",
+   "Not resetting a \"visited\" array in graph traversal problems between test cases is an example of stale state.",
+   "Every accumulator's type should be checked to ensure the largest possible value fits.",
+   "It should be checked whether global state is reset between multi-test-case runs."
+  ]
+ },
+ "4f863ddedc05a29e525127ccf87ce844213668939e0620d4875323a9c1604996": {
+  "score": 3
+ },
+ "4faf607df4473a5916f445f309abfbfe630d5629d85cab7110326d4975fb2a97": {
+  "useful": true
+ },
+ "504294b6ed097a672dfaaf0bc17628c75375d029209a68f35aca4e7ebcfa4706": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "50511469aaff6ef836ed0f6650ce9ae4925504c8f5e24f6937c68fcbdc7a425e": {
+  "score": 3
+ },
+ "50aac1042cf15fd189663c9364a6da630e0b25013775c32422f9f5050c643c1c": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "514e7b2c7319500ecc0b6ee625dcddc75d8ec93f417616b2ef0ef5d8474b9624": {
+  "useful": true
+ },
+ "51644e765e14496a84fb8b210bfaaf5c05747acb6054a5f9d6ef00b0252ea596": {
+  "useful": false
+ },
+ "521f541bac841f03360932c0a10c62cbcc2cb3c77e482e8385621e0ca9be45f5": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "526dc235ba0943dfd32cc0ea3ede75e288c458f2f1a564e2b83f4336cd30422d": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "528a5c6feb80182ab4a9c3c36760f0be5cb7f9a62c33092396b6d34d20f9c8f0": {
+  "useful": false
+ },
+ "53129158439c20d1ad9c167253fb4bc2c2c8d2ff5cd40337361ddd343a6c2e93": {
+  "claims": [
+   "The choice between std::map and std::unordered_map depends on specific needs.",
+   "std::map uses a balanced binary tree.",
+   "std::map guarantees O(log n) performance for find operations.",
+   "std::map guarantees O(log n) performance for insert operations.",
+   "std::map guarantees O(log n) performance for erase operations.",
+   "std::map maintains elements sorted by key.",
+   "std::map allows for sorted iteration.",
+   "std::map allows for range queries like lower_bound.",
+   "std::map allows for range queries like upper_bound.",
+   "std::map allows for predecessor lookups.",
+   "std::map allows for successor lookups.",
+   "Keys for std::map require operator<.",
+   "std::unordered_map uses a hash table.",
+   "std::unordered_map provides O(1) average performance for find operations.",
+   "std::unordered_map provides O(1) average performance for insert operations.",
+   "std::unordered_map provides O(1) average performance for erase operations.",
+   "The worst-case performance for std::unordered_map operations is O(n).",
+   "Adversarial input can trigger the worst-case performance of std::unordered_map if all keys hash to the same bucket.",
+   "std::unordered_map does not guarantee any specific iteration order.",
+   "Keys for std::unordered_map require a hash function.",
+   "Keys for std::unordered_map require operator==.",
+   "If elements do not need to be sorted, unordered_map is usually faster.",
+   "unordered_map has a smaller constant factor per operation than map.",
+   "unordered_map has average O(1) time complexity per operation.",
+   "If sorted iteration is required, map is necessary.",
+   "If range queries are required, map is necessary.",
+   "If predecessor lookups are required, map is necessary.",
+   "If successor lookups are required, map is necessary.",
+   "To defend against unordered_map worst-case performance, a random value can be mixed into the hash function.",
+   "std::map can be used if the number of elements is small to defend against unordered_map worst-case performance.",
+   "Both std::map and std::unordered_map will default-construct an entry if a missing key is accessed using operator[]",
+   "To avoid unintended insertions, use count for membership tests or checked reads.",
+   "To avoid unintended insertions, use find for membership tests or checked reads.",
+   "To avoid unintended insertions, use at for membership tests or checked reads."
+  ]
+ },
+ "535318fb8cba54ae31f1e3b61e3504fa12c01300e4cd7a4f087a522f052b2891": {
+  "useful": false
+ },
+ "552b5f060fb95223bf4f0045a44fbca64b63d0e5fffbf0eb7bf578bac392392b": {
+  "useful": false
+ },
+ "57255e66ae737581429bdbd9989832e5c415930249adef53824e61c428fc1c61": {
+  "claims": [
+   "The passages do not cover how to read input quickly in Python.",
+   "The passages discuss techniques for C++ input/output.",
+   "Techniques for C++ input/output include disabling synchronization between C++ streams and C stdio.",
+   "Techniques for C++ input/output include avoiding `endl` in loops."
+  ]
+ },
+ "5a9aa83f933b7707859a013c8a2a73b25607eca605967599b21f65eb6bf8fe03": {
+  "useful": false
+ },
+ "5ab600cd0d534b1386ce355bc3d1624c5e55337b2d71b697d8571b10b6011079": {
+  "claims": [
+   "A tree is a connected graph.",
+   "A tree has n vertices.",
+   "A tree has exactly n-1 edges.",
+   "A tree has no cycles.",
+   "There is exactly one simple path between any two vertices in a tree.",
+   "Many problems are tractable on trees.",
+   "Many problems are hard on general graphs.",
+   "Rooting a tree gives every vertex a unique parent.",
+   "Rooting a tree turns questions about paths into questions about ancestry."
+  ]
+ },
+ "5da5cc2efa2c713477a6306bdc233714a3ae7ebd145c094998fa1e59bcb8f88f": {
+  "useful": false
+ },
+ "5dd9cecba7f2b3a94f15a910d944e23521cf3bd0e2111ef1b79f85387c451cc4": {
+  "claims": [
+   "A greedy approach is the wrong choice when a decision that seems best at the moment prevents a better overall solution later.",
+   "The 0/1 knapsack problem is an example where a greedy approach is the wrong choice.",
+   "A greedy approach is incorrect if it cannot be proven correct using an exchange argument.",
+   "A greedy approach is incorrect if a counterexample can be found.",
+   "Small, lopsided cases can often serve as counterexamples for greedy approaches.",
+   "Testing only on small random cases is a common mistake that indicates a greedy approach is wrong.",
+   "Sorting items using the wrong criteria is a common mistake that indicates a greedy approach is wrong.",
+   "Assuming that a greedy solution that works in one direction also works in reverse is a common mistake.",
+   "Failing to properly handle ties where multiple choices seem equally good is a common mistake.",
+   "A greedy approach is inappropriate if its initial choice prevents an optimal solution from being formed."
+  ]
+ },
+ "5e170b478aea0811adf9e82af99e1b5da7059d0b3b5e76aedcd762c3697ff664": {
+  "score": 2
+ },
+ "5e93be0111c402ecd0187fbbf0c274bdce160f007c6856f3a633e58516f21643": {
+  "claims": [
+   "A BIT is also known as a Fenwick tree.",
+   "A BIT is also known as a binary indexed tree.",
+   "A BIT is a data structure that maintains an array.",
+   "A BIT efficiently handles point updates, which involve adding a value to a single position.",
+   "A BIT efficiently handles prefix queries, which involve calculating the total sum of all values up to a certain position.",
+   "Point updates are handled in O(log n) time by a BIT.",
+   "Prefix queries are handled in O(log n) time by a BIT.",
+   "A BIT stores data in a single array.",
+   "In a BIT, each position `i` is responsible for a block of entries ending at `i`.",
+   "The length of the block of entries ending at `i` in a BIT is determined by the lowest set bit of `i`."
+  ]
+ },
+ "5ea9b7b6be3a8deefa5bb44db9a1bf51f7b9913f6b1d66b1f28b9a816335093e": {
+  "claims": [
+   "A tree is a connected graph.",
+   "A tree has 'n' vertices.",
+   "A tree has exactly 'n-1' edges.",
+   "A tree contains no cycles.",
+   "There is exactly one simple path between any two vertices in a tree.",
+   "When one vertex is chosen as the root, every other vertex in the tree is assigned a unique parent.",
+   "Assigning a unique parent to vertices in a rooted tree helps in answering questions about ancestry.",
+   "A depth-first search (DFS) can be used to determine the parent of each subtree within a rooted tree.",
+   "A depth-first search (DFS) can be used to determine the depth of each subtree within a rooted tree.",
+   "A depth-first search (DFS) can be used to determine the size of each subtree within a rooted tree.",
+   "Computing an answer for each vertex based on its children's answers is a common operation on trees.",
+   "Tree DP is a method for computing an answer for each vertex based on its children's answers.",
+   "Finding the longest path is a common operation on trees.",
+   "The longest path in a tree is called the diameter.",
+   "Identifying the lowest common ancestor (LCA) of two vertices is a common operation on trees.",
+   "The lowest common ancestor (LCA) of two vertices is their deepest shared ancestor.",
+   "The lowest common ancestor (LCA) is useful for calculating distances between vertices."
+  ]
+ },
+ "5eec886d4a55e479b26f060ee27466dc2fc28cb9b949b394971e4a3ebe7315d6": {
+  "claims": [
+   "Dijkstra finalises a vertex as soon as it is the closest unfinalised one.",
+   "Dijkstra never revisits a finalised vertex.",
+   "Dijkstra's algorithm is sound if extending a path can never decrease its length.",
+   "A single negative edge weight breaks the soundness of Dijkstra's algorithm.",
+   "A longer-looking route might drop below the finalised distance later when negative edge weights are present.",
+   "Dijkstra's algorithm will not notice if a longer-looking route drops below the finalised distance later.",
+   "Bellman-Ford algorithm should be used when negative edge weights are present.",
+   "Bellman-Ford algorithm detects negative cycles."
+  ]
+ },
+ "5f0c849e28c975fc5700dcc630dd95db46242071475a1f50419ba8ae6b92cd27": {
+  "claims": [
+   "DSU stands for disjoint set union.",
+   "DSU is also called union-find.",
+   "DSU maintains a collection of elements.",
+   "The elements in DSU are split into groups.",
+   "DSU supports a 'find' operation.",
+   "The 'find' operation identifies which group an element is in.",
+   "DSU supports a 'unite' operation.",
+   "The 'unite' operation merges two groups.",
+   "The 'find' operation is effectively constant time when path compression and union by rank are used.",
+   "The 'unite' operation is effectively constant time when path compression and union by rank are used.",
+   "DSU cannot split a group.",
+   "Merges in DSU are one-way."
+  ]
+ },
+ "5f538e1d0648d3af6a8a302680ed82a0b19df30109776ecb4019c9d3e6023fac": {
+  "score": 1
+ },
+ "5f9d082242eb045cddff98ef2c3f8dfdf46ee9b402d76542d60cadc286af9325": {
+  "useful": true
+ },
+ "60d6b11a5fd113eb66e1906b5615b5c3c8b448a5b645252f8e251e280b4ab54b": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "60dd3d9a45fc2b31b64174f4c3f4a1a67c3ea86f1364ed6c26d7ae4c2683c8c2": {
+  "score": 3
+ },
+ "61c4b5998862d106add77225c3e0d20998c3d6cbe21b51c0a8ac8d2a0348b04f": {
+  "useful": false
+ },
+ "61ea8b45ab42cc0e7e06507c2040147f33e54d92628fe46d6e84c5cb69af908e": {
+  "useful": false
+ },
+ "6202473fb6acc0a65aea271791b8065b0a714b6677097abc75f3c981c0383895": {
+  "claims": [
+   "An O(n^2) algorithm with n = 2e5 results in 4e10 operations.",
+   "No micro-optimisation will save an O(n^2) algorithm facing n = 2e5 and 4e10 operations.",
+   "An O(n^2) algorithm must change if it faces n = 2e5.",
+   "The constant factor should be suspected if the algorithm's complexity looks fine.",
+   "Using node-based containers where an array would suffice can cause constant factor issues.",
+   "endl flushing in a printing loop can cause constant factor issues.",
+   "Missing sync_with_stdio can cause constant factor issues.",
+   "Passing containers by value can cause constant factor issues.",
+   "An unordered_map being hit by anti-hash tests can cause constant factor issues."
+  ]
+ },
+ "630c3461b8f0446c58b51d85c0e11cc69f2d15908ba4fab520a29fe22dc09199": {
+  "useful": false
+ },
+ "639e59dcf62140bfacbd0ca86882651910490e2e7189f259243c68659bfe6104": {
+  "useful": false
+ },
+ "64764c8afb3722b342de36fa8431e08561828c579966fdefff6a064aa9b8c2b6": {
+  "useful": true
+ },
+ "64ac2fc1c4eaaae93e69da2547f6abcf0cdee01e1d96f3182cc24d2e63700c0a": {
+  "abstained": true
+ },
+ "669e4ab3659ef7e1d7f3311d03dce959ebe2bb228c412a63e4ad17041a634665": {
+  "score": 3
+ },
+ "66de5ccf2a92ad409bcde55cfb17ba40492459e58bb21440a1b17e93849f0499": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "6738d25aff562458fee41222b5413814d1371312f3eefda4cf2f447bc27f12a9": {
+  "useful": false
+ },
+ "67a1bbc8eee674d10719d1dcfbe8ec09a74a0a1e31de2938cfd26334c3216e3a": {
+  "useful": true
+ },
+ "67c4a016344ca3e7b129584d85aeab2260789e69d0673174e3328af0f3350a58": {
+  "useful": true
+ },
+ "681f5b4ec91d274cedfa38561717cb638d4bafd7bfb2f8723e4013a5284172be": {
+  "useful": false
+ },
+ "696af8de67c57d21937a9678e87727de4c24fa30245da24be3c60e920fbd03ed": {
+  "useful": true
+ },
+ "6a32a28c2b5d4483aa3f542255075ecf5f4c3a4938727740e092bdf5a5ef1df2": {
+  "useful": false
+ },
+ "6a3c837bfb4ea972b05ad12dae3cc4278ebe392aa32dbeec4d2391064cec53e6": {
+  "claims": [
+   "A sliding window should not be used if the property being checked is not monotone.",
+   "If a window is invalid, every larger window containing it must also be invalid for the property to be monotone.",
+   "Shrinking the window could turn a failing window into another failing one before it becomes valid, which means the 'shrink until valid' step might skip the correct answer.",
+   "Elements can be negative when summing to find a shortest subarray with a sum at least S.",
+   "Extending the window could decrease the sum, breaking monotonicity when elements are negative.",
+   "Sorting the array destroys the original element positions.",
+   "The algorithm requires either pointer to move backwards, which invalidates the linear time complexity and the approach."
+  ]
+ },
+ "6b069d4807f79d11a0ebbcd0564830a73ae1dc12b1a14ce20aace724a5278423": {
+  "supported": [
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "6b33eb617c3eef2b964a6e66b54d46f221bae650c779d9768ee8260cee66a9e3": {
+  "claims": [
+   "BFS finds the path with the fewest number of connections.",
+   "BFS does not find the cheapest route by total cost.",
+   "BFS finds the cheapest path when all connections have the same cost.",
+   "For situations with general positive costs on connections, BFS is not the correct approach.",
+   "Dijkstra's algorithm should be used for situations with general positive costs on connections.",
+   "Using BFS on weighted connections will result in a wrong answer.",
+   "BFS returns the path with the fewest connections when used on weighted connections.",
+   "The path with the fewest connections is not the same as the path with the lowest total cost."
+  ]
+ },
+ "6c45332ae7c2186855205baad1eb6ffbd9db0c11ba7478989effac5ba0b2ba87": {
+  "useful": true
+ },
+ "6c828657c951b37c292e4b83e8ff4fd5dfeae932641e5a4d720edce56a5084b9": {
+  "useful": false
+ },
+ "6c9baed780f2ae57cd0966115c3abd1853bc7f66d8b0bb21528907bb1b874530": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "6d64dfaad848f4f2b6da02146a2f50e33f7bf1306096bb3c58597abbf6e18c7e": {
+  "useful": false
+ },
+ "6e9987813043c5228ec41b11c795f186e76a91720d538ba40effa52e180956c6": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "6e9eb52b545723b7acd37815bf6f29f1d83e327eae88e92bdf39421be9b28d86": {
+  "claims": [
+   "Dijkstra's algorithm does not work correctly when there are negative edge weights in the graph.",
+   "If a graph contains a single negative edge, Dijkstra's algorithm may return an incorrect shortest path without indicating any problem.",
+   "Dijkstra's algorithm assumes that extending a path will never decrease its length.",
+   "The assumption that extending a path will never decrease its length is violated by negative weights."
+  ]
+ },
+ "6f0546b748d183e648283702f3b4c84318e442fc1a3ec52d3696c8825e64d55b": {
+  "useful": true
+ },
+ "6f57d098377dee63306a64fad5b3902802db0c251d099efef1d1bdeb3b1a4d91": {
+  "useful": true
+ },
+ "7003a1b6bda2b79a3a95c7498e3485d35b2ae5e5f436b651521dbff5f43adb49": {
+  "useful": true
+ },
+ "70184bc698dbaf7e93de66bd0d9949ae773e07af97e694a26e73122fe70470d9": {
+  "useful": false
+ },
+ "70290b5b0f5626bb634e7ca55ebd7146f47bf8971dcc6f99be8c5918f433917a": {
+  "useful": true
+ },
+ "70945946951d5cec556872f0ade23b1bc7c4089f33ffaf8a41f71a63a08ad65d": {
+  "claims": []
+ },
+ "70e809d656d75b668effe4901d0a6f0eb2960ba137eb72c31c1f7f88f6c556d4": {
+  "useful": false
+ },
+ "7399d037a8b4934c03478e8b1115d15570d93abb3b11cb979a4a3482bec7d02b": {
+  "useful": false
+ },
+ "73dd7202dd2e7220a40f937fb4be511e26d28af27d3a9c169f890d96773e049a": {
+  "claims": [
+   "The number is prime.",
+   "Every non-zero value has a multiplicative inverse.",
+   "Division works.",
+   "The number is just under 2^30.",
+   "The product of two values below the number stays under 2^60.",
+   "The product of two values below the number fits in a signed 64-bit integer.",
+   "The product of two values below the number fits in a signed 64-bit integer with room to spare.",
+   "Answers are asked modulo something.",
+   "Counting problems otherwise produce numbers with thousands of digits."
+  ]
+ },
+ "742f2e4e996fc7986122a290ad31f78fc50a39ba291decdd57bc25bc89d6d31a": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "7472d1b4d89ce755a7c218355671c389b2c4345c336088437805a950d421e480": {
+  "claims": [
+   "A Fenwick tree is sufficient for operations that can be undone by subtraction.",
+   "Sums are operations that can be undone by subtraction.",
+   "Counts are operations that can be undone by subtraction.",
+   "XOR is an operation that can be undone by subtraction.",
+   "A Fenwick tree is sufficient when updates are made to single points.",
+   "A Fenwick tree is a good choice if range updates are needed but only point queries.",
+   "A Fenwick tree is a good choice if smaller memory usage is prioritized.",
+   "A Fenwick tree is a good choice if a faster constant factor is prioritized.",
+   "A Fenwick tree is a good choice if fewer lines of code are prioritized.",
+   "A segment tree is needed when range minimum operations are required.",
+   "Range minimum operations do not have an inverse.",
+   "A segment tree is needed when range maximum operations are required.",
+   "Range maximum operations do not have an inverse.",
+   "A segment tree is needed when greatest common divisor operations are required.",
+   "Greatest common divisor operations do not have an inverse.",
+   "A segment tree is necessary for range assignment operations.",
+   "A segment tree is necessary for range add operations.",
+   "A segment tree with lazy propagation is generally a clearer choice for situations requiring both range updates and range queries.",
+   "Using multiple Fenwick trees is an alternative for situations requiring both range updates and range queries."
+  ]
+ },
+ "7507fdfec70e35d815d986049ed0e626f485a04610cefc3f44a3f2c7287a27d4": {
+  "score": 2
+ },
+ "752bf254b50bec2365b7347a62b4b41553e3ab4dabdbea1dfc2a9fb5b166aac2": {
+  "useful": false
+ },
+ "75447c288e4a18f2be19b04e0f5414e1c5fc7f2f2032e09b8926fcf81b4bb501": {
+  "useful": true
+ },
+ "7690ca379b91b2595afcba75e5baf6f6d4a7d64d78c0030ce28f851fa6697e4f": {
+  "claims": [
+   "In C++, the `%` operator can produce a negative result if the number being divided is negative.",
+   "The behavior of the C++ `%` operator differs from mathematical convention.",
+   "The behavior of the C++ `%` operator can lead to unexpected negative answers when performing subtraction in modular arithmetic.",
+   "To correct for negative results of the C++ `%` operator, one can add the modulus (MOD) to the result of `(a - b) % MOD` before taking the modulus again.",
+   "Adding the modulus (MOD) to the result of `(a - b) % MOD` before taking the modulus again ensures that any negative intermediate result is pushed back into the positive range before the final remainder is calculated.",
+   "Adding the modulus (MOD) to the result of `(a - b) % MOD` before taking the modulus again makes the final answer positive."
+  ]
+ },
+ "76e8818c8a16e123b8e3f34342eb7f982461b4773ab04f3703ce2c66bc10a0fa": {
+  "claims": [
+   "The provided passages do not cover how to read input quickly in Python.",
+   "The provided passages discuss fast input/output techniques for C++."
+  ]
+ },
+ "7723df90ed9a7fbbe327816ec3ce8c9aa7e3597bb0169e6ff40d0b6e7037477a": {
+  "claims": [
+   "A Fenwick tree can answer range sum questions on a changing array.",
+   "A segment tree can answer range sum questions on a changing array.",
+   "A Fenwick tree maintains an array under point updates.",
+   "A Fenwick tree maintains an array under prefix queries.",
+   "Point updates on a Fenwick tree cost a logarithmic amount of time relative to the array's size.",
+   "Prefix queries on a Fenwick tree cost a logarithmic amount of time relative to the array's size.",
+   "A range sum for [l, r] can be found by subtracting the prefix total up to l-1 from the prefix total up to r using a Fenwick tree.",
+   "A segment tree maintains an array under interleaved updates.",
+   "A segment tree maintains an array under range queries.",
+   "Updates on a segment tree cost a logarithmic amount of time.",
+   "Range queries on a segment tree cost a logarithmic amount of time.",
+   "A segment tree can handle sums.",
+   "A segment tree can handle other associative combining operations."
+  ]
+ },
+ "772b494ef400399dc146749075d31a780f8043e9c6965bfb028cf992fe5290f0": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "775a0929a37264c127ebe1931d74980b801f1d854c01da1ec15f9af3c641f7e7": {
+  "score": 2
+ },
+ "775c7f7f29909accdf904181d09483f8dcaf5733ace63830a26eb764790bd6a9": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "78f470d3866cbb0f37c0e72392945dc600edf69165579a8d6d62cabf1b7bc711": {
+  "useful": true
+ },
+ "79c08eff42e7e300b9ac6fcc3982002f74e9b572ea4093aefe199634fc6b166d": {
+  "useful": false
+ },
+ "79dbc2ba5c22dae0418edec72e29a41fe97baf9fe4c35ac495ac826217730fb2": {
+  "useful": false
+ },
+ "7a7503e8cd790f81c87d3191204073796d57e6d4870c80219f96f83bca30943c": {
+  "useful": true
+ },
+ "7a841cc7e9a51d17d2955361a7e2a77895d1119527ce06a60af66084a26b1172": {
+  "useful": false
+ },
+ "7bc212f754b22a35d5f925903e3b6b27b1e78fdb8f62bccbdf38274fb7bff03b": {
+  "useful": false
+ },
+ "7d3666f627931dc0002aa7f2518fa1a8d1bcee4281d2d1a10f91d2252666a221": {
+  "useful": true
+ },
+ "7d88586fc48e9357a37ca9dedc6e0e8d09fa5af0491764792b46f79ee6bc18e5": {
+  "useful": true
+ },
+ "7db03bb4e846344e792b84926c9c5aa9006ce4a5d7c02d849e3ba98ffb870846": {
+  "score": 1
+ },
+ "7f6846c39a047ff7113246b854e290fcb6ee7508a891c150260fc4219980de0d": {
+  "claims": [
+   "lower_bound returns the first element that is greater than or equal to x.",
+   "upper_bound returns the first element strictly greater than x.",
+   "For a sorted array containing several copies of x, lower_bound points at the first copy of x.",
+   "For a sorted array containing several copies of x, upper_bound points just past the last copy of x.",
+   "The distance between the iterator returned by lower_bound and the iterator returned by upper_bound is the number of copies of x.",
+   "lower_bound returns the end iterator when no element greater than or equal to x exists.",
+   "upper_bound returns the end iterator when no element strictly greater than x exists.",
+   "lower_bound on its own does not tell you whether x is present.",
+   "upper_bound on its own does not tell you whether x is present."
+  ]
+ },
+ "80d5fe5514e5b17e14bc068aacd1483ea0e0ab04ef23af9f8ee726b2f89ef7e8": {
+  "useful": true
+ },
+ "81655cb55460ab5dac8f66272769923ec56e1c93f2e81e2820980e7e427f18ee": {
+  "useful": true
+ },
+ "8308748b750ce4e517ce1fd96f3915c9228aec1da1d103459ea2f15e995e71d6": {
+  "claims": [
+   "The fastest way to sort depends on the characteristics of the data.",
+   "If the values are integers within a small, known range, counting sort can achieve O(n + MAXV) time.",
+   "Counting sort's time complexity of O(n + MAXV) beats the O(n log n) bound that applies to comparison sorts.",
+   "`std::sort` operates in O(n log n) time for general sorting."
+  ]
+ },
+ "839da92a49ac46703f6db3c73e6be64e052d814db52dfd6a1417d08c263ef770": {
+  "useful": false
+ },
+ "8485df7d4bafe0578a97a5398aef3629ccd81f158f192fa8d139087166234b97": {
+  "useful": true
+ },
+ "85120d432589cc4c3a0d3eec8053151faf7961c6aecceb42242f222ef7e6f5f2": {
+  "supported": [
+   true,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   true,
+   false,
+   false,
+   false,
+   true
+  ]
+ },
+ "863261a582b2d4d4433ce4ae4a86eb40d291b5f2cef2f9b10b84c08053c7c10b": {
+  "useful": false
+ },
+ "863b1adb226608b77f194dc52f76370fec4cdb515bee0b5139a51d642e6e724f": {
+  "score": 3
+ },
+ "86539158edf7d20f1171370f734b1f6a02b4b3b32193af4acdd04f127247df3c": {
+  "claims": [
+   "DSU stands for disjoint set union.",
+   "DSU is also called union-find.",
+   "DSU maintains a collection of elements split into groups.",
+   "DSU supports a find operation that says which group an element is in.",
+   "DSU supports a unite operation that merges two groups.",
+   "The find operation is effectively constant time with path compression and union by rank.",
+   "The unite operation is effectively constant time with path compression and union by rank.",
+   "DSU cannot split a group.",
+   "Merges in DSU are one-way."
+  ]
+ },
+ "86b29b07d3533feb73aa4cd53a8febe051b71ace833e29b9a94c57bcabfd6172": {
+  "useful": true
+ },
+ "880fecd0045d06526ddf4aa9823d7f7a4c57bd3387506e60828f8f7eebf42e54": {
+  "useful": true
+ },
+ "89527ae3f8b09a55ca382a1c5456e74d57b071ca718a206f31dbf460f58afaf5": {
+  "useful": true
+ },
+ "8b7b273e970e4edc46042d0b5d6c8dc0f52148e7c5e744ea6da9a39c9ebc7410": {
+  "useful": true
+ },
+ "8c61710e5dba858420acb37e06cb3d6bafdf3422b1d3f21061f772102d180314": {
+  "claims": [
+   "A recursive graph search can crash on a large input.",
+   "Each pending recursive call consumes memory on the call stack.",
+   "The consumption of memory on the call stack by recursive calls can lead to a crash.",
+   "Recursion depth can become too great.",
+   "10⁵ nested calls on a path graph is an example of a great recursion depth.",
+   "A great recursion depth can exceed the default stack size.",
+   "Exceeding the default stack size causes a stack overflow.",
+   "A stack overflow is a form of memory exhaustion.",
+   "A stack overflow results in a crash.",
+   "A crash due to stack overflow is typically reported as a runtime error."
+  ]
+ },
+ "8c645cde5db2fccd82cb5dca92d0d0e09aaad870599ad8546a8a11b1513b7fa2": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   false,
+   false,
+   true,
+   true,
+   true
+  ]
+ },
+ "8cb1cf7b1b1a469a0a980d4561027389815db49b742a5a3c2199004388386245": {
+  "useful": true
+ },
+ "8d3a91a8f0ab0b5c32e02158ae4246eb70f0b51acc67ea19dcb68c343b6200c2": {
+  "useful": true
+ },
+ "8d4750600acd31b96e32e43d819143729072caf57d7cded921e1baac2706458d": {
+  "useful": true
+ },
+ "8d533246e11c4ec2ce89c14204f3fbc61e3fc527837302eb24df48b40e80e370": {
+  "score": 3
+ },
+ "8dc843727956b8fc4f9cd4dcbb7f026885b49152c3553cb5f884bebf19377370": {
+  "useful": false
+ },
+ "8f187bb4d9ed9cf5447d1c4863ff30193de0a6478be1af45507ff0c9ee83e84d": {
+  "claims": [
+   "TLE (Time Limit Exceeded) typically occurs when the program's computational complexity is too high.",
+   "TLE (Time Limit Exceeded) typically occurs when the program has a large constant factor.",
+   "MLE (Memory Limit Exceeded) usually happens when the program tries to use too much memory.",
+   "An array being too big can cause MLE (Memory Limit Exceeded).",
+   "Recursion being too deep can cause MLE (Memory Limit Exceeded).",
+   "Containers growing excessively can cause MLE (Memory Limit Exceeded)."
+  ]
+ },
+ "8f49082d1e94cff4d9cceb98d565bf83a682741ecde1af55c43914738421b762": {
+  "useful": false
+ },
+ "8fe0d5dd51b2508f7216779f62c531b901ac466caaeab40563c1325d1ff766cc": {
+  "useful": true
+ },
+ "8ff2b0294a8601bedd0dc074aa56a1181450d5a709caba81b03c4c301f1452fd": {
+  "claims": [
+   "The described action stops C++ streams from mirroring C stdio buffers.",
+   "Stopping C++ streams from mirroring C stdio buffers makes cin and cout slow on large input.",
+   "The described action is usually paired with cin.tie(nullptr).",
+   "cin.tie(nullptr) stops cout from being flushed before every read.",
+   "Both actions must come before any reading.",
+   "After performing these actions, one must not mix cin with scanf in the same program."
+  ]
+ },
+ "90b0619e41542acee54bb830efd8bf6f0be6ad6a0004939dc1abcb01475b5d8e": {
+  "useful": false
+ },
+ "914eea5e06e2fe0c15c18aa4e1e9fdae94f21ff13a24b2c9e53ff7ffa4675e10": {
+  "claims": []
+ },
+ "91b839f6d0bcb2521dd08a0e0930a0ad5c073617e6908db2c113213f6ac6f751": {
+  "score": 3
+ },
+ "933652c28e1a38086772b467da89f315b015cc24ec535f9af0dd4b4add14fd7a": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "9356ac085f4f4af8102e5cd61eb8a38d3461239b5fe4bbbfc0f32118f0ac17f9": {
+  "useful": false
+ },
+ "93ea29011d3839741b4157dd28ad3c51389183d85aeb3adc3366a0b26cc131f5": {
+  "score": 3
+ },
+ "946631324c44ec2fef82b97a63fa5532406d7549957d0e044598feaf813e19b7": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "94817bf5bddad15f788e01343f85eac2682303043043d5ab29680c2f895726c9": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "948c3953cfaaf4c0d5b4603f713e15cb1f099ac511c263fd39054e5960ff4b8f": {
+  "useful": true
+ },
+ "95973b11cb341b936cf0a94765406deb91dde3f05fe7401827dd411deeef5abe": {
+  "claims": [
+   "A wrong answer on a later test is usually an unhandled edge case or an overflow rather than a broken idea.",
+   "Check n = 1.",
+   "Check empty input.",
+   "Check all elements equal.",
+   "Check the maximum permitted values.",
+   "Check the minimum permitted values.",
+   "Check already-sorted input.",
+   "Check reverse-sorted input.",
+   "Check duplicates where distinct values were assumed.",
+   "Check every accumulator's type.",
+   "int holds only about 2.1e9.",
+   "A prefix sum can exceed 2.1e9.",
+   "A product of two indices can exceed 2.1e9.",
+   "Stress testing against a brute force on small random inputs finds most of the rest."
+  ]
+ },
+ "97104646698b23a60040c9a1aee2e25bed7e66654bad5682f64a29e3054edbfb": {
+  "useful": true
+ },
+ "9775620065cca0be8e0bc31a85ce5baf5cd0e6e8a00b0c1c070fe8657ee12126": {
+  "useful": true
+ },
+ "98dec1bde29827cf0a3efd89cd57b743c19c2081f10ec9009940534f2eb79fec": {
+  "score": 3
+ },
+ "98eb9b0bd68231a9e2ca496422180360296e471a185c8bfe0be854b799f6f656": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "9950ad04bfa0c6d3092770068a14dd165419f2e752f3714d50ddebd276b0e8c9": {
+  "claims": [
+   "If a program passes a sample but fails on a later test, it typically indicates an unhandled edge case or an overflow.",
+   "Common edge cases include n = 1 or empty inputs.",
+   "Common edge cases include all elements being equal.",
+   "Common edge cases include maximum or minimum values.",
+   "Common edge cases include already sorted or reverse sorted inputs.",
+   "Common edge cases include duplicates.",
+   "Code should be reviewed for incorrect loop bounds.",
+   "Code should be reviewed for off-by-one index errors.",
+   "Code should be reviewed for accumulator types that may overflow.",
+   "Global state should be reset between multiple test cases."
+  ]
+ },
+ "9a824a8d9b5fd9258d06285e1aa4c9d624e4618cb80aca151fa4d863016393ce": {
+  "useful": true
+ },
+ "9a93eab9be44ec598f5a3424f60d5a8a727f1047065ac28fc1a45e5c14dc6980": {
+  "useful": true
+ },
+ "9ab54bd41ebf84437779e6b98f43688b73ae46e12b04731af0c59fe609d43120": {
+  "useful": true
+ },
+ "9b78364d2ce5eed0d8b998423cfff555fa337ecb1de038f86c16362ebf2987ac": {
+  "score": 3
+ },
+ "9e86a1d43d6dad98f4c60c17a56bc60ad82ecf4735c69bbf3c5534fe075f7777": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "9ee6666f33a84903916aac467310941c0d57d0f54f5e4baaba62b96a89e18db1": {
+  "useful": false
+ },
+ "9f13495ef3811ca0525e1c11ff0b24007e726390944c6c6119d9bf9bfaf8e601": {
+  "claims": [
+   "TLE (time limit exceeded) means the program took too long to run.",
+   "TLE usually happens due to high computational complexity.",
+   "TLE usually happens due to a large constant factor in its operations.",
+   "MLE (memory limit exceeded) means the program used too much memory.",
+   "MLE is often caused by an array that is too big.",
+   "MLE is often caused by recursion that is too deep.",
+   "MLE is often caused by excessive container growth."
+  ]
+ },
+ "9f5ae873b9ab260947e9bac30ddf1542cf5e759ec0ebf539991b55ef5f831f7b": {
+  "score": 3
+ },
+ "a0218d6ba26da60c4d1f232c561dec2f3b361de98ae816c0dcdf58ce0e4fad83": {
+  "useful": false
+ },
+ "a03f1af3c3c3eab4f78225833da45820fd4830336164bc8ba24a6fe7e328a924": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "a0ac8e1d10236f3833f5afc1fe9cc86ceef9b6293e8cb061db0312432b4b380c": {
+  "abstained": true
+ },
+ "a2e9bb9cb8303d9a2a1ab78f7c58e0093d778cd35ec62e82d15b1ce839477e6d": {
+  "claims": [
+   "A \"time limit exceeded\" verdict means a program is too slow due to its fundamental approach.",
+   "A \"time limit exceeded\" verdict means a program is too slow due to a large constant factor slowing it down.",
+   "The expected number of operations should be calculated based on an algorithm's complexity and the problem's constraints.",
+   "If the expected number of operations is too high, the algorithm likely needs to be changed entirely.",
+   "A modern judge machine typically performs around 10⁸ simple operations per second.",
+   "If an algorithm's complexity seems appropriate, the issue might be a large constant factor.",
+   "Using `std::map` or `std::set` where an array or sorted vector would be faster is a common cause of large constant factors.",
+   "Flushing streams repeatedly with `endl` in a printing loop is a common cause of large constant factors.",
+   "Not disabling synchronization between C++ streams and C stdio with `ios::sync_with_stdio(false)` for large inputs is a common cause of large constant factors.",
+   "Allocating memory inside a loop can contribute to large constant factors.",
+   "Passing containers by value into functions called in a loop can contribute to large constant factors.",
+   "A timer can be used to find the slow parts of a program's code."
+  ]
+ },
+ "a305a406e78246d457032322cdcf702f48a9c3ae737f73eeda333caa575e5950": {
+  "useful": true
+ },
+ "a3b7fe123409b48ecd2c2459310af4809e2d97b15f39680483765db809e88ccd": {
+  "useful": false
+ },
+ "a3f524a51b12aeb9ac8df7058abff323c4af953a0062382fc3f86a789451f26b": {
+  "supported": [
+   false,
+   true,
+   true,
+   false,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "a55035d8315865f6c503fef2ed819913d8ad5a5fff964efc73075733275078dc": {
+  "claims": [
+   "A prefix sum array is built once and is only correct for the array as it was at that moment.",
+   "A single update to an array invalidates every entry after it in a prefix sum array.",
+   "Repairing a prefix sum array after a single update costs O(n).",
+   "When updates and queries are interleaved, a Fenwick tree or a segment tree is preferred.",
+   "Fenwick trees and segment trees perform updates and queries in O(log n)."
+  ]
+ },
+ "a601b713dd1a67024f75c0dabe2c7c38738d98be5583b73efcbc69e5e54a4e85": {
+  "useful": true
+ },
+ "a620538eec929df0e4edc4e4e994033dd909dbba784d6e2c0c68d9e8390b7098": {
+  "useful": true
+ },
+ "a73b64bb97aa427dc23d1458f5ac56a752252d2b02cf06d29302beb39d1da64f": {
+  "useful": true
+ },
+ "a79bd3eb7cb50aa1c3fe35dea4a848e0f2f546002a84e9b804efa4fa43308acc": {
+  "supported": [
+   false,
+   false,
+   false,
+   false,
+   false
+  ]
+ },
+ "a7a69ca87df06dec20f2250b246869c1c06cb74131468d2566d2b75f3472f303": {
+  "supported": [
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "a84c366931a0ed8e4db2fcec10ae7c545193336f49bc5098e578a1b66846139b": {
+  "useful": true
+ },
+ "a8c0468bb357857dae7541e03103ef3481b8538a14bcb7af9090891ff0839e80": {
+  "useful": false
+ },
+ "a8c9f4f85b5f00e82072627a6511ca05b601056e57ba27f264ae143c07b83886": {
+  "claims": [
+   "DSU stands for Disjoint Set Union.",
+   "Disjoint Set Union maintains a collection of elements partitioned into groups.",
+   "The Disjoint Set Union structure supports two main operations.",
+   "The `find(x)` operation is supported by Disjoint Set Union.",
+   "The `find(x)` operation determines which group an element `x` is in.",
+   "The `unite(x, y)` operation is supported by Disjoint Set Union.",
+   "The `unite(x, y)` operation merges the groups containing elements `x` and `y`.",
+   "Disjoint Set Union allows answering connectivity questions under a series of merges.",
+   "Disjoint Set Union is useful for problems involving components.",
+   "Disjoint Set Union is useful for problems involving grouping.",
+   "Disjoint Set Union is useful for problems determining if two things are related."
+  ]
+ },
+ "a91106660f2ce30e0abd772a4623f06f6d0955aa563f676e6cd3261fa65bf656": {
+  "claims": [
+   "unordered_map is a hash table.",
+   "unordered_map has average O(1) find, insert and erase operations.",
+   "unordered_map has no ordering.",
+   "unordered_map has a worst case of O(n) per operation.",
+   "Adversarial input can trigger the worst case O(n) operation on unordered_map on purpose.",
+   "map is a balanced tree.",
+   "map has O(log n) guaranteed find, insert and erase operations.",
+   "map supports sorted iteration.",
+   "map supports lower_bound queries.",
+   "map supports upper_bound queries.",
+   "lower_bound and upper_bound queries on map can be used for predecessor and successor queries.",
+   "If order is never needed, unordered_map is preferred.",
+   "If ordered iteration or range queries are needed, map is structurally necessary.",
+   "If the keys are integers in a small range, a plain array beats both unordered_map and map."
+  ]
+ },
+ "a93a34da4555461b2629acde084b87db30a4482cb4e809388c9cfa3941b3afd8": {
+  "claims": [
+   "`lower_bound` returns an iterator to the first element that is not less than a given value `x`.",
+   "The first element not less than `x` is the first element greater than or equal to `x`.",
+   "`upper_bound` returns an iterator to the first element that is strictly greater than `x`.",
+   "In the collection `[1, 2, 2, 2, 5]`, `lower_bound` for `x = 2` points to the first `2`.",
+   "In the collection `[1, 2, 2, 2, 5]`, `upper_bound` for `x = 2` points to `5`."
+  ]
+ },
+ "a9e0f38c4dbbf458f26ef5c0b5152a56bdd36765dca0fc862b4dacd4689e31c7": {
+  "useful": true
+ },
+ "aa2a595c86564487880fb0e6b8eb17c0d0463dd226915d8bbfbef34d8e06a029": {
+  "score": 3
+ },
+ "ac26643ccaf0a8da6d6b13fa658a369cfcdc4105455f602fd5e30119a4fdc99d": {
+  "useful": true
+ },
+ "adb9e9964ee0272f6f60f1a6e2c161a10296255aefe4d84268c16a5526f0e824": {
+  "claims": [
+   "`ios::sync_with_stdio(false)` stops `cin` and `cout` from mirroring the buffers used by C standard input/output functions like `scanf` and `printf`.",
+   "Stopping `cin` and `cout` from mirroring C standard input/output buffers can speed up input and output operations.",
+   "The speedup of input and output operations is especially noticeable when dealing with a large number of values."
+  ]
+ },
+ "ae4511c0871f28d0f9db0c475a4d99039ea4e6a596a553250dc573d3e0c729ee": {
+  "useful": false
+ },
+ "ae9191b03c7f42332c66a4b3151f2c8b8d70ae5ee96e021f5780f07310a54603": {
+  "useful": true
+ },
+ "afeb5173b3f4c45285d39d179536ede50439e84c02ab61d06f203646e36785a0": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "b046c5e05194146e56c107cc80a3804dc324343ae5a0dfc2813fbc931396631b": {
+  "supported": [
+   true,
+   true,
+   true,
+   false,
+   true,
+   true,
+   false
+  ]
+ },
+ "b0a32acbccd4fd4e530b85b6138afc56113cada5f2e569f1293118ccd8f570af": {
+  "claims": [
+   "The reference notes describe general concepts.",
+   "The reference notes contain nothing about any specific problem.",
+   "The reference notes do not answer the specific problem.",
+   "The tutor must never answer the specific problem.",
+   "Operating rule R1 forbids revealing how to solve the learner's current problem.",
+   "Operating rule R1 forbids naming the technique that would work."
+  ]
+ },
+ "b0b68a2f74ae8660731af12d5c57cad40999b09fe4ccdf3e1706d63284a1b6a1": {
+  "useful": true
+ },
+ "b184e51f7c9d0041c5b048edbffdefaf99e7a0a063d24122b5e175a4e8bd10ad": {
+  "supported": [
+   true,
+   true,
+   false,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "b29d7493fcb163c192dfe36b8e9a2932758c82af788b3900a17a2a719a49aaa7": {
+  "score": 3
+ },
+ "b38a7f447f21f9a6d1a2b1f8bf1b4a3ca3bda082723842b3f0566228763b9fa4": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   false,
+   false,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "b45828acad0459ccf0ee7dc38cdfb0688619559c09007508ba4499660c3d0884": {
+  "useful": false
+ },
+ "b470ce280c42ddfd21c8fed51cffd5680151f21e11003f72a57487ff75c978d8": {
+  "claims": [
+   "Recursion depth d costs O(d) memory.",
+   "The call stack typically uses 1 MB to 8 MB of memory.",
+   "An adjacency list for a graph uses O(n + m) space, where n is the number of vertices and m is the number of edges.",
+   "An adjacency matrix uses O(n²) space.",
+   "An n × n table uses O(n²) space.",
+   "An n × n table can use hundreds of megabytes for n = 10,000.",
+   "A binary lifting table uses O(n log n) memory.",
+   "Dynamic programming tables can sometimes be optimized from O(nW) to O(W) memory."
+  ]
+ },
+ "b49c57b4b4067cf9b4711e80f755fc9577c333b6d1668be5fe93f3f22a57f6e9": {
+  "useful": true
+ },
+ "b4efd8b3cf4412dcc654f0f66a48c612a4db663183db3ae88104ab1ade154e0e": {
+  "useful": false
+ },
+ "b53e7adba7dcd89a7167cad198fadbe6a7d681c3a318e7fa0818edf3aadce4b0": {
+  "useful": true
+ },
+ "b58186931b0ce9e9f3f3bcef7f0a6131b62a8bae56b9c8c6ebc8c1251058971e": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "b5853ebcd52466a31ce6443c9cd27cdd2bf226c18457f3f9e37a5614e95373f9": {
+  "useful": true
+ },
+ "b667272f1fd91d7191218477411d1ae4f5f2c6c70d66823ffef81eb3c682829a": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "b66837af9ab380c7bca37a9a96c578fbda885918cc0368b5f99f591f240ce18b": {
+  "useful": false
+ },
+ "b6748212ebf48f3e01bd7673525972b881f394abfec9323c55714c361600f7f3": {
+  "claims": [
+   "A Fenwick tree handles sums under point updates.",
+   "A Fenwick tree handles counts under point updates.",
+   "A Fenwick tree handles XOR under point updates.",
+   "A Fenwick tree can be implemented in about ten lines.",
+   "A Fenwick tree has a small constant factor.",
+   "Minimum has no inverse.",
+   "A Fenwick tree cannot do range minimum.",
+   "A segment tree can handle range minimum.",
+   "A segment tree can handle range maximum.",
+   "A segment tree can handle range gcd.",
+   "A segment tree can handle an update applied across a whole range.",
+   "Lazy propagation supports updates across a whole range.",
+   "A Fenwick tree does not support updates across a whole range."
+  ]
+ },
+ "b7745d81202aeffc25fab98135aa1d19d22d6592fa308813ff413808a1de0c7d": {
+  "useful": false
+ },
+ "b7a616a3d1665a64aba66e54f6b2ec368cd076e7d9c0bcfdd93dd4f4008748bb": {
+  "claims": [
+   "A Fenwick tree relies on subtraction.",
+   "A range in a Fenwick tree is calculated as one prefix minus another prefix.",
+   "A Fenwick tree handles sums under point updates.",
+   "A Fenwick tree handles counts under point updates.",
+   "A Fenwick tree handles XOR under point updates.",
+   "A Fenwick tree implementation for these operations is about ten lines long.",
+   "A Fenwick tree implementation for these operations has a small constant factor.",
+   "Minimum has no inverse operation.",
+   "A Fenwick tree cannot perform range minimum queries.",
+   "A segment tree should be used for minimum queries.",
+   "A segment tree should be used for maximum queries.",
+   "A segment tree should be used for GCD queries.",
+   "A segment tree should be used for updates applied across a whole range.",
+   "Lazy propagation supports updates applied across a whole range.",
+   "A Fenwick tree does not support updates applied across a whole range."
+  ]
+ },
+ "b7d049aca714b863d18a5f45fc273151185054dd643d3d3053f8d98cfe6a0eca": {
+  "claims": [
+   "Dijkstra's algorithm does not work correctly when there are negative edge weights in the graph.",
+   "Dijkstra's algorithm finalizes a vertex's shortest distance and never re-examines it.",
+   "Finalizing a vertex's shortest distance and never re-examining it is only sound if extending a path cannot decrease its total length.",
+   "If a negative edge exists, a path that initially seems longer might become shorter later.",
+   "Dijkstra's algorithm will not detect that a path might become shorter later if a negative edge exists.",
+   "Dijkstra's algorithm will provide an incorrect result if a negative edge exists."
+  ]
+ },
+ "b88febc8b7a7ee30f921bbecdfb620b6871190de81b14c5bd2d0aa8bfc2d8275": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "b8e0bb245c8916ffa0bdf3fead10ddddcb37f31628124065783897235537d72f": {
+  "score": 3
+ },
+ "b8f7c631cae3d72e3adb1b1db0d44c0c5f9007a8b94360cbb10efbe851bc96eb": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   false,
+   false,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "b94eeff8a4d84c6e68becaa2900ce33049ba6262f41ca47f2f971f80e292c80e": {
+  "useful": true
+ },
+ "ba35bfd3854e078f34e11f2772a5e51b353346d13f2922f558fe02393e49921b": {
+  "supported": [
+   true,
+   false,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "ba778f62bdd6d2b4217f04fdea83867aa5aec7dbcf4cfa49beda29407a2aee32": {
+  "useful": true
+ },
+ "bb9540076b0c9b0665f3aa918392790a8808e39953b85552af9f8a2b0e89d200": {
+  "useful": true
+ },
+ "bb9a797448940e8f15ed74c7afcfaacc3fe2e5fb40c2ebc26329f8722bb93a31": {
+  "useful": true
+ },
+ "bc8e5e42826fb45ed810e0b8ead109f3fc7aafa28e2816f76cbbe0e26c7f90ec": {
+  "claims": [
+   "A locally best choice can preclude a better later option.",
+   "The 0/1 knapsack problem is a standard example where a locally best choice can preclude a better later option.",
+   "In the 0/1 knapsack problem, an item with the best value per weight might occupy space that could have been used more profitably by two other items.",
+   "Once an item with the best value per weight is in the knapsack, there is no way to remove it.",
+   "Coin change with a non-canonical system is another example where a locally best choice can preclude a better later option.",
+   "With coins of denominations 1, 3, and 4, and a target sum of 6, a greedy approach selects 4+1+1.",
+   "The optimal solution for a target sum of 6 with coins 1, 3, and 4 is 3+3.",
+   "If an exchange argument cannot be constructed, look for a small lopsided counterexample.",
+   "If a small lopsided counterexample fails, use dynamic programming."
+  ]
+ },
+ "bdb7a61e193ffe83094df6a907e377f275d6ae9726dcd82fb20c636c6ea15e91": {
+  "score": 3
+ },
+ "be73cf30bd7d258efb81a0515620265091f4fa85b0182b721103d3ecc9945b35": {
+  "useful": false
+ },
+ "bfa3bffb5aa43ede7400f941f38f236b025dd64c6496467e078eb8595f49e024": {
+  "useful": true
+ },
+ "bfc8ec42d532cb3d1fc4dd70fa32d8879e70edf4397a680e5b32ba2fe05fb046": {
+  "score": 1
+ },
+ "c1567732673739361a1f9e955d869a3373ecf11cb1d4d28ed9690b8643e0782b": {
+  "useful": false
+ },
+ "c21901f2fd705db44a13dd90744c7e19f41a74d8fe61df01c7060f28bdbd6a18": {
+  "useful": false
+ },
+ "c2f90b5f6afd1ac38bef9e488f04c2de9d5376ce4077cfee571bc6ad6f8946a9": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "c3815c0e33db028104384976c10899a8ef04df75c48b4e55916ac3606c917c34": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "c4394e5f30776fb42492196010d5d9b8b714aa4ffa6eb14c755b6c46dae8e82f": {
+  "score": 3
+ },
+ "c44133a3195a708f9ed93acafb9a5034280a887939cecec7c44354b3e00fbe30": {
+  "useful": true
+ },
+ "c5d9eaa3368ac1672d46564b4befdb3a443c905ee692814f75e7036c910ca48f": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "c60c87ada0121e7b6715979e4578437e4ae80874e7cfe099ddc53ee32f316997": {
+  "useful": true
+ },
+ "c71df5584763591bccd8b59c9c1177519b4daace5b701baa5687114a5e74c834": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "c79a6ab1bdf0a0c627b9c4cc56d9f807a0130445637e62874d71028b81980c88": {
+  "useful": false
+ },
+ "c80a0bb4076fb29b3e4c607d40bc2c1a866048eb5b6156a1aae49c32b6c478d6": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "c8ec8b157d3ac2d61ef107b8bd1baefb5ca235a47aed92f546af5673f50b4887": {
+  "score": 3
+ },
+ "c931b86f91b5632bffbbd3b8573f79ec10dbbacf6d22887dbb2dc828126347f5": {
+  "claims": [
+   "A judge machine runs on the order of 1e8 simple operations per second.",
+   "A two-second limit permits n up to 5000 for O(n^2) complexity.",
+   "A two-second limit permits n up to 1e6 for O(n log n) complexity.",
+   "A two-second limit requires O(n) complexity for n up to 1e8.",
+   "Constant factors can make an O(n log n) solution built from std::map lose to a tight O(n^2) array scan at moderate n."
+  ]
+ },
+ "ca6c134744c1dbab2035613ba7fa519a4aa3208df759a84eaf3e3ac7f69b1e2b": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "cba1f832fca909a1283199585d1b2a5ce638a40cb3b696d11fc407f80d923906": {
+  "useful": true
+ },
+ "cbf21a535f1c324d9baaefff3fd4351b1a9c00bc8a557cafa746b83235ad21e3": {
+  "claims": [
+   "The modulus `1e9+7` is commonly used because it is a prime number.",
+   "Being a prime number allows division to work correctly.",
+   "Every non-zero value has a multiplicative inverse.",
+   "The modulus `1e9+7` is just under 2³⁰.",
+   "The product of two values below `1e9+7` will be less than 2⁶⁰.",
+   "The product of two values below `1e9+7` will fit within a signed 64-bit integer."
+  ]
+ },
+ "cca59fa962f4cd6b1fe2702a2619732ac44a8c07dbb91354972c3735791122d7": {
+  "score": 3
+ },
+ "cd200885177c042f0a2cb2ab5909dd205a0e3855b06d1c450b73d2cf7234121e": {
+  "claims": [
+   "Each pending call keeps its locals and return address on the call stack.",
+   "The call stack is typically 1-8 MB.",
+   "The call stack runs out somewhere between 10^4 and 10^5 frames.",
+   "A depth-first search over a path-shaped graph with 10^5 vertices reliably hits the call stack limit.",
+   "Running out of call stack space is a crash.",
+   "Running out of call stack space is reported as a runtime error, not a memory limit.",
+   "An explicit stack moves frames to the heap.",
+   "An explicit stack is a fix for running out of call stack space."
+  ]
+ },
+ "ce18c7fd7041a99b59e5cefeaaf9ea63dec53590fbb56d601a3b7090fbd0a5f6": {
+  "useful": true
+ },
+ "cf5d98770d307575376b68269ca3b0efe4d457b9d4839d5949df2303595bbd39": {
+  "useful": true
+ },
+ "cfb2725b6e9a9126b3d36e18aac694548458d50e866ee4e714c252cfa724202b": {
+  "useful": true
+ },
+ "cfb4f4c4b2d27b7c0746d53c3279fb63837cdee48af9b5f417c617d4e9b141da": {
+  "supported": [
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "d087de99fb7ff08587544b99554ee02e44b746d59e922f0ec3ddbbeeec9cf954": {
+  "useful": false
+ },
+ "d13054b71c431c0015895f9857005f0a570688033f059cf9340db719e6a01155": {
+  "score": 3
+ },
+ "d178760b42a5e71d69c5817646703f5629a976ac188055ce7aec61b031d02288": {
+  "score": 3
+ },
+ "d1a73ae6b8632b2c716a614893d302cfec6a18e8963ac589712e421e0063a599": {
+  "claims": [
+   "If a program works locally but exceeds the time limit on a judge, slow input and output operations might be the cause.",
+   "The default synchronization between C++ streams and C standard I/O can become a bottleneck when reading 10^5 or more numbers.",
+   "Synchronization can be disabled with `ios::sync_with_stdio(false);`.",
+   "`cin` can be untied from `cout` with `cin.tie(nullptr);`.",
+   "The lines `ios::sync_with_stdio(false);` and `cin.tie(nullptr);` must be placed before any reading occurs.",
+   "Using `endl` to end lines in a loop can cause performance issues because it flushes the stream every time.",
+   "Flushing the stream every time `endl` is used can be very costly for programs that print many lines.",
+   "Printing `'\n'` instead of `endl` allows the stream to flush when it is ready."
+  ]
+ },
+ "d254572caabcf0835a6302b52ca9c470be1591901d8081e1aed8d5f813a9bee7": {
+  "claims": [
+   "Each pending call keeps its locals on the call stack.",
+   "Each pending call keeps its return address on the call stack.",
+   "The call stack is typically 1-8 MB.",
+   "The call stack runs out somewhere between 10,000 and 100,000 frames.",
+   "A depth-first search over a path-shaped graph with 100,000 vertices reliably hits the call stack limit.",
+   "Hitting the call stack limit is a crash.",
+   "Hitting the call stack limit is not a slowdown.",
+   "Judges report hitting the call stack limit as a runtime error.",
+   "Judges do not report hitting the call stack limit as a memory limit.",
+   "An explicit stack is a fix for hitting the call stack limit.",
+   "An explicit stack moves the frames to the heap."
+  ]
+ },
+ "d2a2cf89e0dd439de2b2dd506dcfe70362686fade2e4080d5c142c03acfd6e67": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   false
+  ]
+ },
+ "d2a9efddd6ea07cc8d96258d6c24ef83c94bef469cc878233919e9955211ead8": {
+  "useful": false
+ },
+ "d3e37048d6aa392972cdf81656c37b3d50f3c81353a94583312c5fb66bb096a3": {
+  "abstained": false
+ },
+ "d3f5e75d9acb77b18f331be1d02ca062ea2d5730191990c9590657e76d434ab0": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   false,
+   false,
+   false,
+   true,
+   false
+  ]
+ },
+ "d42db2ed4f833dbfdad5b2f1c0058880b1937190d552a58d240cdf86b6d4578d": {
+  "useful": true
+ },
+ "d525f6f47f016eb40f4193861795f5b2c4d6873b8432f22edc2a6fa76dd7db55": {
+  "supported": [
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "d528edfedebb03d8ce01ea00e5ab2a2be28772230ec21001d31efbc5859651a7": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "d5e17386fe3ab4dc92e13be867bbf18d6e40e24830660177c73fcce26982b1ff": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "d605a1073545179262b278af14c6f54463b53911479587667c7145d764c88a3d": {
+  "claims": [
+   "A Fenwick tree is sufficient for operations that can be undone by subtraction.",
+   "Sums are operations that can be undone by subtraction.",
+   "Counts are operations that can be undone by subtraction.",
+   "XOR is an operation that can be undone by subtraction.",
+   "A Fenwick tree is a good choice when updates are made to single points.",
+   "A Fenwick tree is a good choice if range updates but only point queries are needed.",
+   "A Fenwick tree prioritizes smaller memory usage.",
+   "A Fenwick tree prioritizes a faster constant factor.",
+   "A Fenwick tree prioritizes fewer lines of code.",
+   "A segment tree is needed when range minimum operations are required.",
+   "A segment tree is needed when range maximum operations are required.",
+   "A segment tree is needed when greatest common divisor operations are required.",
+   "Range minimum operations do not have an inverse.",
+   "Range maximum operations do not have an inverse.",
+   "Greatest common divisor operations do not have an inverse.",
+   "A segment tree is necessary for range assignment operations.",
+   "A segment tree is necessary for range add operations.",
+   "A segment tree with lazy propagation is a clearer choice than using multiple Fenwick trees for situations requiring both range updates and range queries."
+  ]
+ },
+ "d6d1c6d1f27b1790f136805c3959462a5b49fb5f43898a6d8aa4a0dbdbfcdc0d": {
+  "abstained": true
+ },
+ "d6f382feb04da1f66d367b58d412e16af0b2be88d440df6d1fb059a9c57e870b": {
+  "useful": false
+ },
+ "d70e4f56f0401770ae6b47128c3d2ed19581112ed87ae0a5d470c736065e1a78": {
+  "claims": [
+   "In C++, the modulo operator `%` can handle negative numbers.",
+   "In C++, `(-3) % 7` results in `-3`.",
+   "The result of `(-3) % 7` in C++ differs from the mathematical convention.",
+   "To correct negative results from the modulo operator in C++, you can add the modulus before the final modulo operation.",
+   "The corrected form for calculating `(a - b) % MOD` is `((a - b) % MOD + MOD) % MOD`.",
+   "The technique `((a - b) % MOD + MOD) % MOD` ensures a negative intermediate result is pushed back into the positive range.",
+   "A negative result from the modulo operator can be a common bug.",
+   "This bug may only appear when a subtraction yields a negative value.",
+   "This bug might not appear on sample inputs."
+  ]
+ },
+ "d74d9019c9b0e7d19e8870e8365edcd8cdaadd24662d04fa281849aacee4a09e": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "d773ad1b59677c61ded44d2eac053532cf88ed76e449cb9933590cdbc5843e06": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   false,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "d82279543a61e0cb6958c74ca6ed40bee86f5713d1da97b32ceaac47976e386f": {
+  "useful": true
+ },
+ "d8ef1655699d14c14e0c9a91c1faf3cc725d01ae19a833d9e1f56155d23ad9ee": {
+  "claims": [
+   "BFS finds the path with the fewest edges.",
+   "The path with the fewest edges is the cheapest path only when all edges have equal weight.",
+   "With weights of 0 and 1, use 0-1 BFS with a deque.",
+   "With general non-negative weights, use Dijkstra.",
+   "With negative weights, use Bellman-Ford.",
+   "Using BFS on weighted edges produces a wrong answer.",
+   "The wrong answer produced by using BFS on weighted edges never looks wrong."
+  ]
+ },
+ "d919ba15f0decc53769feed76f88a036dc7d0ef78b84d136a7f1eca7e4830b08": {
+  "score": 3
+ },
+ "da0e9c48d99e2d129953e0e698869d0ccdda0fcc7933aa7e953ba533dedf224a": {
+  "useful": false
+ },
+ "da576569039688d9042b2aa8dc5958f993e7460a97482a6ff0d81635880c293b": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "da96327bbcb3a72b260745031905c82d052d10cf47303f30b7bbd078b3a5a439": {
+  "useful": true
+ },
+ "dbf2b4d14a6e7f1beb783504697a4065916123a884ab2002676c4c8048fe4986": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   false,
+   false,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   false
+  ]
+ },
+ "dc80a12907cdd73f935d7432d360caae58e2fecd850ebcfceacba99990b5e0ca": {
+  "useful": true
+ },
+ "dd916818a5731bb9a9f6a6a5f022e4fa722c1da4f376b9a8009f1f8d1c5318d5": {
+  "useful": false
+ },
+ "ddb63915e88ecbbf67484a066190d3b2ef947082d59904deeae14aff88fd387e": {
+  "claims": [
+   "A \"time limit exceeded\" verdict indicates a program is too slow due to its fundamental approach.",
+   "A \"time limit exceeded\" verdict indicates a program is too slow due to a large constant factor.",
+   "One should calculate the expected number of operations based on an algorithm's complexity.",
+   "One should calculate the expected number of operations based on the problem's constraints.",
+   "If the expected number of operations is too high, the algorithm likely needs to be changed entirely.",
+   "A modern judge machine typically performs around 10\b simple operations per second.",
+   "If an algorithm's complexity seems appropriate, a large constant factor might be the issue.",
+   "Using `std::map` where an array would be faster is a common cause of a large constant factor.",
+   "Using `std::map` where a sorted vector would be faster is a common cause of a large constant factor.",
+   "Using `std::set` where an array would be faster is a common cause of a large constant factor.",
+   "Using `std::set` where a sorted vector would be faster is a common cause of a large constant factor.",
+   "Flushing streams repeatedly with `endl` in a printing loop is a common cause of a large constant factor.",
+   "Not disabling synchronization between C++ streams and C stdio with `ios::sync_with_stdio(false)` for large inputs is a common cause of a large constant factor.",
+   "Allocating memory inside a loop can contribute to a large constant factor.",
+   "Passing containers by value into functions called in a loop can contribute to a large constant factor.",
+   "A timer can be used to find the slow parts of code."
+  ]
+ },
+ "ddc387cc69db46617c12628fa9c15ae1851382fa1ed12c29cdedf1b36ab667a0": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "df7a3cdf21650f29a0059bf5d429dcd93e88dd3b9a39cd7abec0395e3c6fa147": {
+  "score": 3
+ },
+ "dfdfc37247b101b0084f4c2ed07a5d44119b575cc6573304f04c6066208f1f66": {
+  "useful": false
+ },
+ "e0384ae5b4471747e820e146c59e13126d96d1e134f0ebb5aff7b3291c12de13": {
+  "useful": true
+ },
+ "e06f741fae5c18c3afb227c5c2214fb45a0ce439158ffa023fb4de21faeb26c6": {
+  "claims": [
+   "A tree is a connected graph containing N vertices and N-1 edges.",
+   "A tree has no cycles.",
+   "Between any two vertices in a tree, there is exactly one simple path.",
+   "By choosing one vertex as the root, every other vertex is assigned a unique parent.",
+   "A Depth First Search (DFS) can compute the parent of each vertex.",
+   "A Depth First Search (DFS) can compute the depth of each vertex.",
+   "A Depth First Search (DFS) can compute the size of each subtree.",
+   "Depth is determined before the recursive call in a DFS.",
+   "Subtree size is accumulated after the child's recursion finishes in a DFS.",
+   "The deepest common ancestor of two vertices is called their Lowest Common Ancestor (LCA).",
+   "The LCA can be used to calculate the distance between two vertices.",
+   "When merging two trees, attaching the shorter one under the taller one helps keep the overall tree depth logarithmic."
+  ]
+ },
+ "e0b1eaeb9ae561cdfe9d74847ef5d111b229d8bb0f1ff1e5bc4bf5689887eca6": {
+  "supported": [
+   false,
+   true,
+   false,
+   false,
+   true,
+   true,
+   false,
+   false
+  ]
+ },
+ "e0efffe12a41c3e252801b5526f4e101df17083d9ba4ec981e59004c6b9d81d2": {
+  "useful": true
+ },
+ "e0ff7a4efeb960076fd58bca16c44b1f7e2c46f412d31e07a64c53ce84a6d094": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "e177cca2bd656b601d4c60e141643420f1d332543a51280414c4635f813018eb": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "e19a332902145ab047b6c1646ba409ec9d8e58ebdc8910b0b9369822519a681f": {
+  "useful": true
+ },
+ "e1aa1c5419bbf57f6eb45e3079147cb0cf527778b71f833df0f3887f7fe3c222": {
+  "useful": true
+ },
+ "e277ac46352ae9c82d662049cb9ef9078242026b3f5a17d525d261b99f4ebf35": {
+  "useful": true
+ },
+ "e3a248fc2517398c24ad5f3e1e1222702d523f65358b6936e0a9bfee1ba1b6c1": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "e3d90be2125d711d92409681c9355f45cdea0dbce7d2cd5e127a18c874a85b3a": {
+  "useful": false
+ },
+ "e457c71a747b9af6ce346c78b25ee074aa90200090d8a45882f58edda7784f9e": {
+  "claims": [
+   "DSU stands for Disjoint Set Union.",
+   "Disjoint Set Union is used to maintain a collection of elements partitioned into groups.",
+   "Disjoint Set Union supports operations to find which group an element belongs to.",
+   "Disjoint Set Union supports operations to merge groups.",
+   "Disjoint Set Union is suitable for problems involving counting connected components.",
+   "Disjoint Set Union is used in Kruskal's algorithm for minimum spanning trees.",
+   "Disjoint Set Union efficiently tests for cycles in Kruskal's algorithm.",
+   "Disjoint Set Union is suitable for grouping elements by equivalence relationships that arrive as a stream of pairs.",
+   "Disjoint Set Union is suitable for offline connectivity problems that involve deletions.",
+   "Offline connectivity problems involving deletions can be solved by processing queries in reverse using Disjoint Set Union."
+  ]
+ },
+ "e58425492f0aa254adf913f6262f0f1f9a7d9843a7ce2e94495ae5083fba98c2": {
+  "useful": true
+ },
+ "e5f9230d1f83bfb594aff7d9b9e4f28b5370a8999365143627199bee5c16868d": {
+  "useful": false
+ },
+ "e640c751ecdb7fb0b99054fdd55176a4bd9bd92d92603e287c75d6a3a07d17d0": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "e71d90917399782c6b856515b0f200bf37d1f542048660c9321aa84c90901c9a": {
+  "useful": true
+ },
+ "e7487678b1743dc6842396a19e3c2660c05f4e5704db663cd9970162dfd8e8a8": {
+  "useful": true
+ },
+ "e7a57b768d122b28c2034fb4f5725ae3adc2516ac067c2036bc2891043541415": {
+  "claims": [
+   "A Fenwick tree is sufficient for sums, counts, or XOR operations.",
+   "Fenwick trees are particularly useful when updates are applied to a single point.",
+   "Fenwick trees are particularly useful when queries involve prefixes or ranges that can be calculated by subtracting prefix sums.",
+   "Fenwick trees have a smaller memory footprint compared to segment trees.",
+   "Fenwick trees have a faster constant factor compared to segment trees.",
+   "Fenwick trees have shorter code compared to segment trees.",
+   "A segment tree is needed for more complex operations.",
+   "A segment tree is needed for operations that cannot be undone by subtraction.",
+   "Segment trees can handle range minimum queries.",
+   "Segment trees can handle range maximum queries.",
+   "Segment trees can handle greatest common divisor queries.",
+   "Segment trees can handle bitwise OR queries.",
+   "Segment trees can handle range assignments.",
+   "Segment trees can handle adding values across a range.",
+   "A segment tree with lazy propagation is often a clearer choice when both range updates and range queries are required."
+  ]
+ },
+ "e7aacbdef3d9ea0353abafd2312fd598067645a1999f86564e5344b480911f17": {
+  "useful": false
+ },
+ "e9043a363deb23950f78164ec53fed95ab658bed86e3377a09cc1630f518fed3": {
+  "useful": false
+ },
+ "e90ab81dc366199aeefe1c7f792c68dfe02911d65a86a0f7e67220877bee7085": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "eb7dd18217d1e65e5e65334d4146f1a997b42aee5f6bd7ed9751414bf3c57aaf": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "ebd4939e7958677ad97f89f79c378796c7b07487597bfd03347201002ea81732": {
+  "score": 2
+ },
+ "ec76f32564ac712d2bbf9a366a954fc29bf02f5d5481ae35f6c0fc29810ec903": {
+  "useful": true
+ },
+ "ec92a7caa181390e692fa3529b33e427e3412fa740c0cbd8a45c49cf0195f5a7": {
+  "supported": [
+   true,
+   true,
+   false,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "eca3bc8a7f9893150d721e1c8cfe76e1625025f48673fbecbe73da25ab70c4df": {
+  "useful": false
+ },
+ "ed32c67848437caf53eef6f30742516a54aa69268faa723367da33c8e7e41243": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "edf785794c875e3fc958915362d33acda79d95d4b9f91da01f32a27106b2ceed": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "f00c14ab287536f2f5c539a17054b5f4e15a8f9816fc09143d5a1452db32d23f": {
+  "useful": true
+ },
+ "f013a1b06d384a164544bbdac9ac61c59527db10af9620762880971bcfe953b9": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "f0e6571873e7befcc882b8915cd769b3bdd4e10815eac8ea079cd62c43695bf8": {
+  "supported": [
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "f111bd8cd7a240b29c1c9e48a8fb212a08006779d1284079ec42374f9cc626a2": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   false,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "f115ac58024d6ede43c6ecb55a7b917e84ac3bd8c48224c78d2ca5c06380b06c": {
+  "score": 2
+ },
+ "f34931522a07cb541d1eeb3841bc8a576f30e37c60f00bae53e1e4518f9a5dec": {
+  "claims": [
+   "unordered_map should be used if elements do not need to be in any particular order.",
+   "unordered_map typically offers faster average performance for operations like inserting, finding, and erasing elements.",
+   "unordered_map has an average time complexity of O(1) for operations like inserting, finding, and erasing elements.",
+   "map should be chosen if elements need to be sorted by key.",
+   "map should be chosen if sorted iteration is required.",
+   "map should be chosen if range queries are needed.",
+   "map should be chosen if finding a predecessor or successor element is needed.",
+   "Operations in map are guaranteed to be O(log n)."
+  ]
+ },
+ "f4b4b22df3780611e08b4333ac2592ca819a7c297ae50dc5548c2badb0f0778e": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "f51c6ad0e46789a03ef6958fb9b64da17aaee955f36ed0a5c0153fb59f5bb5df": {
+  "claims": [
+   "A Fenwick tree is suitable for answering range sum questions on a mutable array.",
+   "A Fenwick tree is also called a binary indexed tree.",
+   "Standard prefix sum arrays are not efficient for mutable data.",
+   "A single update in a standard prefix sum array invalidates subsequent entries.",
+   "Repairing a standard prefix sum array after an update costs O(n) time.",
+   "A Fenwick tree allows for point updates in O(log n) time.",
+   "A Fenwick tree allows for prefix queries in O(log n) time.",
+   "Range sums over [l, r] can be found using a Fenwick tree by calculating query(r) - query(l - 1).",
+   "A segment tree is an option for scenarios where updates and queries are mixed."
+  ]
+ },
+ "f5227775c9caead6a99c111fd22e95d5573ba91c38f875b310cd3d161a4efc27": {
+  "useful": false
+ },
+ "f53f6833155ab42455b0d749317c030369c008481c766fb5da33982dec9a4f19": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "f65af00827772f52f61a2600a590afed1c70fc33225e3ec485a3a294a7363539": {
+  "useful": true
+ },
+ "f6a826a0d6b79c7fd8844b4e2e201144b7c24d5c88732b51de82f65b3089249f": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "f6dbf4c9365c5bd2b52e86da8a31099b961ac5dc118b9aab8d0271b00941a1fa": {
+  "useful": false
+ },
+ "f6f42381b30e0591adfa4acce49d0568e8663c9bed3657b684c1b08e9d8763a3": {
+  "claims": [
+   "A sliding window should not be used if the property being checked is not monotone.",
+   "A property is monotone if every larger window containing an invalid window must also be invalid.",
+   "The sliding window technique should be avoided if shrinking the window could turn a failing window into another failing one before it becomes valid.",
+   "The \"shrink until valid\" step might skip the correct answer if shrinking the window turns a failing window into another failing one.",
+   "The sliding window technique should be avoided if elements can be negative when summing to find a shortest subarray with a sum at least S.",
+   "Extending the window could decrease the sum if elements are negative.",
+   "Extending the window decreasing the sum breaks monotonicity.",
+   "The sliding window technique should be avoided if the problem asks about contiguous ranges of the original array and the array has been sorted.",
+   "Sorting an array destroys the original element positions.",
+   "The sliding window technique should be avoided if the algorithm requires either pointer to move backwards.",
+   "Pointers moving backwards invalidate linear time complexity.",
+   "Pointers moving backwards invalidate the sliding window approach."
+  ]
+ },
+ "f7429324272656c7b3af1fc208a34b0c6f476a61eb5ba915e1fe8bdbdc8c6121": {
+  "useful": true
+ },
+ "f780be9828fa3789854fc74bc8645c64ccb10bd39bd27a36e2a13eab195445b0": {
+  "useful": true
+ },
+ "f7fb5017dfafa40dcd73be7a4c59e92a4cea6d155dfd532805bc06864a876b73": {
+  "claims": [
+   "The notes cover C++ only.",
+   "The fast input section is about ios::sync_with_stdio.",
+   "The fast input section is about cin.",
+   "The notes do not contain information about Python's input handling."
+  ]
+ },
+ "f8e16eb239bface44a4d3bb5b3ada9afedaa1dcdd45aca61a1220faea8af7e77": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "f944525067ecbcff071f24fb6ccacdce87aced0a995aff8733fa42ad312093ab": {
+  "useful": false
+ },
+ "f9c0392161f9f6a3c5342b1fc3a5525e4a11ef2d2dc755b7e7af96ae08c9f533": {
+  "score": 3
+ },
+ "f9c262b87344282f79f6665b65896332c929f834dc7c4bc8a10bfd89932b9f98": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "fcc3a8569c8390a8a656add61092dcdbf70fe805d798963d40cb0a682ff567ca": {
+  "useful": true
+ },
+ "fcfaa198d8b3861828ca3e8307bb90d10dfaf844b51c5a1cced9575af7323c0c": {
+  "useful": false
+ },
+ "fd16ba58bfd5da34b0f92a88ae39f04c6735d0b9e6b9298a37fe1c19bc6a0928": {
+  "supported": [
+   false,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "fe8fc61622fad7dd4d4773ef0b5d94ffc9e3acf09ed007054198dd3611cfb7ab": {
+  "supported": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "fe93c5369c6bd530350a0485f6a8581c2f2ee8cea1254a3b129827cfbbe428f1": {
+  "useful": true
+ },
+ "febcc155acb824a49b6d4b890c2865c3476e1d93e411e82ee8cfc6ed5c5c2b3b": {
+  "useful": true
+ },
+ "ff3360fff34b09c92f87aee051406f69a7e26aff3cb87d0a9e02f580c742f80c": {
+  "claims": [
+   "A recursive graph search can crash on a big input due to excessive recursion depth.",
+   "Each pending recursive call stores its parameters, local variables, and return address on the call stack.",
+   "For a graph with many vertices, particularly one shaped like a long path, the recursion can become very deep.",
+   "The call stack has a limited size, typically between 1 MB and 8 MB.",
+   "When the recursion depth exceeds the call stack limit, the stack overflows, causing the program to crash.",
+   "This failure is reported as a runtime error.",
+   "A depth-first search on a path graph with 10^5 vertices can reliably hit the recursion depth limit."
+  ]
+ },
+ "ff91e15b6f0085bc69226ce7b2e2019ef2d3091c81136cca01e578467c2d3d79": {
+  "useful": true
+ },
+ "ffae21828c9bb44a630cde1e0ac9e4bd665d14bb37b3176081e28a49e85984c1": {
+  "useful": false
+ },
+ "ffc22d63772b1dd9b503e00608e382cc35f4bee270252e2c0d7c2602f5fac0ec": {
+  "useful": true
+ }
+}

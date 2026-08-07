@@ -1,0 +1,20 @@
+# Evaluation and tracing dependencies — deliberately NOT in backend/requirements.txt.
+#
+# The Dockerfile installs the backend list into a python:3.12-slim image that runs
+# the bot, the worker, the scheduler and the monitor. MLflow brings roughly sixty
+# packages with it (pandas, scipy, scikit-learn, pyarrow, matplotlib, Flask,
+# SQLAlchemy, alembic, docker), none of which the running system needs. Keeping
+# them here means the runtime image does not grow to carry a measuring tool.
+#
+#     pip install -r backend/requirements.txt -r requirements-eval.txt
+#
+# The application imports mlflow SOFTLY (see backend/tracing.py): with this file
+# uninstalled the tutor runs exactly as before and the whole test suite passes.
+# Tracing is additionally off unless CP_TUTOR_TRACING=1, so installing this
+# changes nothing by itself.
+#
+# Why the full package rather than mlflow-skinny: traces are stored through the
+# SQLAlchemy backend (`sqlite:///mlflow.db`), and skinny ships no SQLAlchemy. The
+# file store under mlruns/ does not carry traces at all. The full package also
+# brings `mlflow ui`, which is how the span tree gets looked at.
+mlflow>=3.15,<4

@@ -19,9 +19,18 @@ graphs: `generate` and `generate_structured`. Single-shot calls with no tools
 and no branching gain nothing from being a graph, and every node that needs one
 can just call it. They also remain the seam the test suite stubs.
 
-Tracing is deliberately NOT enabled. LangSmith would send learner messages and
-generated code off the machine; if you want it, set LANGCHAIN_TRACING_V2 and
-LANGCHAIN_API_KEY yourself and know what you are agreeing to.
+Hosted tracing is still deliberately NOT enabled. LangSmith would send learner
+messages and generated code off the machine; if you want it, set
+LANGCHAIN_TRACING_V2 and LANGCHAIN_API_KEY yourself and know what you are
+agreeing to. `backend/tracing.py` is the local answer to the same need — MLflow
+writing spans to a SQLite file on this machine, off unless CP_TUTOR_TRACING=1,
+and not installed in the runtime image at all.
+
+Temperature is not pinned here, and never was. The provider default is what the
+tutor runs at, which is worth knowing before reading any evaluation of it: three
+runs of the same question are not expected to be identical. `CP_TUTOR_TEMPERATURE`
+sets it explicitly when a caller needs the number on the record rather than
+inherited — the agent eval does — and changes nothing when unset.
 """
 from __future__ import annotations
 
@@ -54,6 +63,22 @@ _models: dict[str, BaseChatModel] = {}
 _embedders: dict[str, GoogleGenerativeAIEmbeddings] = {}
 
 
+def temperature() -> float | None:
+    """The sampling temperature to impose, or None to leave the default alone.
+
+    Read at call time rather than at import so a harness can set it in-process.
+    None and 0.0 are different answers: 0.0 pins greedy decoding, None declines
+    to have an opinion, and this system's normal operation is the second.
+    """
+    raw = os.environ.get("CP_TUTOR_TEMPERATURE", "").strip()
+    if not raw:
+        return None
+    try:
+        return float(raw)
+    except ValueError:
+        return None
+
+
 def chat_model(model: str = MAIN_MODEL, **kwargs) -> BaseChatModel:
     """The chat model, memoised per (model, kwargs).
 
@@ -68,6 +93,16 @@ def chat_model(model: str = MAIN_MODEL, **kwargs) -> BaseChatModel:
     other. Wrapping here would break the tutor, the operator, the router, the
     critic and the judge simultaneously, and no stubbed test would notice.
     """
+    # Applied before the cache key is built, so two temperatures are two
+    # memoised models rather than whichever was asked for first. Only when the
+    # variable is set AND the caller named nothing: with it unset this branch
+    # does not run and the constructed model is byte-for-byte what it was
+    # before this seam existed.
+    if "temperature" not in kwargs:
+        wanted = temperature()
+        if wanted is not None:
+            kwargs["temperature"] = wanted
+
     cache_key = model + repr(sorted(kwargs.items()))
     if cache_key not in _models:
         api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")

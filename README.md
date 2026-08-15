@@ -200,14 +200,25 @@ rather than obeyed, and the monitor's own findings.
 
 ## Running it
 
-**Full instructions: [`LOCAL_SETUP.md`](LOCAL_SETUP.md).** The short version —
-all you need is Docker:
+**Full instructions: [`LOCAL_SETUP.md`](LOCAL_SETUP.md).** One command, if you
+have a Python on the host to type it with:
 
 ```bash
-cp .env.example .env             # add GEMINI_API_KEY (and a bot token, if you want chat)
+python bootstrap.py              # checks Docker, writes .env, builds, starts, verifies
+```
+
+By hand it is three, and all you need is Docker:
+
+```bash
+cp .env.example .env             # GEMINI_API_KEY, and a bot token — see the note below
 docker compose build sandbox     # the C++ jail
 docker compose up -d             # app + worker + scheduler + monitor
 ```
+
+A bot token is needed **even for the web UI alone**: `app` serves the API and
+runs the chat poll loop in one process, so without `TELEGRAM_BOT_TOKEN` it exits
+at startup and :8000 never comes up. `python bootstrap.py --web-only` starts the
+web half without one.
 
 Open **http://localhost:8000**. `docker compose logs -f app` to watch,
 `docker compose down` to stop (your data survives, in `./data`).

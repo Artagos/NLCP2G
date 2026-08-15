@@ -3,6 +3,21 @@
 Everything runs in containers. You need Docker, and nothing else — no Python, no
 Node, no npm on the host. The web UI is built inside the image.
 
+## The short way
+
+```bash
+python bootstrap.py           # or: python bootstrap.py --check, to look first
+```
+
+Checks Docker and the daemon, writes `.env` from the example, generates the
+webhook secret, builds both images, starts the stack and waits until it actually
+answers on :8000 — printing every command as it runs it, so it teaches the long
+way rather than replacing it. `--web-only` skips the chat bot, `--no-docker`
+sets up a host venv instead, `--tests` runs the suite, `--down` stops. It uses
+nothing but the standard library and runs on any Python from 3.6 up.
+
+The rest of this file is what it does, and why the stack is shaped this way.
+
 ## Once
 
 ```bash
@@ -18,6 +33,18 @@ GEMINI_API_KEY=...                 # https://aistudio.google.com/apikey
 TELEGRAM_BOT_TOKEN=...             # @BotFather -> /newbot
 CP_TUTOR_WEBHOOK_SECRET=...        # any random string
 CP_TUTOR_ADMIN_CHAT_IDS=           # your chat id, to reach /admin. empty = nobody
+```
+
+**`TELEGRAM_BOT_TOKEN` is not optional, even if you only want the web UI.** `app`
+runs the poll loop and the API in one process (see below for why that is
+required), and the channel raises at startup when the token is missing — so
+without it the container crash-loops and :8000 never comes up either, which
+looks like a broken build and is really a missing line in `.env`.
+
+If you do not want a bot at all, run the web half on its own:
+
+```bash
+python bootstrap.py --web-only        # same image, uvicorn instead of the bot
 ```
 
 ## Every time

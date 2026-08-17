@@ -396,6 +396,10 @@ def check_docker(required):
     return argv
 
 
+def image_exists(name):
+    return probe(["docker", "image", "inspect", name])
+
+
 def port_is_taken(port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(0.4)
@@ -496,6 +500,23 @@ def do_check(root, args):
                 warn("%s is not set -> %s" % (key, consequence))
             else:
                 ok("%s is set" % key)
+
+    step("The sandbox image")
+    # Worth its own check because the failure is silent and misattributed: the
+    # stack comes up perfectly, the tutor answers, and only an actual code
+    # attempt fails — with SANDBOX_UNAVAILABLE, which reads as "Docker is
+    # broken" when the truth is that one image was never built. Nothing else in
+    # the stack notices it is missing.
+    if base is None:
+        say("skipped (no Docker).")
+    elif image_exists("cp-tutor-sandbox"):
+        ok("cp-tutor-sandbox is built")
+    else:
+        warn("cp-tutor-sandbox is NOT built.")
+        say("Everything else will work. Running learner C++ will not: every")
+        say("attempt returns SANDBOX_UNAVAILABLE, through both the web UI and")
+        say("chat. Build it with `python bootstrap.py`, or directly:")
+        say("  docker build -t cp-tutor-sandbox ./sandbox")
 
     step("Ports")
     if port_is_taken(args.port):
@@ -694,8 +715,12 @@ def do_no_docker(root, args):
 
     step("Code execution")
     if check_docker(required=False):
-        say("Docker is available, so learner code can still be run.")
-        say("Build the jail once:  docker build -t cp-tutor-sandbox ./sandbox")
+        if image_exists("cp-tutor-sandbox"):
+            ok("cp-tutor-sandbox is built, so learner code can be run.")
+        else:
+            warn("Docker is available but cp-tutor-sandbox is not built, so")
+            say("every attempt will return SANDBOX_UNAVAILABLE. Build it once:")
+            say("  docker build -t cp-tutor-sandbox ./sandbox")
     else:
         warn("no Docker, so running learner C++ is unavailable on this path.")
         say("Everything else (chat, memory, retrieval) works. Attempts will")
